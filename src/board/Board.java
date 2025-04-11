@@ -2,6 +2,7 @@ package board;
 
 import data.PieceColor;
 import piece.*;
+import specialRule.SpecialRule;
 
 //////////////////////////////////////////////
 public class Board {
@@ -132,11 +133,33 @@ public class Board {
             // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
             end.setPiece(movingPiece);
             start.setPiece(null);
+            enPassantChecking();  // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
+            SpecialRule.promotion(end);//프로모션은 흐름도에 따라 기물 이동을 수행한 후 결정됩니다.
             return true;
         }
         return false;
     }
 
+    public void enPassantChecking(){
+        for(int i = 0 ; i<8; i++){
+            for(int j = 0; j<8; j++){
+                Piece enpassantTest = getCell(i,j).getPiece();
+                if(enpassantTest!=null){
+                    String enSym = enpassantTest.getSymbol();
+                    if ("P".equals(enSym)||"p".equals(enSym)){
+                        Pawn pawn = (Pawn) enpassantTest;
+                        if(pawn.enPassantable&&pawn.enPassantCounter==0){
+                            pawn.enPassantCounter=1; //한턴은 앙파상을 유지시켜야하므로
+                        }else if(pawn.enPassantable&&pawn.enPassantCounter==1){
+                            pawn.enPassantable=false;
+                            pawn.enPassantCounter=0; //한턴이 더 지났으니, 앙파상을 종료한다.
+                        }
+                    }
+                }
+            }
+        }
+
+    }
     /**
      * 내부 좌표 (row, col)을 체스 표준 표기("a1" ~ "h8")로 변환
      * 예) row=7, col=0 -> "a1"
