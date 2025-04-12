@@ -32,8 +32,11 @@ public class Pawn extends Piece {
         // 2) 두 칸 전진 (초기 위치에서만 가능, 중간 칸과 목적지 모두 비어 있어야)
         if (startRow == startRowForDouble && endCol == startCol && endRow == startRow + 2 * direction) {
             Cell intermediate = board.getCell(startRow + direction, startCol);
-            if (intermediate.getPiece() == null && dest == null)
+            if (intermediate.getPiece() == null && dest == null){
+                enPassantable = true;
                 return true;
+            }
+
         }
 
         // 3) 대각선으로 상대 기물을 잡는 이동
@@ -45,7 +48,7 @@ public class Pawn extends Piece {
         if (Math.abs(endCol - startCol) == 1 && endRow == startRow + direction && dest == null) {
             Cell enPassantCell = board.getCell(startRow,endCol); //앙파상이었을 경우를 가정하여 그 셀을 가져온다.
             Pawn enPassantPiece = (Pawn) enPassantCell.getPiece(); // 그 셀에서 기물을 받고 폰으로 변환한다.
-            if(enPassantPiece!=null && enPassantPiece.enPassantable) // null이 아니고, enPassatable이 true라면,
+            if(enPassantPiece!=null && enPassantPiece.enPassantable && enPassantCounter==1) // null이 아니고, enPassatable이 true라면,
                 return SpecialRule.enPassant(startCell,endCell, enPassantCell);
         }
 
