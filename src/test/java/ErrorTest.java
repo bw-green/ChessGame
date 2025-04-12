@@ -1,9 +1,9 @@
 package test.java;
 
-import data.COMMAND_ERROR;
-import data.FILE_ERROR;
-import data.INVALID_COORDINATE;
-import data.UNSPECIFIED;
+import data.CommandError;
+import data.FileError;
+import data.InvalidCoordinate;
+import data.Unspecified;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -15,8 +15,8 @@ public class ErrorTest { // 에러 코드 나오게하기
     @Test
     void ErrorParameterTest() {
         try{
-            System.out.println(COMMAND_ERROR.EMPTY_SLOT.formatMessage(6));
-            System.out.println(COMMAND_ERROR.EMPTY_SLOT);
+            System.out.println(CommandError.EMPTY_SLOT.formatMessage(6));
+            System.out.println(CommandError.EMPTY_SLOT);
         }catch(Exception e){
             if(e instanceof NumberFormatException){
                 Assertions.assertEquals("slot index out of bounds", e.getMessage());
@@ -26,11 +26,11 @@ public class ErrorTest { // 에러 코드 나오게하기
             }
         }
 
-        System.out.println(COMMAND_ERROR.EMPTY_SLOT.formatMessage(3));
-        System.out.println(INVALID_COORDINATE.INVALID_MOVE);
-        System.out.println(COMMAND_ERROR.START_BLOCK);
-        System.out.println(FILE_ERROR.FAILED_DELETE);
-        System.out.println(UNSPECIFIED.CASTLING_FAILED);
+        System.out.println(CommandError.EMPTY_SLOT.formatMessage(3));
+        System.out.println(InvalidCoordinate.INVALID_MOVE);
+        System.out.println(CommandError.START_BLOCK);
+        System.out.println(FileError.FAILED_DELETE);
+        System.out.println(Unspecified.CASTLING_FAILED);
     }
 
 

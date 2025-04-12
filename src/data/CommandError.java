@@ -1,6 +1,6 @@
 package data;
 
-public enum COMMAND_ERROR {
+public enum CommandError {
 
     WRONG_NUMBER("Wrong number!"),
     WRONG_COMMAND("Wrong command!"),
@@ -12,7 +12,7 @@ public enum COMMAND_ERROR {
 
     private final String message;
 
-    COMMAND_ERROR(String message){
+    CommandError(String message){
         this.message = message;
     }
 

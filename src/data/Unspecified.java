@@ -1,11 +1,11 @@
 package data;
 
-public enum UNSPECIFIED {
+public enum Unspecified {
     CASTLING_FAILED("Castling failed.");
 
     private final String message;
 
-    UNSPECIFIED(String message){
+    Unspecified(String message){
         this.message = message;
     }
 

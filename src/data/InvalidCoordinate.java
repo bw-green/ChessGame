@@ -1,6 +1,6 @@
 package data;
 
-public enum INVALID_COORDINATE {
+public enum InvalidCoordinate {
     EMPTY_INPUT("Empty or null."),
     INCORRECT_LENGTH("Coordinates must be 2 characters."),
     INCORRECT_COUNT("Exactly 2 coordinates required."),
@@ -18,7 +18,7 @@ public enum INVALID_COORDINATE {
 
     private final String message;
 
-    INVALID_COORDINATE(String message){
+    InvalidCoordinate(String message){
         this.message = message;
     }
 
