@@ -38,7 +38,7 @@ public class SpecialRule {
         Scanner scanner = new Scanner(System.in);
         Piece pawn = end.getPiece(); //폰 확정은 아니지만 일단 이름은 pawn
         int targetEndRow = (pawn.getColor() == PieceColor.WHITE) ? 0 : 7; // 판별할 끝을 정하기
-        if ("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol()) && end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
+        if (("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol())) && end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
         {
             while(true) {
                 System.out.print("Enter the PIECE to promote to (e.g., \"Q\", \"R\", \"N\", \"B\").\n ");
@@ -87,7 +87,7 @@ public class SpecialRule {
             rookEndCell = board.getCell(kingStart.getRow(), rookCol + 3);
         //룩 셀에 룩이 없거나, 길이 열려있지 않으면, 실패. 룩이나 킹이 한번이라도 움직였어도 실패.
         Piece movingPiece = rookCell.getPiece();
-        if (!("R".equals(movingPiece.getSymbol())||"r".equals(movingPiece.getSymbol())) || !board.isPathClear(kingStart, rookCell) || ((Rook) movingPiece).firstMove || ((King)king).firstMove) {
+        if (movingPiece == null||!("R".equals(movingPiece.getSymbol())||"r".equals(movingPiece.getSymbol())) || !board.isPathClear(kingStart, rookCell) || ((Rook) movingPiece).firstMove || ((King)king).firstMove) {
             return false;
         }
         //룩을 이동시킴 (true 반환하면 king은 보드 클래스에서 움직임)

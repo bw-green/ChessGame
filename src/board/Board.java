@@ -151,6 +151,7 @@ public class Board {
                         pawn.enPassantCounter = 1; //한턴은 앙파상을 유지시켜야하므로
                     } else if (pawn.enPassantable && pawn.enPassantCounter == 1) {
                         pawn.enPassantCounter = 0;
+                        pawn.enPassantable = false;
                     }
                 }
             }
