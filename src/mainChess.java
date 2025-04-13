@@ -32,5 +32,6 @@ public class mainChess {
         System.out.println("이동 성공 여부: " + success);
         System.out.println("[이동 후 체스판 상태]");
         System.out.println(board);
+
     }
 }

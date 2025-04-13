@@ -8,6 +8,7 @@ import data.PieceColor;
 // 2) board.Cell 클래스: 체스판의 한 칸 (row, col, piece)
 
 public class Rook extends Piece {
+    public boolean firstMove = false; // 캐슬링 조건
     public Rook(PieceColor color) {
         super(color);
     }
@@ -18,8 +19,10 @@ public class Rook extends Piece {
         if (startCell.getRow() == endCell.getRow() || startCell.getCol() == endCell.getCol()) {
             if (board.isPathClear(startCell, endCell)) {
                 Piece dest = endCell.getPiece();
-                if (dest == null || dest.getColor() != this.color)
+                if (dest == null || dest.getColor() != this.color){
+                    firstMove = true;
                     return true;
+                }
             }
         }
         return false;
