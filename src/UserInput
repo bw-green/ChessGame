@@ -1,0 +1,175 @@
+import board.Board;
+import board.Cell;
+import data.PieceColor;
+import piece.Piece;
+
+
+public class UserInput {
+
+    private String input;  // 원본 입력 문자열
+    private String from;   // 시작 좌표 ("e2")
+    private String to;     // 도착 좌표 ("e4")
+
+    private int fromRow, fromCol;
+    private int toRow, toCol;
+
+    private Board board;  // 현재 게임의 보드 참조
+    private PieceColor currentTurn; // 현재 플레이어 턴 (WHITE or BLACK)
+
+    // 생성자: 보드와 현재 턴을 전달받아 초기화
+    public UserInput(Board board, PieceColor currentTurn) {
+        this.board = board;
+        this.currentTurn = currentTurn;
+    }
+
+    /**
+     * 외부로부터 문자열 입력을 받아 파싱 시작
+     * @param userInput 사용자 입력 문자열 ("e2 e4")
+     * @return 유효한 입력이면 true, 아니면 false
+     */
+    public boolean getUserInput(String userInput) {
+        this.input = userInput.trim();
+        return parseInput();
+    }
+
+    /**
+     * 입력 문자열을 파싱하고 유효성 검사 수행
+     * @return 파싱 성공 여부
+     */
+    private boolean parseInput() {
+        if (input == null || input.isBlank()) {
+            printError("null");
+            return false;
+        }
+
+        String[] tokens = input.trim().split("\s+");
+        if (tokens.length != 2) {
+            printError("syntax");
+            return false;
+        }
+
+        from = tokens[0];
+        to = tokens[1];
+
+        if (!isValidCoordinate(from) || !isValidCoordinate(to)) {
+            printError("syntax");
+            return false;
+        }
+
+        if (from.equals(to)) {
+            printError("same");
+            return false;
+        }
+
+        fromCol = colToIndex(from.charAt(0));
+        fromRow = rowToIndex(from.charAt(1));
+        toCol = colToIndex(to.charAt(0));
+        toRow = rowToIndex(to.charAt(1));
+
+        if (fromCol == -1 || fromRow == -1 || toCol == -1 || toRow == -1) {
+            printError("range");
+            return false;
+        }
+
+        return checkSemanticRules();
+    }
+
+    /**
+     * 의미적 유효성 검사 - 기물 존재, 소유자, 목적지 등의 논리 검사
+     * @return 검사 통과 여부
+     */
+    private boolean checkSemanticRules() {
+        Cell start = board.getCell(fromRow, fromCol);
+        Cell end = board.getCell(toRow, toCol);
+
+        if (start == null || end == null) {
+            printError("range");
+            return false;
+        }
+
+        Piece movingPiece = start.getPiece();
+        if (movingPiece == null) {
+            printError("noPiece");
+            return false;
+        }
+
+        if (movingPiece.getColor() != currentTurn) {
+            printError("notYours");
+            return false;
+        }
+
+        if (end.getPiece() != null && end.getPiece().getColor() == currentTurn) {
+            printError("blocked");
+            return false;
+        }
+
+        return true;
+    }
+
+    // 좌표 형식 검사
+    private boolean isValidCoordinate(String coord) {
+        if (coord.length() != 2) return false;
+        char file = coord.charAt(0);
+        char rank = coord.charAt(1);
+        return isFileChar(file) && isRankChar(rank);
+    }
+
+    private boolean isFileChar(char c) {
+        return c >= 'a' && c <= 'h';
+    }
+
+    private boolean isRankChar(char c) {
+        return c >= '1' && c <= '8';
+    }
+
+    private int colToIndex(char c) {
+        return c - 'a';
+    }
+
+    private int rowToIndex(char c) {
+        return 8 - Character.getNumericValue(c);
+    }
+
+    /**
+     * 오류 메시지를 기획서 포맷에 맞게 출력
+     * @param type 오류 유형 (예: syntax, range, notYours 등)
+     */
+    private void printError(String type) {
+        String message;
+        switch (type) {
+            case "null" -> message = "|Empty or null. Try again.|";
+            case "syntax" -> message = "|Wrong Command!|";
+            case "range" -> message = "|Wrong Number!|";
+            case "same" -> message = "|Same START and END square.|";
+            case "noPiece" -> message = "|No piece at the starting position.|";
+            case "notYours" -> message = "|That piece does not belong to you.|";
+            case "blocked" -> message = "|You cannot capture your own piece.|";
+            default -> message = "|Unknown error|";
+        }
+
+        System.out.println("==================================================");
+        System.out.println(message);
+        System.out.println("==================================================");
+
+        if (currentTurn == null) {
+            System.out.print("menu > ");
+        } else {
+            System.out.print((currentTurn == PieceColor.WHITE ? "WHITE" : "BLACK") + " > ");
+        }
+    }
+
+    // Getter methods (좌표 정보 제공)
+    public int getFromRow() { return fromRow; }
+    public int getFromCol() { return fromCol; }
+    public int getToRow() { return toRow; }
+    public int getToCol() { return toCol; }
+    public String getFrom() { return from; }
+    public String getTo() { return to; }
+
+    /**
+     * 하나의 문자열로 합쳐진 전체 움직임 반환 ("e2 e4" 형태)
+     */
+    public String getFullMove() {
+        return from + " " + to;
+    }
+}
