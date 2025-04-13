@@ -9,10 +9,11 @@ public class FileManager {
     private static final String SAVE_DIR = "saves";
     private Deque<String> moveHistory;
     private ArrayList<String> filename;
+    private String lastSavedFile = "No DATA";
 
     public FileManager() {
         this.moveHistory = new ArrayDeque<>();
-        filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, ""));
+        filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
         ensureSaveDirectory();
         loadFileNames();
     }
@@ -26,6 +27,10 @@ public class FileManager {
         return new ArrayList<>(moveHistory); // 복사본만 제공
     }
 
+    public String getLastSavedFile() {
+        return lastSavedFile;
+    }
+
     // 세이브 디렉토리 확인 및 생성
     private void ensureSaveDirectory() {
         File dir = new File(SAVE_DIR);
@@ -33,8 +38,6 @@ public class FileManager {
             dir.mkdirs();
         }
     }
-
-    // Deque에 입력 받을 때 무결섬을 재차 검사해야하나
 
     // Deque에 움직임 저장
     public void overWriteHistory(String string) { moveHistory.addLast(string);}
@@ -55,6 +58,7 @@ public class FileManager {
                 writer.write(move); // 세 번째 줄부터: moveHistory 내용
                 writer.newLine();
             }
+            lastSavedFile = saveName;
             return true;
         } catch (IOException e) {
             //e.printStackTrace(); //디버깅용 후에 주석처리
@@ -110,6 +114,8 @@ public class FileManager {
         }
     }
 
+    public void clearMoveHistory() { moveHistory.clear(); } // 종료 관련 명령어의 경우에만 실행
+
     private void loadFileNames() {
         for (int i = 1; i <= MAX_SAVES; i++) {
             String filePath = getFilePath(i);
@@ -148,4 +154,6 @@ public class FileManager {
     public void printHistory() {
         System.out.println("현재 움직임 기록: " + moveHistory);
     }
+
+
 }
