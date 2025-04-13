@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8a3a52aa-4164-4503-89d8-4225a62657a7" name="변경" comment="GameEnd 2차 파일">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chessGame.iml" beforeDir="false" afterPath="$PROJECT_DIR$/chessGame.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/board/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/board/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/check/Checker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/check/Checker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/piece/King.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/piece/King.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/specialRule/SpecialRule.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/specialRule/SpecialRule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/board/BoardTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/board/BoardTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/gameEnd/CheckerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/gameEnd/CheckerTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;likescape&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/bw-green/ChessGame.git&quot;,
+    &quot;accountId&quot;: &quot;3a62a42f-aa95-4c46-80f4-f1bc7976d670&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2vfFkiU6jzX4PDTbmPnhFl4GC56" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.BoardTest.executor": "Run",
+    "JUnit.CheckerTest.executor": "Run",
+    "JUnit.ErrorTest.ErrorParameterTest.executor": "Run",
+    "JUnit.ErrorTest.executor": "Run",
+    "JUnit.GameEndTest.checkStaleMate.executor": "Run",
+    "JUnit.GameEndTest.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "gameEnd",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true",
+    "애플리케이션.mainChess.executor": "Run"
+  }
+}]]></component>
+  <component name="RunManager" selected="JUnit.GameEndTest.checkStaleMate">
+    <configuration name="mainChess" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="mainChess" />
+      <module name="chessGame" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CheckerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chessGame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.java.gameEnd.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test.java.gameEnd" />
+      <option name="MAIN_CLASS_NAME" value="test.java.gameEnd.CheckerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ErrorTest.ErrorParameterTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chessGame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.java.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test.java" />
+      <option name="MAIN_CLASS_NAME" value="test.java.ErrorTest" />
+      <option name="METHOD_NAME" value="ErrorParameterTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GameEndTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chessGame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.java.gameEnd.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test.java.gameEnd" />
+      <option name="MAIN_CLASS_NAME" value="test.java.gameEnd.GameEndTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GameEndTest.checkStaleMate" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="chessGame" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="test.java.gameEnd.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="test.java.gameEnd" />
+      <option name="MAIN_CLASS_NAME" value="test.java.gameEnd.GameEndTest" />
+      <option name="METHOD_NAME" value="checkStaleMate" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.GameEndTest.checkStaleMate" />
+        <item itemvalue="JUnit.GameEndTest" />
+        <item itemvalue="JUnit.CheckerTest" />
+        <item itemvalue="JUnit.ErrorTest.ErrorParameterTest" />
+        <item itemvalue="애플리케이션.mainChess" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="8a3a52aa-4164-4503-89d8-4225a62657a7" name="변경" comment="" />
+      <created>1744528366485</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744528366485</updated>
+      <workItem from="1744528367627" duration="12583000" />
+      <workItem from="1744541114264" duration="818000" />
+      <workItem from="1744542015359" duration="473000" />
+      <workItem from="1744542567812" duration="767000" />
+      <workItem from="1744543360728" duration="572000" />
+    </task>
+    <task id="LOCAL-00001" summary="GameEnd, GameEndTest 1차 파일">
+      <option name="closed" value="true" />
+      <created>1744540941313</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1744540941313</updated>
+    </task>
+    <task id="LOCAL-00002" summary="GameEnd 2차 파일">
+      <option name="closed" value="true" />
+      <created>1744542136975</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1744542136975</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="GameEnd, GameEndTest 1차 파일" />
+    <MESSAGE value="GameEnd 2차 파일" />
+    <option name="LAST_COMMIT_MESSAGE" value="GameEnd 2차 파일" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ChessGame$GameEndTest.ic" NAME="GameEndTest 커버리지 결과" MODIFIED="1744536359089" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>test.java.gameEnd.*</FILTER>
+    </SUITE>
+  </component>
+</project>

@@ -87,6 +87,10 @@ public class SpecialRule {
             rookEndCell = board.getCell(kingStart.getRow(), rookCol + 3);
         //룩 셀에 룩이 없거나, 길이 열려있지 않으면, 실패. 룩이나 킹이 한번이라도 움직였어도 실패.
         Piece movingPiece = rookCell.getPiece();
+        if(movingPiece == null){
+            return false;
+        }
+
         if (!("R".equals(movingPiece.getSymbol())||"r".equals(movingPiece.getSymbol())) || !board.isPathClear(kingStart, rookCell) || ((Rook) movingPiece).firstMove || ((King)king).firstMove) {
             return false;
         }

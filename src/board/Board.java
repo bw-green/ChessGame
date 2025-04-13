@@ -100,7 +100,7 @@ public class Board {
         // endCell 직전까지 검사
         while (currentRow != endRow || currentCol != endCol) {
             Cell cell = getCell(currentRow, currentCol);
-            if (cell.getPiece() != null) {
+            if (cell != null && cell.getPiece() != null) {
                 return false;
             }
             currentRow += stepRow;
