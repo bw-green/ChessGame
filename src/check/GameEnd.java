@@ -17,12 +17,12 @@ public class GameEnd {
 
 
     public boolean isCheckMate(Board board) {
-        System.out.printf("%b, %b",checker.isCheck(board),checker.canMove(board));
+        //System.out.printf("%b, %b",checker.isCheck(board),checker.canMove(board));
         return checker.isCheck(board) && !checker.canMove(board);
     }
 
     public boolean isStaleMate(Board board) {
-        System.out.printf("%b, %b",checker.isCheck(board),checker.canMove(board));
+        //System.out.printf("%b, %b",checker.isCheck(board),checker.canMove(board));
         return !checker.isCheck(board) && !checker.canMove(board);
     }
 
