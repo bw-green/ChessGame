@@ -1,6 +1,5 @@
 package fileManager;
 
-import data.FileError;
 import java.io.*;
 import java.util.*;
 import java.util.Random;
@@ -37,13 +36,8 @@ public class FileManager {
 
     // Deque에 입력 받을 때 무결섬을 재차 검사해야하나
 
-//    // Deque에 움직임 저장 (Input으로 정제된 움직임만 받음. Input이 정제되는건 Input 클래스에서 통제)
-//    public void overWriteHistory(Input input) {
-//        String str = input.makeInput(); // input 객체에서 입력받을 문자열 반환
-//        moveHistory.addLast(str);
-//    }
-
-
+    // Deque에 움직임 저장
+    public void overWriteHistory(String string) { moveHistory.addLast(string);}
 
     // 세이브 파일 덮어쓰기 (최대 5개 관리, 텍스트 형식)
     public boolean overWriteSavedFile(int slot) {
