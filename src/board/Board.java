@@ -100,7 +100,13 @@ public class Board {
         // endCell 직전까지 검사
         while (currentRow != endRow || currentCol != endCol) {
             Cell cell = getCell(currentRow, currentCol);
-            if (cell.getPiece() != null) {
+
+            if (!(0 <= currentRow && currentRow < 8 && 0 <= currentCol && currentCol < 8)){
+                System.out.println("range is out of bounds");
+                break;
+            }
+
+            if (cell != null && cell.getPiece() != null) {
                 return false;
             }
             currentRow += stepRow;
