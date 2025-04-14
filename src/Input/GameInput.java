@@ -1,6 +1,5 @@
 package Input;
 
-import data.Command;
 import data.CommandError;
 import data.GameInputReturn;
 
@@ -14,11 +13,11 @@ public class GameInput {
     static int HELP = GameInputReturn.HELP.getCode();
 
     static int EXIT = GameInputReturn.EXIT.getCode();
-    static int START = GameInputReturn.START.getCode();
+//    static int START = GameInputReturn.START.getCode();
     static int QUIT = GameInputReturn.QUIT.getCode();
     static int SAVE = GameInputReturn.SAVE.getCode();
     static int LOAD = GameInputReturn.LOAD.getCode();
-    static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
+//    static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
     static int SAVE_FILE = GameInputReturn.SAVE_FILE.getCode();
 
 
@@ -47,12 +46,11 @@ public class GameInput {
             } catch (Exception e) {
                 if(e instanceof InputMismatchException){
                     System.out.println(CommandError.WRONG_COMMAND);
-                    return ERROR;
                 }
                 else{
                     System.out.println(CommandError.WRONG_NUMBER);
-                    return ERROR;
                 }
+                return ERROR;
             }
 
         }
@@ -61,10 +59,12 @@ public class GameInput {
 
     }
     private static int checkOrderInput(){
-        String[] parts = input.split("/");
-        if(parts.length!=2){
-            throw new InputMismatchException("/가 너무 많음");
+        for(int i = 1; i<input.length(); i++){
+            if(input.charAt(i)=='/'){
+                throw new InputMismatchException("/가 너무 많음");
+            }
         }
+        String[] parts = input.split("/");
         if(parts[1].startsWith("help")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("help")){
@@ -97,11 +97,12 @@ public class GameInput {
 
         } //인자있음
 
-        else if(parts[1].startsWith("delsave")){
+        else if(parts[1].startsWith("delsave")){//아님
             String now = parts[1].substring("delsave".length());
             if(checking(now)!=0){
                 number= checking(now);
-                return DEL_SAVE;
+                System.out.println(CommandError.DELSAVE_BLOCK);
+                return ERROR;
             }
             else{
                 throw new InputMismatchException("delsave 실패");
@@ -122,7 +123,8 @@ public class GameInput {
         else if(parts[1].startsWith("start")){
             parts[1]=blank(parts[1]) ;
             if(parts[1].equals("start")){
-                return START;
+                System.out.println(CommandError.DELSAVE_BLOCK);
+                return ERROR;
             }
             else{
                 throw new InputMismatchException("start 실패");
@@ -179,7 +181,7 @@ public class GameInput {
             }
 
             now = blank(now);
-            int num=0;
+            int num;
             try{
                 num= Integer.parseInt(now);
             } catch (NumberFormatException e) {
