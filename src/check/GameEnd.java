@@ -23,7 +23,7 @@ public class GameEnd {
 
     public boolean isStaleMate(Board board) {
         //System.out.printf("%b, %b",checker.isCheck(board),checker.canMove(board));
-        return !checker.isCheck(board) && !checker.canMove(board);
+        return  !checker.isCheck(board) && !checker.canMove(board);
     }
 
     public boolean isInsufficientPieces(Board board){
