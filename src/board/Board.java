@@ -21,7 +21,7 @@ public class Board {
         }
         initializeBoard();
     }
-    public Board(boolean notInitialize){ // test board 임시
+    public Board(boolean notInitialize){ // test board 임시 -> 각 cell은 null을 가짐
         cells = new Cell[8][8];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -83,6 +83,18 @@ public class Board {
      * @return true if 경로가 모두 비어있으면, false otherwise
      */
     public boolean isPathClear(Cell start, Cell end) {
+        // 0415 update : 필요 없는 기물에 대해서는 함수의 최우선에서 return으로 끝냄.
+        if((start == null) || (end == null)) {
+            return false;
+        }
+
+        Piece piece = start.getPiece();
+
+        if ((piece instanceof Pawn || piece instanceof Knight)) {
+            // 폰과 나이트는 중간 경로를 검사할 필요 없음
+            return true;
+        }
+
         int startRow = start.getRow();
         int startCol = start.getCol();
         int endRow = end.getRow();
@@ -90,15 +102,21 @@ public class Board {
 
         int dRow = endRow - startRow;
         int dCol = endCol - startCol;
-        // 이동 방향(증가량)
+        boolean isStraight = dRow == 0 || dCol == 0; // 직선 움직임
+        boolean isDiagonal = Math.abs(dRow) == Math.abs(dCol); // 대각 움직임
+
+        if (!isStraight && !isDiagonal) {
+            return false; // 비정상 방향은 경로 검사 불필요
+        }
+
         int stepRow = (dRow == 0) ? 0 : dRow / Math.abs(dRow);
         int stepCol = (dCol == 0) ? 0 : dCol / Math.abs(dCol);
 
         int currentRow = startRow + stepRow;
         int currentCol = startCol + stepCol;
 
-        // endCell 직전까지 검사
         while (currentRow != endRow || currentCol != endCol) {
+
             Cell cell = getCell(currentRow, currentCol);
             if (cell.getPiece() != null) {
                 return false;
@@ -108,6 +126,7 @@ public class Board {
         }
         return true;
     }
+
 
     /**
      * 기물을 이동시키는 메서드.
@@ -121,26 +140,40 @@ public class Board {
     public boolean movePiece(int startRow, int startCol, int endRow, int endCol) {
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
-        if (start == null || end == null)
-            return false;
+        if (start == null || end == null) return false;
 
         Piece movingPiece = start.getPiece();
-        if (movingPiece == null)
-            return false;
+        if (movingPiece == null) return false;
 
-        // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
-        if (movingPiece.isValidMove(this, start, end)) {
-            // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
+        // 1. 이동 가능성 자체 확인
+        if (!movingPiece.isValidMove(this, start, end)) return false;
+
+        // 2. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
+        if (movingPiece instanceof King king) {
+            Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
             end.setPiece(movingPiece);
             start.setPiece(null);
-            enPassantChecking();  // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
-            if(end.getRow()==7 || end.getRow()==0){
-                SpecialRule.promotion(end);//프로모션은 흐름도에 따라 기물 이동을 수행한 후 결정됩니다.
-            }
-            return true;
+
+            boolean isInCheck = isCellUnderAttack(endRow, endCol, king.getColor());
+
+            // 상태 복원
+            start.setPiece(movingPiece);
+            end.setPiece(targetPieceBackup);
+
+            if (isInCheck) return false; // 체크되는 칸으로는 이동 불가
         }
-        return false;
+
+        // 3. 이동 수행
+        end.setPiece(movingPiece);
+        start.setPiece(null);
+        enPassantChecking();
+
+        if (endRow == 0 || endRow == 7) {
+            SpecialRule.promotion(end);
+        }
+        return true;
     }
+
 
     public void enPassantChecking(){
         for(int i = 0 ; i<8; i++){
@@ -199,9 +232,52 @@ public class Board {
         }
         return sb.toString();
     }
+    
+    public Piece getPieceAt(int row, int col) {
+        // 0415 update - 좌표에 있는 기물을 받아옴.
+        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+            return null; // 보드 범위를 벗어난 경우
+        }
+        return cells[row][col].getPiece();
+    }
 
-    // 기물 배치를 통해 test용이용으로 만든 함수 실제는 사용하지 않아야함
+    public boolean isCellUnderAttack(int targetRow, int targetCol, PieceColor targetColor) {
+        // 0415 update - 특정 좌표가 targetColor의 상대편이 공격중인지 체크함(여기로 이동해도 되는가? 처럼 사용)
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                Piece attacker = cells[r][c].getPiece();
+
+                // Null or 아군이면 스킵
+                if (attacker == null || attacker.getColor() == targetColor) continue;
+
+                // 1. Pawn은 특별 처리: 공격 방향만 체크해야 함
+                if (attacker instanceof Pawn pawn) {
+                    int direction = (pawn.getColor() == PieceColor.WHITE) ? -1 : 1;
+                    // 대각선 좌우 두 방향
+                    if ((r + direction == targetRow) &&
+                            (c - 1 == targetCol || c + 1 == targetCol)) {
+                        return true;
+                    }
+                }
+                // 2. 나머지 기물은 일반 canMove() 검사
+                else {
+                    Cell from = getCell(r, c);
+                    Cell to = getCell(targetRow, targetCol);
+
+                    if (attacker.isValidMove(this, from, to)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+    // 기물 배치를 통해 test용이용으로 만든 함수.
+    // 실제는 사용하지 않아야함
     public void setPieceTest(int row, int col, Piece piece) {
         cells[row][col].setPiece(piece);
     }
 }
+

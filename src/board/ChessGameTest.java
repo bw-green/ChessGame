@@ -467,6 +467,11 @@ class Pawn extends Piece {
         }
         return false;
     }
+    public boolean canAttack(int fromRow, int fromCol, int toRow, int toCol) {
+        int direction = (this.color == PieceColor.WHITE) ? -1 : 1;
+        return (toRow == fromRow + direction) &&
+                (Math.abs(toCol - fromCol) == 1);
+    }
 
     @Override
     public String getSymbol() {
