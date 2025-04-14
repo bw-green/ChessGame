@@ -2,58 +2,65 @@ package Input;
 
 import data.Command;
 import data.CommandError;
+import data.GameInputReturn;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class GameInput {
+    static int NOT_MINE = -1; //유신님 코드 불러야함
+    static int ERROR = GameInputReturn.ERROR.getCode();
+    static int HELP = GameInputReturn.HELP.getCode();
 
+    static int EXIT = GameInputReturn.EXIT.getCode();
+    static int START = GameInputReturn.START.getCode();
+    static int QUIT = GameInputReturn.QUIT.getCode();
+    static int SAVE = GameInputReturn.SAVE.getCode();
+    static int LOAD = GameInputReturn.LOAD.getCode();
+    static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
+    static int SAVE_FILE = GameInputReturn.SAVE_FILE.getCode();
+
+
+    public static int number = 0;
     public static String input;
-
-
 
     public static void main(String[] args) {
         gameInput();
     }
 
-    public static void gameInput() { // int로 바꿔서 하기
-        System.out.println("again");
+    public static int gameInput() {
+        // 이거 input을 받아서 튀어 나오게 해야할듯
+        //return은 int로 하고
         Scanner sc = new Scanner(System.in);
         input = sc.nextLine();
-        checkInput();
-
+        return checkInput();
     }
 
-    private static void checkInput() {
+    private static int checkInput() {
         if(input.isEmpty()){
-            System.out.println("Please enter a valid input");
-            gameInput();
-            return;
+            return NOT_MINE;
         }
         if(input.charAt(0)=='/'){
-//            System.out.println("명령어임");
             try{
-                checkOrderInput();
+                return checkOrderInput();
             } catch (Exception e) {
                 if(e instanceof InputMismatchException){
                     System.out.println(CommandError.WRONG_COMMAND);
-                    gameInput();
+                    return ERROR;
                 }
                 else{
                     System.out.println(CommandError.WRONG_NUMBER);
-                    gameInput();
+                    return ERROR;
                 }
             }
 
         }
-        else{
-            // 유신님 인풋으로 보내기
-            return;
-        }
+        // 유신님 인풋으로 보내기
+        return NOT_MINE;
 
     }
-    private static void checkOrderInput()throws Exception{
+    private static int checkOrderInput(){
         String[] parts = input.split("/");
         if(parts.length!=2){
             throw new InputMismatchException("/가 너무 많음");
@@ -61,7 +68,7 @@ public class GameInput {
         if(parts[1].startsWith("help")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("help")){
-                System.out.println(Command.HELP);
+                return HELP;
             }
             else{
                 throw new InputMismatchException("help 실패");
@@ -70,7 +77,8 @@ public class GameInput {
         else if(parts[1].startsWith("savefile")){//인자있음
             String now = parts[1].substring("savefile".length());
             if(checking(now)!=0){
-                System.out.println(Command.SAVEFILE);  // 파일매니저에게 넘겨주기
+                number= checking(now);
+                return SAVE_FILE;  // 파일매니저에게 넘겨주기
             }
             else{
                 throw new InputMismatchException("savefile 실패");
@@ -80,7 +88,8 @@ public class GameInput {
         else if(parts[1].startsWith("save")){
             String now = parts[1].substring("save".length());
             if(checking(now)!=0){
-                System.out.println(Command.SAVE.formatStr(checking(now)));// 파일매니저로 보내기
+                number= checking(now);
+                return SAVE;// 파일매니저로 보내기
             }
             else{
                 throw new InputMismatchException("save 실패");
@@ -91,7 +100,8 @@ public class GameInput {
         else if(parts[1].startsWith("delsave")){
             String now = parts[1].substring("delsave".length());
             if(checking(now)!=0){
-                System.out.println(CommandError.DELSAVE_BLOCK);
+                number= checking(now);
+                return DEL_SAVE;
             }
             else{
                 throw new InputMismatchException("delsave 실패");
@@ -102,7 +112,8 @@ public class GameInput {
         else if(parts[1].startsWith("load")){
             String now = parts[1].substring("load".length());
             if(checking(now)!=0){
-                System.out.println(Command.LOAD.formatStr(checking(now))); // 파일매니저로보내기
+                number= checking(now);
+                return LOAD; // 파일매니저로보내기
             }
             else{
                 throw new InputMismatchException("load 실패");
@@ -111,7 +122,7 @@ public class GameInput {
         else if(parts[1].startsWith("start")){
             parts[1]=blank(parts[1]) ;
             if(parts[1].equals("start")){
-                System.out.println(CommandError.DELSAVE_BLOCK);
+                return START;
             }
             else{
                 throw new InputMismatchException("start 실패");
@@ -121,7 +132,7 @@ public class GameInput {
         else if(parts[1].startsWith("quit")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("quit")){
-                System.out.println(Command.QUIT);
+                return QUIT;
             }
             else{
                 throw new InputMismatchException("quit 실패");
@@ -130,7 +141,7 @@ public class GameInput {
         else if(parts[1].startsWith("exit")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("exit")){
-                System.out.println(Command.EXIT);
+                return EXIT;
             }
             else{
                 throw new InputMismatchException("exit 실패");
@@ -168,19 +179,22 @@ public class GameInput {
             }
 
             now = blank(now);
-            int num = Integer.parseInt(now);
+            int num=0;
+            try{
+                num= Integer.parseInt(now);
+            } catch (NumberFormatException e) {
+                throw new InputMismatchException();
+            }
+
             if (num >= 1 && num <= 5) {
                 return num;
             }
-//            else {
-//                System.out.println(num);
-//                throw new NumberFormatException(" 1부터 5사이가 아님");
-//            }
+            else {
+                throw new NumberFormatException(" 1부터 5사이가 아님");
+            }
         } else {
             throw new InputMismatchException();
         }
-
-        return 0;
     }
 
 }
