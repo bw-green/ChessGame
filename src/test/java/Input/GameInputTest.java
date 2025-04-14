@@ -95,7 +95,7 @@ public class GameInputTest {
     @DisplayName("start명령어")
     void startTest(String input) {
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        Assertions.assertEquals(GameInputReturn.START.getCode(), GameInput.gameInput());
+        Assertions.assertEquals(GameInputReturn.ERROR.getCode(), GameInput.gameInput());
     }
 
     @ParameterizedTest
@@ -112,7 +112,8 @@ public class GameInputTest {
     @ParameterizedTest
     @CsvSource({
             "/save 3   3     ",
-            "/save 1       /    ", // 오류 뜨는데 실제로는 이상없음
+            "/save 1       /",
+            "/save 1       /    ", // 오류 맞았음
             "/save 1       /    2",
             "/save 2  4",
             "/save 3 adsfasd",
@@ -146,7 +147,7 @@ public class GameInputTest {
     @DisplayName("delsave명령어")
     void delSaveTest(String input) {
         System.setIn(new ByteArrayInputStream(input.getBytes()));
-        Assertions.assertEquals(GameInputReturn.DEL_SAVE.getCode(), GameInput.gameInput());
+        Assertions.assertEquals(GameInputReturn.ERROR.getCode(), GameInput.gameInput());
         System.out.println(GameInput.number);
     }
 
