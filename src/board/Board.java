@@ -1,5 +1,6 @@
 package board;
 
+import data.MoveErrorType;
 import data.PieceColor;
 import piece.*;
 import specialRule.SpecialRule;
@@ -229,7 +230,6 @@ public class Board {
 
         sb.append("    a b c d e f g h\n");
         sb.append("  ===================\n");
-
         for (int row = 0; row < 8; row++) {
             int rank = 8 - row;  // 실제 출력되는 행 번호 (8 ~ 1)
             sb.append(rank).append(" | ");
@@ -238,7 +238,6 @@ public class Board {
             }
             sb.append("| ").append(rank).append("\n");
         }
-
         sb.append("  ===================\n");
         sb.append("    a b c d e f g h\n");
 
@@ -275,6 +274,72 @@ public class Board {
             }
         }
         return false;
+    }
+
+    /**
+     * 체스 기물 이동 명령에 대해 의미적 오류를 판단하는 메서드입니다.
+     *
+     * 아래 우선순위에 따라 오류를 판별하며, 가장 중요한 의미 오류 하나만 리턴합니다:
+     *  1. INVALID_MOVE_FOR_THIS_PIECE : 이동 규칙 자체 위반
+     *  2. PATH_BLOCKED                 : 직선/대각선 기물의 경로에 장애물 존재
+     *  3. OWN_PIECE_AT_DESTINATION     : 도착지에 같은 색 기물이 있음
+     *  4. NOT_YOUR_PIECE               : 현재 턴과 다른 색의 기물을 선택
+     *  5. NO_PIECE_AT_START            : 출발 위치에 기물이 없음
+     *  6. SAME_START_END               : 시작과 도착 좌표가 동일
+     *
+     * @param fromNotation 시작 좌표 (예: "e2")
+     * @param toNotation   도착 좌표 (예: "e4")
+     * @param currentTurn  현재 턴 색상 (WHITE or BLACK)
+     * @return MoveErrorType: 의미 오류가 있으면 그에 해당하는 타입, 없으면 null
+     */
+    public MoveErrorType validateMoveMeaning(String fromNotation, String toNotation, PieceColor currentTurn) {
+        int[] startRC = Board.notationToCoordinate(fromNotation);
+        int[] endRC = Board.notationToCoordinate(toNotation);
+
+        int startRow = startRC[0], startCol = startRC[1];
+        int endRow = endRC[0], endCol = endRC[1];
+
+        Cell start = getCell(startRow, startCol);
+        Cell end = getCell(endRow, endCol);
+
+        Piece movingPiece = (start != null) ? start.getPiece() : null;
+        Piece destPiece = (end != null) ? end.getPiece() : null;
+
+        // 1. 시작과 끝이 같은 칸
+        if (startRow == endRow && startCol == endCol) {
+            return MoveErrorType.SAME_START_END;
+        }
+
+        // 2. 출발 칸에 기물이 없음
+        if (movingPiece == null) {
+            return MoveErrorType.NO_PIECE_AT_START;
+        }
+
+        // 3. 현재 턴과 다른 색의 기물
+        if (movingPiece.getColor() != currentTurn) {
+            return MoveErrorType.NOT_YOUR_PIECE;
+        }
+
+        // 4. 도착 칸에 같은 색 기물이 있음
+        if (destPiece != null && destPiece.getColor() == currentTurn) {
+            return MoveErrorType.OWN_PIECE_AT_DESTINATION;
+        }
+
+        // 5. 이동 규칙 위반
+        if (!movingPiece.isValidMove(this, start, end)) {
+            return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+        }
+
+        // 6. Rook, Bishop, Queen 이동 시 경로 막힘
+        boolean pathBlocked = (movingPiece instanceof Rook || movingPiece instanceof Bishop || movingPiece instanceof Queen)
+                && !isPathClear(start, end);
+        if (pathBlocked) {
+            return MoveErrorType.PATH_BLOCKED;
+        }
+
+
+
+        return null; // 의미 오류 없음
     }
 
     public Piece getPieceAt(int row, int col) {
