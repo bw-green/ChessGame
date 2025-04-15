@@ -7,22 +7,24 @@ import java.util.Random;
 public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
-    private Deque<String> moveHistory;
-    private ArrayList<String> filename;
-    private ArrayList<Integer> counter;
+
+    private static final FileManager instance = new FileManager();
+
+    private static final Deque<String> moveHistory = new ArrayDeque<>();
+    private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
+    private static final ArrayList<Integer> counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
     private String deFault = "NO DATA";
     private String lastSavedFile = deFault;
     private int lastSaveFileNum;
-    private int count = 0;
+    private static int count = 0;
 
     public FileManager() {
-        this.moveHistory = new ArrayDeque<>();
-        filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, deFault));
         ensureSaveDirectory();
         loadFileNames();
-        counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
     }
 
+
+    public static FileManager getInstance() { return instance; }
 
     public ArrayList<String> getFilename() {
         return new ArrayList<>(filename); //복사본 제공
@@ -49,7 +51,10 @@ public class FileManager {
     }
 
     // Deque에 움직임 저장
-    public void overWriteHistory(String string) { moveHistory.addLast(string);}
+    public void addHistory(String string) { moveHistory.addLast(string);}
+
+    public void clearMoveHistory() { moveHistory.clear(); } // 종료 관련 명령어의 경우에만 실행
+
 
     // 세이브 파일 덮어쓰기 (최대 5개 관리, 텍스트 형식)
     public boolean overWriteSavedFile(int slot) {
@@ -117,16 +122,26 @@ public class FileManager {
             //System.out.println("삭제할 파일이 존재하지 않습니다: 슬롯 " + slot);
             return false;
         }
-        if(lastSavedFile.equals(filename.get(slot))) {
+        if (lastSavedFile.equals(filename.get(slot))) {
             int secondMax = Integer.MIN_VALUE;
+            int secondIndex = -1;
+
             for (int i = 0; i < MAX_SAVES; i++) {
-                if (i == slot) continue; // 현재 최대값은 제외
+                if (i == slot) continue;
+                if (filename.get(i).equals(deFault)) continue;
 
                 int value = counter.get(i);
                 if (value > secondMax) {
                     secondMax = value;
-                    lastSavedFile = filename.get(i);
+                    secondIndex = i;
                 }
+            }
+            if (secondIndex != -1) {
+                lastSavedFile = filename.get(secondIndex);
+                lastSaveFileNum = secondIndex;
+            } else {
+                lastSavedFile = deFault;
+                lastSaveFileNum = -1;
             }
         }
 
@@ -141,7 +156,7 @@ public class FileManager {
         }
     }
 
-    public void clearMoveHistory() { moveHistory.clear(); } // 종료 관련 명령어의 경우에만 실행
+
 
     private void loadFileNames() {
         for (int i = 1; i <= MAX_SAVES; i++) {

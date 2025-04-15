@@ -5,15 +5,16 @@ import data.PrintTemplate;
 import java.util.ArrayList;
 
 public class FilePrint {
-    FileManager fileManager;
+    private final FileManager fileManager;
+
     public FilePrint(FileManager fileManager) {
         this.fileManager = fileManager;
     }
 
-    public void saveListPrint() {
+    public void saveListPrint() { //./savefile 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
         showFileList();
-        System.out.println("|the last save file and the list of save files");
+        System.out.println(PrintTemplate.MENU_LAST_SAVE);
         System.out.println(PrintTemplate.BOLDLINE);
     }
 
@@ -47,6 +48,7 @@ public class FilePrint {
     }
 
     public void showFileList() {
+
         ArrayList<String> filename = fileManager.getFilename();
         String LSFile = fileManager.getLastSavedFile();
         int LSFileNum = fileManager.getLastSaveFileNum();

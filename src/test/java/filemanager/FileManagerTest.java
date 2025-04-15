@@ -20,8 +20,8 @@ class FileManagerTest { //FileManager Test
     void testOverwriteAndLoadSavedFile() {
 
         // 준비: 움직임을 수동으로 추가
-        fileManager.overWriteHistory("P A2 A4");
-        fileManager.overWriteHistory("k B1 C3");
+        fileManager.addHistory("P A2 A4");
+        fileManager.addHistory("k B1 C3");
 
         // 저장
         boolean saveResult = fileManager.overWriteSavedFile(1);

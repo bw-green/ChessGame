@@ -29,8 +29,8 @@ public class FilePrintTest { //출력 FilePrint Class 테스트
 
         // 2. 각 슬롯에 기보 저장 (5개)
         for (int i = 1; i <= 5; i++) {
-            fileManager.overWriteHistory("P E2 E4");
-            fileManager.overWriteHistory("k B1 C3");
+            fileManager.addHistory("P E2 E4");
+            fileManager.addHistory("k B1 C3");
             filePrint.saveFilePrint(i);
             fileManager.clearMoveHistory();
         }
@@ -41,26 +41,28 @@ public class FilePrintTest { //출력 FilePrint Class 테스트
         assertEquals(2, historyAfterLoad.size());
         assertEquals("P E2 E4", historyAfterLoad.get(0));
 
+        FileManager fileManager2 = new FileManager();
+        FilePrint filePrint2 = new FilePrint(fileManager2);
         // 4. 5번 슬롯 삭제
-        filePrint.deleteFilePrint(5);
+        filePrint2.deleteFilePrint(5);
         File deletedFile = new File("saves/savefile5.txt");
         assertFalse(deletedFile.exists(), "5번 파일이 실제로 삭제되어야 함");
 
         //빈 슬롯 delete 테스트
-        filePrint.deleteFilePrint(5);
+        filePrint2.deleteFilePrint(5);
 
         // "/savefile 테스트
-        filePrint.saveListPrint();
+        filePrint2.saveListPrint();
 
         // 5. 대용량 moveHistory 작성 (150줄)
-        fileManager.clearMoveHistory();
+        fileManager2.clearMoveHistory();
         String[] sampleMoves = {
                 "P E2 E4", "P E7 E5", "N G1 F3", "N B8 C6", "B F1 C4",
                 "B F8 C5", "Q D1 H5", "N G8 F6", "Q H5 F7", "K E8 F7"
         };
         for (int i = 0; i < 15; i++) {
             for (String move : sampleMoves) {
-                fileManager.overWriteHistory(move);
+                fileManager2.addHistory(move);
             }
         }
         assertEquals(150, fileManager.getMoveHistory().size());
