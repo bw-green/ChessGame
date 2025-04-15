@@ -11,7 +11,7 @@ import piece.Pawn;
 
 import java.io.ByteArrayInputStream;
 
-public class PawnPromotionTest {
+public class    PawnPromotionTest {
     static Board board;
 
     @BeforeEach
