@@ -3,6 +3,7 @@ package fileManager;
 import data.FileMessage;
 import data.FileError;
 import data.PrintTemplate;
+import board.Board;
 
 import java.util.ArrayList;
 
@@ -20,9 +21,9 @@ public class FilePrint {
         System.out.println(PrintTemplate.BOLDLINE);
     }
 
-    public void saveFilePrint(int slot) { // ./save 명령어 호출시
+    public void saveFilePrint(int slot, Board board) { // ./save 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
-        if(fileManager.overWriteSavedFile(slot)) {
+        if(fileManager.overWriteSavedFile(slot, board)) {
             showFileList();
             System.out.println(FileMessage.SAVE_CREATED.format(slot));
         }
@@ -39,9 +40,9 @@ public class FilePrint {
         System.out.println(PrintTemplate.BOLDLINE);
     }
 
-    public void loadFilePrint(int slot) {
+    public void loadFilePrint(int slot, Board board) {
         System.out.println(PrintTemplate.BOLDLINE);
-        if(fileManager.loadSavedFile(slot)) {
+        if(fileManager.loadSavedFile(slot, board)) {
             System.out.println(FileMessage.SAVE_LOADED.format(slot));
             System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
         }

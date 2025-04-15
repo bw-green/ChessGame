@@ -50,14 +50,14 @@ public class FilePrintTest_LFSfocus {
         // 저장 10회 수행, 저장된 슬롯을 Stack에 push
         for (int i = 0; i < SAVE_ITERATIONS; i++) {
             int slot = random.nextInt(MAX_SLOT) + 1;
-            fileManager.setCurrentBoard(createSampleBoard(i));
-            FilePrint printer = new FilePrint(FileManager.getInstance());
-            boolean success = fileManager.overWriteSavedFile(slot);
+            boolean success = fileManager.overWriteSavedFile(slot, createSampleBoard(slot));
             if (success) {
                 savedSlotsStack.push(slot);
                 System.out.println("Saved to slot: " + slot);
             }
         }
+        Board current = new Board();
+        fileManager.loadSavedFile(3,current);
 
         System.out.println("\n===== START DELETE PHASE =====");
 
@@ -77,7 +77,6 @@ public class FilePrintTest_LFSfocus {
         }
 
         // 현재 board는 마지막 저장된 상태 유지 (삭제와 무관)
-        Board current = fileManager.getCurrentBoard();
         assertNotNull(current);
         // E3에는 기물이 있고 E2는 비어 있어야 함 (홀수 번째 저장일 경우)
         assertNotNull(current.getCell(5, 4).getPiece());

@@ -2,6 +2,7 @@ package fileManager;
 
 import board.Board;
 import board.PieceFactory;
+import data.PieceColor;
 import piece.Piece;
 
 import java.io.*;
@@ -13,8 +14,6 @@ public class FileManager {
     private static final String SAVE_DIR = "saves";
     private final String deFault = "NO DATA";
 
-    private Board currentBoard;
-    private String currentTurn;
     private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
     private static final ArrayList<Integer> counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
     private String lastSavedFile = deFault;
@@ -40,10 +39,6 @@ public class FileManager {
         return new ArrayList<>(filename); //복사본 제공
     }
 
-    public void setCurrentBoard(Board board) { this.currentBoard = board; }
-
-    public Board getCurrentBoard() { return currentBoard; }
-
     public String getLastSavedFile() {
         return lastSavedFile;
     }
@@ -65,26 +60,26 @@ public class FileManager {
     }
 
     // 세이브 파일 덮어쓰기 (최대 5개 관리, 텍스트 형식)
-    public boolean overWriteSavedFile(int slot) {
+    public boolean overWriteSavedFile(int slot, Board board) {
         if (slot < 1 || slot > MAX_SAVES) return false;
         slot--;
 
         String saveName = generateRandomSaveName();
-        String filePath = getFilePath(slot + 1);
+        String filePath = getFilePath(slot + 1); //savefile 1~5생성을 위해 +1
 
-        if (currentBoard == null) return false;
+        if (board == null) return false;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write(saveName);
             writer.newLine(); // 두 번째 줄 공백
             writer.newLine();
-            writer.write(Objects.equals(currentTurn, "WHITE") ? "White" : "Black"); // 세 번째 줄 턴 정보
+            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "White" : "Black"); // 세 번째 줄 턴 정보
             writer.newLine();
 
             // 💡 여기서 보드 상태 직접 저장 (네 번째 줄부터)
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
-                    var piece = currentBoard.getCell(row, col).getPiece();
+                    var piece = board.getCell(row, col).getPiece();
                     writer.write((piece == null ? "." : piece.getSymbol()) + " ");
                 }
                 writer.newLine();
@@ -102,35 +97,32 @@ public class FileManager {
     }
 
     // 세이브 파일 불러오기
-    public boolean loadSavedFile(int slot) {
-        if (slot < 1 || slot > MAX_SAVES) {
-            //System.out.println("세이브 슬롯 번호는 1~5 사이여야 합니다.");
-            return false;
-        }
-        slot--;
-        String filePath = getFilePath(slot + 1);
-        Board loadedBoard = new Board();
+    public boolean loadSavedFile(int slot, Board targetBoard) {
+        if (slot < 1 || slot > MAX_SAVES ) return false;
+
+        String filePath = getFilePath(slot);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            reader.readLine(); // 첫 줄: 저장 이름
-            reader.readLine(); // 둘째 줄: 공백줄
-            currentTurn = reader.readLine(); // 셋째 줄: 턴
+            reader.readLine(); // 저장 이름
+            reader.readLine(); // 공백 줄
+            String getLine = reader.readLine(); // 턴 정보 읽기
+
+            if(getLine == null) return false; //currentTurn에 turn 값 넣기
+            if(getLine.equalsIgnoreCase("BLACK")) targetBoard.turnChange(); /*코드 확인해봐야될듯,
+                                                                            기본값이 WHITE니까 BLACK이면 바꿔주는걸로 했습니다. */
 
             for (int row = 0; row < 8; row++) {
                 String line = reader.readLine();
-                if (line == null) {return false;} // 줄 수가 부족하면 실패
+                if (line == null) return false;
                 String[] tokens = line.trim().split(" ");
-                if (tokens.length != 8) {return false;}
+                if (tokens.length != 8) return false;
 
                 for (int col = 0; col < 8; col++) {
                     String symbol = tokens[col];
                     Piece piece = symbol.equals(".") ? null : PieceFactory.createPieceFromSymbol(symbol);
-                    loadedBoard.getCell(row, col).setPiece(piece);
+                    targetBoard.getCell(row, col).setPiece(piece);
                 }
             }
-
-            // 로드된 보드를 현재 보드로 설정
-            this.currentBoard = loadedBoard;
 
             return true;
         } catch (IOException e) {
@@ -146,7 +138,7 @@ public class FileManager {
             return false;
         }
         slot--;
-        String filePath = getFilePath(slot+1);
+        String filePath = getFilePath(slot+1); //savefile 1~5삭제을 위해 +1
         File saveFile = new File(filePath);
 
         if (!saveFile.exists()) {
@@ -208,16 +200,22 @@ public class FileManager {
         }
     }
 
-    private static String generateRandomSaveName() {
+    private String generateRandomSaveName() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
+        Random r = new Random();
 
-        for (int i = 0; i < 10; i++) {
-            int index = random.nextInt(chars.length());
-            sb.append(chars.charAt(index));
+        while (true) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 10; i++) {
+                sb.append(chars.charAt(r.nextInt(chars.length())));
+            }
+            String candidate = sb.toString();
+            // 중복 검사
+            if (!filename.contains(candidate)) {
+                return candidate;
+            }
+            // 중복이면 다시 생성
         }
-        return sb.toString();
     }
 
     //중복 문자열 함수 처리
