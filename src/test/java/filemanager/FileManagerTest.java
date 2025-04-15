@@ -7,7 +7,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileManagerTest {
+class FileManagerTest { //FileManager Test
     private FileManager fileManager;
     //!!saves 폴더 자동생성됩니다.!! 폴더 삭제하는건 따로 구현 안했습니다. 회의때 논의하면 좋을 것 같습니다.
     @BeforeEach
@@ -18,9 +18,10 @@ class FileManagerTest {
 
     @Test
     void testOverwriteAndLoadSavedFile() {
+ //MANAGER 기능 체크
         // 준비: 움직임을 수동으로 추가
-        fileManager.overWriteHistory("P A2 A4");
-        fileManager.overWriteHistory("k B1 C3");
+        fileManager.addHistory("P A2 A4");
+        fileManager.addHistory("k B1 C3");
 
         // 저장
         boolean saveResult = fileManager.overWriteSavedFile(1);
