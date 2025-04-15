@@ -1,10 +1,13 @@
 package data;
 
+import java.rmi.UnexpectedException;
+
 public enum PrintTemplate {
 
     //프롬프트 입력 창
-    PROMPT("%s >"),
-
+    MENU_PROMPT("menu >"),
+    BLACK_PROMPT("BLACK >"),
+    WHITE_PROMPT("WHITE >"),
     //구분선
     BOLDLINE("=================================================="),
     INTERLINE("--------------------------------------------------"),
@@ -20,6 +23,7 @@ public enum PrintTemplate {
     PrintTemplate(String printTmp){
         this.printTmp = printTmp;
     }
+
 
     @Override
     public String toString() {
