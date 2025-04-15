@@ -14,6 +14,7 @@ public class Cell {
      * @param col - Cell의 열 번호 (입력: int)
      * 초기 상태에서는 기물이 없으므로 piece는 null로 설정.
      */
+
     public Cell(int row, int col) {
         this.row = row;
         this.col = col;
