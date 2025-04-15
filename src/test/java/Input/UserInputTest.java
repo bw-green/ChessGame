@@ -30,6 +30,9 @@ public class UserInputTest {
     @ParameterizedTest
     @CsvSource({
             "e 3 f2",
+            "e2",
+            "e2f2",
+            "c8 e3 f2",
     })
     @DisplayName("savefile명령어")
     void InputFalseTest(String input) {
