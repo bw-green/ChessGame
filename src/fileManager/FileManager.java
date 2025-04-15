@@ -8,7 +8,7 @@ public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
 
-    private static final FileManager instance = new FileManager();
+    private static FileManager instance = null;
 
     private static final Deque<String> moveHistory = new ArrayDeque<>();
     private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
@@ -23,8 +23,12 @@ public class FileManager {
         loadFileNames();
     }
 
-
-    public static FileManager getInstance() { return instance; }
+    public static FileManager getInstance() {
+        if (instance == null) {
+            instance = new FileManager();
+        }
+        return instance;
+    }
 
     public ArrayList<String> getFilename() {
         return new ArrayList<>(filename); //복사본 제공
