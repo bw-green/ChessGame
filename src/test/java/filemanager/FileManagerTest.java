@@ -2,7 +2,6 @@ package test.java.filemanager;
 
 import board.Board;
 import board.Cell;
-import board.PieceFactory;
 import fileManager.FileManager;
 import org.junit.jupiter.api.*;
 
