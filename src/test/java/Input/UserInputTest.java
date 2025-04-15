@@ -21,7 +21,7 @@ public class UserInputTest {
             "e2 e4",
             "e1 e5                  "
     })
-    @DisplayName("savefile명령어")
+    @DisplayName("input_success")
     void InputTrueTest(String input) {
         Assertions.assertEquals(GameInputReturn.COORDINATE_TRUE.getCode(), UserInput.handleInput(input));
     }
@@ -34,7 +34,7 @@ public class UserInputTest {
             "e2f2",
             "c8 e3 f2",
     })
-    @DisplayName("savefile명령어")
+    @DisplayName("input_fail")
     void InputFalseTest(String input) {
         Assertions.assertEquals(GameInputReturn.ERROR.getCode(), UserInput.handleInput(input));
     }
