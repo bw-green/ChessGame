@@ -57,4 +57,9 @@ public class FilePrintTest {
         anotherPrint.saveFilePrint(2, board);
         anotherPrint.loadFilePrint(2, new Board());
     }
+
+    @Test
+    void testSaveFilListPrint() {
+        filePrint.saveListPrint();
+    }
 }
