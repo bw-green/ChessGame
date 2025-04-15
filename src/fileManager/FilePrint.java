@@ -27,7 +27,7 @@ public class FilePrint {
         else System.out.println("| Failed to save the game. |");
         System.out.println(PrintTemplate.BOLDLINE);
     }
-    public void deleteFilePrint(int slot) {
+    public void deleteFilePrint(int slot) { // ./delsave 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.deleteSavedFile(slot)) {
             showFileList();

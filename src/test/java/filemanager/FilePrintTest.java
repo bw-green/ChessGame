@@ -89,5 +89,5 @@ public class FilePrintTest { //출력 FilePrint Class 테스트
             }
         }
         System.out.println("========= 통합 테스트 끝 =========");
-    }
+    } //기본 출력 체크
 }

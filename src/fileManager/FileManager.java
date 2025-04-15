@@ -17,7 +17,7 @@ public class FileManager {
     private String lastSavedFile = deFault;
     private int lastSaveFileNum;
     private static int count = 0;
-    //moveHistroy, counter, count는 공유되야해서 static입니다.
+    //moveHistroy, counter, count는 공유되야해서 static으로 선언
     public FileManager() {
         ensureSaveDirectory();
         loadFileNames();

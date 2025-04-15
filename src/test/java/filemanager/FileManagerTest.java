@@ -18,7 +18,7 @@ class FileManagerTest { //FileManager Test
 
     @Test
     void testOverwriteAndLoadSavedFile() {
-
+ //MANAGER 기능 체크
         // 준비: 움직임을 수동으로 추가
         fileManager.addHistory("P A2 A4");
         fileManager.addHistory("k B1 C3");
