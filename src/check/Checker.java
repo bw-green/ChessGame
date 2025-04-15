@@ -97,7 +97,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                             Piece piece2 = now.getPiece();
 
                             if(now.getPiece().isValidMove(board,now,to)){
-                                newBoard.movePiece(now.getRow(),now.getCol(),to.getRow(),to.getCol());
+                                newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
                                 if(!isCheck(newBoard)) {
                                     return true;
                                 }
