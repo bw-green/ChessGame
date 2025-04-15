@@ -19,7 +19,8 @@ public class UserInputTest {
             "e2 f2",
             "b1 c3  ",
             "e2 e4",
-            "e1 e5                  "
+            "e1 e5                  ",
+            "e2              e4"
     })
     @DisplayName("input_success")
     void InputTrueTest(String input) {
