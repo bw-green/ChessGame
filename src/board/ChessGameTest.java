@@ -1,4 +1,42 @@
+
 import java.util.Scanner;
+
+/**
+ * 각각의 오류 사항에 따른 리턴값 enum
+ */
+enum MoveErrorType {
+    /** 시작 좌표와  도착 좌표가 동일한 경우 */
+    SAME_START_END("Invalid input: Same START and END square. Try again."),
+    /** 시작 위치에 기물이 없는 경우 */
+    NO_PIECE_AT_START("Invalid input: No piece at start square. Try again."),
+    /** 현재 턴과 다른 색상의 기물을 선택한 경우 */
+    NOT_YOUR_PIECE("Invalid input: Not your piece. Try again."),
+    /** 도착 위치에 자기 색상의 기물이 있는 경우 */
+    OWN_PIECE_AT_DESTINATION("Invalid input: Own piece at destination. Try again."),
+    /** 도착지까지의 경로가 막혀 있는 경우 (Rook, Bishop, Queen 등) */
+    PATH_BLOCKED("Invalid input: Path is blocked. Try again."),
+    /** 기물의 이동 규칙에 어긋난 경우 */
+    INVALID_MOVE_FOR_THIS_PIECE("Invalid input: Invalid move for this piece. Try again."),
+
+    // ===== 추가: 문법 오류 관련 =====
+
+    /** 입력값이 비어 있거나 null인 경우 */
+    EMPTY_OR_NULL("Invalid input: Empty or null. Try again."),
+    /** 좌표 개수가 정확히 2개가 아닌 경우 */
+    COORDINATE_COUNT("Invalid input: Exactly 2 coordinates required. Try again."),
+    /** 좌표에 잘못된 문자가 포함된 경우 (예: 알파벳이 아니거나 숫자 아님) */
+    INVALID_CHARACTER("Invalid input: Invalid characters in coordinates. Try again.");
+
+    private final String message;
+
+    MoveErrorType(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}
 
 //////////////////////////////////////////////
 // 1) 열거형: 기물 색상, 이동 결과
@@ -68,7 +106,7 @@ class Board {
     }
 
     /**
-     * 세이브 파일의 정보를 반영해 보드를 재설정하는 생성자  
+     * 세이브 파일의 정보를 반영해 보드를 재설정하는 생성자
      * @param boardState - 8줄 문자열 배열, 각 줄은 해당 행의 기물 상태를 나타냄.
      *   예: "r n b q k b n r" (기호는 공백으로 구분, "."는 빈 칸)
      */
@@ -135,7 +173,7 @@ class Board {
     }
 
     /**
-     * 두 Cell 사이의 경로에 장애물이 없는지 검사  
+     * 두 Cell 사이의 경로에 장애물이 없는지 검사
      * (수직, 수평, 대각선 이동 시 사용)
      */
     public boolean isPathClear(Cell start, Cell end) {
@@ -164,7 +202,7 @@ class Board {
     }
 
     /**
-     * 기물을 이동시키는 메서드  
+     * 기물을 이동시키는 메서드
      * 이동 후 상대 king의 체크 상태 및 en passant 상태 업데이트를 수행.
      */
     public MoveResult movePiece(int startRow, int startCol, int endRow, int endCol) {
@@ -259,15 +297,93 @@ class Board {
         return new int[] { row, col };
     }
 
+    /**
+     * 체스 기물 이동 명령에 대해 의미적 오류를 판단하는 메서드입니다.
+     *
+     * 아래 우선순위에 따라 오류를 판별하며, 가장 중요한 의미 오류 하나만 리턴합니다:
+     *  1. INVALID_MOVE_FOR_THIS_PIECE : 이동 규칙 자체 위반
+     *  2. PATH_BLOCKED                 : 직선/대각선 기물의 경로에 장애물 존재
+     *  3. OWN_PIECE_AT_DESTINATION     : 도착지에 같은 색 기물이 있음
+     *  4. NOT_YOUR_PIECE               : 현재 턴과 다른 색의 기물을 선택
+     *  5. NO_PIECE_AT_START            : 출발 위치에 기물이 없음
+     *  6. SAME_START_END               : 시작과 도착 좌표가 동일
+     *
+     * @param fromNotation 시작 좌표 (예: "e2")
+     * @param toNotation   도착 좌표 (예: "e4")
+     * @param currentTurn  현재 턴 색상 (WHITE or BLACK)
+     * @return MoveErrorType: 의미 오류가 있으면 그에 해당하는 타입, 없으면 null
+     */
+    public MoveErrorType validateMoveMeaning(String fromNotation, String toNotation, PieceColor currentTurn) {
+        int[] startRC = Board.notationToCoordinate(fromNotation);
+        int[] endRC = Board.notationToCoordinate(toNotation);
+
+        int startRow = startRC[0], startCol = startRC[1];
+        int endRow = endRC[0], endCol = endRC[1];
+
+        Cell start = getCell(startRow, startCol);
+        Cell end = getCell(endRow, endCol);
+
+        Piece movingPiece = (start != null) ? start.getPiece() : null;
+        Piece destPiece = (end != null) ? end.getPiece() : null;
+
+        // 1. 시작과 끝이 같은 칸
+        if (startRow == endRow && startCol == endCol) {
+            return MoveErrorType.SAME_START_END;
+        }
+
+        // 2. 출발 칸에 기물이 없음
+        if (movingPiece == null) {
+            return MoveErrorType.NO_PIECE_AT_START;
+        }
+
+        // 3. 현재 턴과 다른 색의 기물
+        if (movingPiece.getColor() != currentTurn) {
+            return MoveErrorType.NOT_YOUR_PIECE;
+        }
+
+        // 4. 도착 칸에 같은 색 기물이 있음
+        if (destPiece != null && destPiece.getColor() == currentTurn) {
+            return MoveErrorType.OWN_PIECE_AT_DESTINATION;
+        }
+
+        // 5. 이동 규칙 위반
+        if (!movingPiece.isValidMove(this, start, end)) {
+            return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+        }
+
+        // 6. Rook, Bishop, Queen 이동 시 경로 막힘
+        boolean pathBlocked = (movingPiece instanceof Rook || movingPiece instanceof Bishop || movingPiece instanceof Queen)
+                && !isPathClear(start, end);
+        if (pathBlocked) {
+            return MoveErrorType.PATH_BLOCKED;
+        }
+
+
+
+        return null; // 의미 오류 없음
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+
+        sb.append("==================================================\n");
+        sb.append("    a b c d e f g h\n");
+        sb.append("  ===================\n");
+
         for (int row = 0; row < 8; row++) {
+            int rank = 8 - row;  // 실제 출력되는 행 번호 (8 ~ 1)
+            sb.append(rank).append(" | ");
             for (int col = 0; col < 8; col++) {
                 sb.append(cells[row][col].toString()).append(" ");
             }
-            sb.append("\n");
+            sb.append("| ").append(rank).append("\n");
         }
+
+        sb.append("  ===================\n");
+        sb.append("    a b c d e f g h\n");
+        sb.append("--------------------------------------------------\n");
+
         return sb.toString();
     }
 }
@@ -330,7 +446,8 @@ class Queen extends Piece {
 
         boolean straightMove = (startRow == endRow || startCol == endCol);
         boolean diagonalMove = (rowDiff == colDiff);
-        if ((straightMove || diagonalMove) && board.isPathClear(startCell, endCell)) {
+
+        if (straightMove || diagonalMove) {
             Piece dest = endCell.getPiece();
             if (dest == null || dest.getColor() != this.color)
                 return true;
@@ -352,11 +469,9 @@ class Rook extends Piece {
     @Override
     public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
         if (startCell.getRow() == endCell.getRow() || startCell.getCol() == endCell.getCol()) {
-            if (board.isPathClear(startCell, endCell)) {
-                Piece dest = endCell.getPiece();
-                if (dest == null || dest.getColor() != this.color)
-                    return true;
-            }
+            Piece dest = endCell.getPiece();
+            if (dest == null || dest.getColor() != this.color)
+                return true;
         }
         return false;
     }
@@ -377,11 +492,10 @@ class Bishop extends Piece {
         int rowDiff = Math.abs(endCell.getRow() - startCell.getRow());
         int colDiff = Math.abs(endCell.getCol() - startCell.getCol());
         if (rowDiff == colDiff) {
-            if (board.isPathClear(startCell, endCell)) {
-                Piece dest = endCell.getPiece();
-                if (dest == null || dest.getColor() != this.color)
-                    return true;
-            }
+            Piece dest = endCell.getPiece();
+            if (dest == null || dest.getColor() != this.color)
+                return true;
+
         }
         return false;
     }
@@ -466,11 +580,6 @@ class Pawn extends Piece {
             }
         }
         return false;
-    }
-    public boolean canAttack(int fromRow, int fromCol, int toRow, int toCol) {
-        int direction = (this.color == PieceColor.WHITE) ? -1 : 1;
-        return (toRow == fromRow + direction) &&
-                (Math.abs(toCol - fromCol) == 1);
     }
 
     @Override
@@ -558,69 +667,70 @@ public class ChessGameTest {
             currentTurn = PieceColor.WHITE;
         }
 
-        // 초기 상태 출력
-        System.out.println("[현재 체스판 상태]");
-        System.out.println(board);
-        System.out.println("현재 턴: " + currentTurn);
+
 
         // 게임 루프
         while (true) {
-            System.out.print("이동할 기물의 위치와 도착 위치를 입력하세요 (예: e2 e4): ");
-            String input = scan.nextLine();
-            String[] tokens = input.split("\\s+");
+            // 초기 상태 출력
+            System.out.println(board);
+            System.out.print(currentTurn + " > ");
+            String input = scan.nextLine().trim();
 
+            // 1. 입력 비었는지 확인
+            if (input == null || input.isBlank()) {
+                printError(MoveErrorType.EMPTY_OR_NULL); // ← 문법 오류지만 예외적으로 같이 씀
+                continue;
+            }
+
+            // 2. 좌표 개수 확인
+            String[] tokens = input.split("\\s+");
             if (tokens.length != 2) {
-                System.out.println("❌ 입력은 시작 위치와 도착 위치, 두 개여야 합니다. 예: e2 e4\n");
+                printError(MoveErrorType.COORDINATE_COUNT); // ← 역시 문법 오류 범주
                 continue;
             }
 
             String startNotation = tokens[0];
             String endNotation = tokens[1];
 
+            // 3. 좌표 형식 검사
             if (!isValidNotation(startNotation) || !isValidNotation(endNotation)) {
-                System.out.println("❌ 좌표 형식이 잘못되었습니다. 예: e2 e4\n");
+                printError(MoveErrorType.INVALID_CHARACTER);
                 continue;
             }
 
+            // 4. 의미 오류 검사 (보드 상태 기반)
+            MoveErrorType error = board.validateMoveMeaning(startNotation, endNotation, currentTurn);
+            if (error != null) {
+                printError(error);
+                continue;
+            }
+
+            // 5. 의미 오류 없음 → 이동 수행
             int[] startRC = Board.notationToCoordinate(startNotation);
             int[] endRC = Board.notationToCoordinate(endNotation);
-            Cell startCell = board.getCell(startRC[0], startRC[1]);
-
-            if (startCell.getPiece() == null) {
-                System.out.println("❌ 선택한 칸에 기물이 없습니다.\n");
-                continue;
-            }
-
-            if (startCell.getPiece().getColor() != currentTurn) {
-                System.out.println("❌ 현재 턴의 기물이 아닙니다. (" + currentTurn + " 턴인데 다른 색 기물 선택)\n");
-                continue;
-            }
-
             MoveResult result = board.movePiece(startRC[0], startRC[1], endRC[0], endRC[1]);
+
             if (result == MoveResult.SUCCESS) {
                 System.out.println("✅ 이동 성공!");
                 System.out.println(board);
-                // 턴 전환
                 currentTurn = (currentTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-                System.out.println("턴이 전환되었습니다. 현재 턴: " + currentTurn + "\n");
             } else {
-                switch (result) {
-                    case INVALID_POSITION:
-                        System.out.println("❌ 잘못된 좌표입니다. 체스판 범위를 벗어났습니다.\n");
-                        break;
-                    case EMPTY_CELL:
-                        System.out.println("❌ 선택한 칸에 기물이 없습니다.\n");
-                        break;
-                    case INVALID_MOVE:
-                        System.out.println("❌ 해당 기물의 이동 규칙을 따르지 않았습니다.\n");
-                        break;
-                    default:
-                        System.out.println("❌ 이동 실패. 다시 시도해주세요.\n");
-                        break;
-                }
+                // (보통 여기 안 와야 함)
+                printError(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
             }
         }
         // scan.close(); // 무한 루프로 종료되지 않으므로 닫지 않습니다.
+    }
+
+    /**
+     * enum InputError 값에 맞는 오류 출력
+     * @param error
+     */
+    static void printError(MoveErrorType error) {
+        System.out.println("==================================================");
+        System.out.println(error.getMessage());
+        System.out.println("==================================================");
+        System.out.println();
     }
 
     /**

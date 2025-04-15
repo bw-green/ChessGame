@@ -7,6 +7,8 @@ import specialRule.SpecialRule;
 //////////////////////////////////////////////
 public class Board {
     private Cell[][] cells; // 8x8 board.Cell 배열
+    private PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
+
 
     /**
      * 생성자
@@ -234,14 +236,6 @@ public class Board {
         return sb.toString();
     }
 
-    public Piece getPieceAt(int row, int col) {
-        // 0415 update - 좌표에 있는 기물을 받아옴.
-        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-            return null; // 보드 범위를 벗어난 경우
-        }
-        return cells[row][col].getPiece();
-    }
-
     public boolean isCellUnderAttack(int targetRow, int targetCol, PieceColor targetColor) {
         // 0415 update - 특정 좌표가 targetColor의 상대편이 공격중인지 체크함(여기로 이동해도 되는가? 처럼 사용)
         for (int r = 0; r < 8; r++) {
@@ -274,11 +268,26 @@ public class Board {
         return false;
     }
 
+    public Piece getPieceAt(int row, int col) {
+        // 0415 update - 좌표에 있는 기물을 받아옴.
+        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+            return null; // 보드 범위를 벗어난 경우
+        }
+        return cells[row][col].getPiece();
+    }
 
-    // 기물 배치를 통해 test용이용으로 만든 함수.
+    // 기물 배치를 통해 test용으로 만든 함수.
     // 실제는 사용하지 않아야함
     public void setPieceTest(int row, int col, Piece piece) {
         cells[row][col].setPiece(piece);
     }
+
+    public void turnChange() {
+        currentTurn = (currentTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+    }
+    public PieceColor getCurrentTurn() {
+        return currentTurn;
+    }
+
 }
 

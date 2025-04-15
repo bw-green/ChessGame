@@ -1,10 +1,12 @@
 package test.java.piece;
 
 import board.Board;
+import board.PieceFactory;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import piece.Pawn;
+import piece.Piece;
 import piece.Rook;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,7 +36,7 @@ public class RookTest {
     // 1. Rook 기본 이동 테스트: 각 수직/수평 방향으로 3칸 이동 가능한지 확인
     @Test
     void testRookBasicMovementInAllDirections() {
-        Rook rook = new Rook(PieceColor.WHITE);
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
         testBoard.setPieceTest(START_ROW, START_COL, rook); // 중앙 배치
 
         for (int i = 0; i < DIRECTIONS.length; i++) {
@@ -54,7 +56,7 @@ public class RookTest {
     // 2. Rook이 보드 밖으로 이동할 수 없는지 테스트
     @Test
     void testRookCantMoveOutOfBoard() {
-        Rook rook = new Rook(PieceColor.WHITE);
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
         // 예: 보드의 좌상단 모서리에 배치
         testBoard.setPieceTest(0, 0, rook);
         boolean moved = testBoard.movePiece(0, 0, -1, 0); // 위쪽으로 이동 시도 → 보드 밖
@@ -64,8 +66,8 @@ public class RookTest {
     // 3. Rook 캡처 테스트: 목적지에 상대 기물이 있으면 캡처할 수 있어야 함
     @Test
     void testRookCaptureEnemy() {
-        Rook rook = new Rook(PieceColor.WHITE);
-        Pawn enemyPawn = new Pawn(PieceColor.BLACK);
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
+        Piece enemyPawn = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(START_ROW, START_COL, rook);
         // 예: 수평 오른쪽 방향으로 3칸 떨어진 곳에 상대 기물 배치
         int targetRow = START_ROW;
@@ -78,8 +80,8 @@ public class RookTest {
     // 4. Rook 이동 경로에 아군 기물이 있는 경우 이동 불가 테스트
     @Test
     void testRookCannotMoveIfBlockedByAlly() {
-        Rook rook = new Rook(PieceColor.WHITE);
-        Pawn allyPawn = new Pawn(PieceColor.WHITE);
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
+        Piece allyPawn = PieceFactory.createPieceFromSymbol("P");
         testBoard.setPieceTest(START_ROW, START_COL, rook);
         // 예: 수평 오른쪽 방향으로 이동할 때, 중간 칸 (예: (4,6))에 아군 기물이 존재할 경우
         testBoard.setPieceTest(START_ROW, START_COL + 2, allyPawn);
@@ -90,8 +92,8 @@ public class RookTest {
     // 5. Rook은 중간 경로에 기물이 있으면 뛰어넘어 이동할 수 없음 (점프 불가)
     @Test
     void testRookCannotJumpOverPieces() {
-        Rook rook = new Rook(PieceColor.WHITE);
-        Pawn blockingPawn = new Pawn(PieceColor.BLACK);
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
+        Piece blockingPawn = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(START_ROW, START_COL, rook);
         // 예: 수직 아래 방향으로 이동할 때, 중간 칸 (예: (5,4))에 기물이 있으면, (6,4)로 이동 시도 시 이동 불가
         testBoard.setPieceTest(START_ROW + 1, START_COL, blockingPawn);
