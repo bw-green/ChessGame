@@ -72,8 +72,9 @@ public class BishopTest {
         int targetRow = START_ROW - 3;
         int targetCol = START_COL + 3;
         testBoard.setPieceTest(targetRow, targetCol, enemyPawn);
-
         boolean moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
+        // 움직인 이후에 있는 기물이 비숍이 맞는지 확인하기
+
         assertTrue(moved, "Bishop은 상대 기물을 캡처할 수 있어야 한다.");
     }
 

@@ -232,7 +232,7 @@ public class Board {
         }
         return sb.toString();
     }
-    
+
     public Piece getPieceAt(int row, int col) {
         // 0415 update - 좌표에 있는 기물을 받아옴.
         if (row < 0 || row >= 8 || col < 0 || col >= 8) {
