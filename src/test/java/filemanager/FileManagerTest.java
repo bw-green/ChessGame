@@ -7,7 +7,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileManagerTest {
+class FileManagerTest { //FileManager Test
     private FileManager fileManager;
     //!!saves 폴더 자동생성됩니다.!! 폴더 삭제하는건 따로 구현 안했습니다. 회의때 논의하면 좋을 것 같습니다.
     @BeforeEach
