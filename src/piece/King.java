@@ -28,8 +28,9 @@ public class King extends Piece {
             }
         }
         //캐슬링에 대한 기본적인 입장 조건입니다. board 인자로 받는거 제거하려고 일단 노력중
-        if (colDiff == 2 && board.isPathClear(startCell, endCell))
+        if (colDiff ==2 && board.isPathClear(startCell, endCell))
             return SpecialRule.castling(board, startCell, endCell);
+
         return false;
     }
 
