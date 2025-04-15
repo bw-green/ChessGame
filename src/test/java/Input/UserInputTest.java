@@ -23,7 +23,7 @@ public class UserInputTest {
             "e1 e5                  ",
             "e2              e4",
             "E2 E4",
-            "'e2\te4'"
+            "e2\te4"
     })
     @DisplayName("input_success")
     void InputTrueTest(String input) {
