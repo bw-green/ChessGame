@@ -19,7 +19,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     public Checker(PieceColor pieceColor) {
         this.pieceColor = pieceColor;
         Symbol = (this.pieceColor == PieceColor.WHITE) ? "K" : "k";
-        //System.out.println(Symbol);
+        System.out.println(Symbol);
     }
 
     public void findKing(Board board){
@@ -29,7 +29,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                 if(now.getPiece() == null)continue;
                 if(Objects.equals(now.getPiece().getSymbol(), Symbol)){
                     King = now;
-                    //System.out.println(Symbol);
+                    System.out.println(Symbol);
                     return;
                 }
             }

@@ -141,7 +141,6 @@ public class Board {
             end.setPiece(movingPiece);
             start.setPiece(null);
             enPassantChecking();  // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
-
             if(end.getRow()==7 || end.getRow()==0){
                 SpecialRule.promotion(end);//프로모션은 흐름도에 따라 기물 이동을 수행한 후 결정됩니다.
             }
