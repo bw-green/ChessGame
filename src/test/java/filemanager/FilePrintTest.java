@@ -1,19 +1,31 @@
 package test.java.filemanager;
 
+import board.Board;
+import board.Cell;
 import fileManager.FileManager;
 import fileManager.FilePrint;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FilePrintTest { //출력 FilePrint Class 테스트
+public class FilePrintTest {
+
+    private Board createSampleBoard() {
+        Board board = new Board();
+        // P가 한 칸 앞으로 이동 (예: E2 -> E3)
+        Cell original = board.getCell(6, 4); // E2
+        Cell target = board.getCell(5, 4);   // E3
+        target.setPiece(original.getPiece());
+        original.setPiece(null);
+        return board;
+    }
 
     @Test
     void integratedFileManagerTest() {
-        FileManager fileManager = new FileManager();
+        FileManager fileManager = FileManager.getInstance();
         FilePrint filePrint = new FilePrint(fileManager);
 
         System.out.println("========= 통합 테스트 시작 =========");
@@ -24,63 +36,49 @@ public class FilePrintTest { //출력 FilePrint Class 테스트
             if (file.exists()) file.delete();
         }
 
-        fileManager.clearMoveHistory();
-        assertEquals(0, fileManager.getMoveHistory().size());
-
-        // 2. 각 슬롯에 기보 저장 (5개)
+        // 2. 각 슬롯에 보드 저장
         for (int i = 1; i <= 5; i++) {
-            fileManager.addHistory("P E2 E4");
-            fileManager.addHistory("k B1 C3");
+            fileManager.setCurrentBoard(createSampleBoard());
             filePrint.saveFilePrint(i);
-            fileManager.clearMoveHistory();
         }
 
         // 3. 3번 슬롯 불러오기
         filePrint.loadFilePrint(3);
-        List<String> historyAfterLoad = fileManager.getMoveHistory();
-        assertEquals(2, historyAfterLoad.size());
-        assertEquals("P E2 E4", historyAfterLoad.get(0));
+        Board loadedBoard = fileManager.getClass().cast(fileManager).getClass().cast(fileManager).getClass().cast(fileManager).getClass().cast(fileManager).getCurrentBoard();
 
-        FileManager fileManager2 = new FileManager();
-        FilePrint filePrint2 = new FilePrint(fileManager2);
-        // 4. 5번 슬롯 삭제
-        filePrint2.deleteFilePrint(5);
+        assertNotNull(loadedBoard);
+        assertNotNull(loadedBoard.getCell(5, 4).getPiece()); // E3
+        assertNull(loadedBoard.getCell(6, 4).getPiece()); // E2
+
+        // 4. 싱글턴 확인
+        FileManager fileManager2 = FileManager.getInstance();
+        assertSame(fileManager, fileManager2);
+
+        // 5. 5번 슬롯 삭제
+        filePrint.deleteFilePrint(5);
         File deletedFile = new File("saves/savefile5.txt");
-        assertFalse(deletedFile.exists(), "5번 파일이 실제로 삭제되어야 함");
+        assertFalse(deletedFile.exists());
 
-        //빈 슬롯 delete 테스트
-        filePrint2.deleteFilePrint(5);
+        // 빈 슬롯 delete 테스트
+        filePrint.deleteFilePrint(5);
 
         // "/savefile 테스트
-        filePrint2.saveListPrint();
+        filePrint.saveListPrint();
 
-        // 5. 대용량 moveHistory 작성 (150줄)
-        fileManager2.clearMoveHistory();
-        String[] sampleMoves = {
-                "P E2 E4", "P E7 E5", "N G1 F3", "N B8 C6", "B F1 C4",
-                "B F8 C5", "Q D1 H5", "N G8 F6", "Q H5 F7", "K E8 F7"
-        };
-        for (int i = 0; i < 15; i++) {
-            for (String move : sampleMoves) {
-                fileManager2.addHistory(move);
-            }
-        }
-        assertEquals(150, fileManager.getMoveHistory().size());
-
-        // 6. 2번 슬롯에 저장 → clear → 로드 → 재검증
+        // 6. 다시 저장하고 불러오기 검증
+        fileManager.setCurrentBoard(createSampleBoard());
         boolean saved = fileManager.overWriteSavedFile(2);
         assertTrue(saved);
-
-        fileManager.clearMoveHistory();
-        assertEquals(0, fileManager.getMoveHistory().size());
 
         boolean loaded = fileManager.loadSavedFile(2);
         assertTrue(loaded);
 
-        assertEquals(150, fileManager.getMoveHistory().size());
-        assertEquals("P E2 E4", fileManager.getMoveHistory().get(0));
+        Board reloadedBoard = fileManager.getCurrentBoard();
+        assertNotNull(reloadedBoard);
+        assertNotNull(reloadedBoard.getCell(5, 4).getPiece());
+        assertNull(reloadedBoard.getCell(6, 4).getPiece());
 
-        // 테스트 종료 후 저장파일 삭제
+        // 7. 정리
         for (int i = 1; i <= 5; i++) {
             File file = new File("saves/savefile" + i + ".txt");
             if (file.exists()) {
@@ -88,6 +86,7 @@ public class FilePrintTest { //출력 FilePrint Class 테스트
                 assertTrue(deleted, "파일 삭제 실패: " + file.getName());
             }
         }
+
         System.out.println("========= 통합 테스트 끝 =========");
-    } //기본 출력 체크
+    }
 }

@@ -1,5 +1,9 @@
 package fileManager;
 
+import board.Board;
+import board.PieceFactory;
+import piece.Piece;
+
 import java.io.*;
 import java.util.*;
 import java.util.Random;
@@ -7,18 +11,20 @@ import java.util.Random;
 public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
+    private final String deFault = "NO DATA";
 
-    private static FileManager instance = null;
-
-    private static final Deque<String> moveHistory = new ArrayDeque<>();
+    private Board currentBoard;
+    private String currentTurn;
     private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
     private static final ArrayList<Integer> counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
-    private String deFault = "NO DATA";
     private String lastSavedFile = deFault;
     private int lastSaveFileNum;
     private static int count = 0;
     //moveHistroy, counter, count는 공유되야해서 static으로 선언
-    public FileManager() {
+
+    private static FileManager instance = null;
+
+    private FileManager() { //싱글턴 확보
         ensureSaveDirectory();
         loadFileNames();
     }
@@ -34,9 +40,9 @@ public class FileManager {
         return new ArrayList<>(filename); //복사본 제공
     }
 
-    public ArrayList<String> getMoveHistory() {
-        return new ArrayList<>(moveHistory); // 복사본만 제공
-    }
+    public void setCurrentBoard(Board board) { this.currentBoard = board; }
+
+    public Board getCurrentBoard() { return currentBoard; }
 
     public String getLastSavedFile() {
         return lastSavedFile;
@@ -50,39 +56,47 @@ public class FileManager {
     private void ensureSaveDirectory() {
         File dir = new File(SAVE_DIR);
         if (!dir.exists()) {
-            dir.mkdirs();
+            boolean success = dir.mkdirs();
+            if (!success) {
+                System.err.println(" Failed to create save directory: " + SAVE_DIR); //임시 출력본
+                throw new IllegalStateException("Unable to create save directory. The program will terminate.");
+            }
         }
     }
 
-    // Deque에 움직임 저장
-    public void addHistory(String string) { moveHistory.addLast(string);}
-
-    public void clearMoveHistory() { moveHistory.clear(); } // 종료 관련 명령어의 경우에만 실행
-
-
     // 세이브 파일 덮어쓰기 (최대 5개 관리, 텍스트 형식)
     public boolean overWriteSavedFile(int slot) {
-        if (slot < 1 || slot > MAX_SAVES) {
-            return false;
-        }
+        if (slot < 1 || slot > MAX_SAVES) return false;
         slot--;
+
         String saveName = generateRandomSaveName();
-        String filePath = getFilePath(slot+1);
-        filename.set(slot, saveName);
-        counter.set(slot, ++count);
+        String filePath = getFilePath(slot + 1);
+
+        if (currentBoard == null) return false;
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(saveName); // 첫 번째 줄: 무작위 세이브 이름
+            writer.write(saveName);
+            writer.newLine(); // 두 번째 줄 공백
             writer.newLine();
-            writer.newLine(); // 두 번째 줄: 공백
-            for (String move : moveHistory) {
-                writer.write(move); // 세 번째 줄부터: moveHistory 내용
+            writer.write(Objects.equals(currentTurn, "WHITE") ? "White" : "Black"); // 세 번째 줄 턴 정보
+            writer.newLine();
+
+            // 💡 여기서 보드 상태 직접 저장 (네 번째 줄부터)
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    var piece = currentBoard.getCell(row, col).getPiece();
+                    writer.write((piece == null ? "." : piece.getSymbol()) + " ");
+                }
                 writer.newLine();
             }
+
+            filename.set(slot, saveName);
+            counter.set(slot, ++count);
             lastSavedFile = saveName;
             lastSaveFileNum = slot;
+
             return true;
         } catch (IOException e) {
-            //e.printStackTrace(); //디버깅용 후에 주석처리
             return false;
         }
     }
@@ -94,23 +108,36 @@ public class FileManager {
             return false;
         }
         slot--;
-        String filePath = getFilePath(slot+1);
-        moveHistory.clear();
+        String filePath = getFilePath(slot + 1);
+        Board loadedBoard = new Board();
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            reader.readLine();// 첫째 줄: 세이브 이름
-            reader.readLine();// 둘째 줄: 공백줄
-            String line;
-            while ((line = reader.readLine()) != null) {
-                moveHistory.addLast(line);
+            reader.readLine(); // 첫 줄: 저장 이름
+            reader.readLine(); // 둘째 줄: 공백줄
+            currentTurn = reader.readLine(); // 셋째 줄: 턴
+
+            for (int row = 0; row < 8; row++) {
+                String line = reader.readLine();
+                if (line == null) {return false;} // 줄 수가 부족하면 실패
+                String[] tokens = line.trim().split(" ");
+                if (tokens.length != 8) {return false;}
+
+                for (int col = 0; col < 8; col++) {
+                    String symbol = tokens[col];
+                    Piece piece = symbol.equals(".") ? null : PieceFactory.createPieceFromSymbol(symbol);
+                    loadedBoard.getCell(row, col).setPiece(piece);
+                }
             }
-            //System.out.println("로드 완료: " + filePath);
+
+            // 로드된 보드를 현재 보드로 설정
+            this.currentBoard = loadedBoard;
+
             return true;
         } catch (IOException e) {
-            //e.printStackTrace(); //디버깅용 후에 주석처리
             return false;
-            //System.out.println("파일을 찾을 수 없습니다: " + filePath);
         }
     }
+
 
     // 세이브 파일 지우기
     public boolean deleteSavedFile(int slot) {
@@ -127,7 +154,7 @@ public class FileManager {
             return false;
         }
         if (lastSavedFile.equals(filename.get(slot))) {
-            int secondMax = Integer.MIN_VALUE;
+            int secondMax = -1;
             int secondIndex = -1;
 
             for (int i = 0; i < MAX_SAVES; i++) {
@@ -195,9 +222,4 @@ public class FileManager {
 
     //중복 문자열 함수 처리
     private String getFilePath(int slot) {return SAVE_DIR + "/savefile" + slot + ".txt";}
-
-    // 현재 움직임 출력 (디버깅용)
-    public void printHistory() {
-        System.out.println("현재 움직임 기록: " + moveHistory);
-    }
 }

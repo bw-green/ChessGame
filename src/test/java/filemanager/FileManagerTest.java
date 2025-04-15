@@ -1,66 +1,113 @@
 package test.java.filemanager;
 
+import board.Board;
+import board.Cell;
+import board.PieceFactory;
 import fileManager.FileManager;
 import org.junit.jupiter.api.*;
-import java.util.List;
+
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileManagerTest { //FileManager Test
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class FileManagerTest {
+
     private FileManager fileManager;
-    //!!saves 폴더 자동생성됩니다.!! 폴더 삭제하는건 따로 구현 안했습니다. 회의때 논의하면 좋을 것 같습니다.
+
+    // 테스트용 초기 보드 (P가 한 칸 전진한 상태)
+    private Board createTestBoard() {
+        Board board = new Board();
+        board.initializeBoard(); // 기본 보드 생성
+        Cell from = board.getCell(6, 4); // e2 (P)
+        Cell to = board.getCell(5, 4);   // e3
+        to.setPiece(from.getPiece());
+        from.setPiece(null);
+        return board;
+    }
+
     @BeforeEach
-    void setUp() {
-        fileManager = new FileManager();
-        fileManager.getMoveHistory().clear(); // 초기화된 moveHistory와는 다른 복사본이지만, 테스트용 클린업 습관
+    public void setUp() {
+        fileManager = FileManager.getInstance();
+        fileManager.setCurrentBoard(createTestBoard());
     }
 
-    @Test
-    void testOverwriteAndLoadSavedFile() {
- //MANAGER 기능 체크
-        // 준비: 움직임을 수동으로 추가
-        fileManager.addHistory("P A2 A4");
-        fileManager.addHistory("k B1 C3");
-
-        // 저장
-        boolean saveResult = fileManager.overWriteSavedFile(1);
-        assertTrue(saveResult, "파일 저장에 실패했습니다.");
-
-        // 로드
-        boolean loadResult = fileManager.loadSavedFile(1);
-        assertTrue(loadResult, "파일 로딩에 실패했습니다.");
-
-        // 검증
-        List<String> loadedMoves = fileManager.getMoveHistory();
-        assertEquals(2, loadedMoves.size());
-        assertEquals("P A2 A4", loadedMoves.get(0));
-        assertEquals("k B1 C3", loadedMoves.get(1));
-    }
-
-    @Test
-    void testInvalidSlotSave() {
-        boolean result = fileManager.overWriteSavedFile(6); // 1~5 이외
-        assertFalse(result, "1~5 범위를 벗어난 슬롯 저장은 실패해야 합니다.");
-    }
-
-    @Test
-    void testInvalidSlotLoad() {
-        boolean result = fileManager.loadSavedFile(0); // 잘못된 슬롯
-        assertFalse(result, "1~5 범위를 벗어난 슬롯 로딩은 실패해야 합니다.");
-    }
-
-    /*슬롯 자리에 문자열 등 아예 벗어나는 값이 들어가는 경우는 GameManager
-    에서 처리해야 되는 오류라 생각해서<("Wrong number")-인자 오류 부분> 단순한 오류 식별 능력이 있는지만 봤습니다.
-    아마 추후 slot부분은 완성된 입력이 들어온다 가정하여, 위 테스트 부분은 필요없는 테스트 부분이 될 것 같습니다.*/
     @AfterEach
-    void tearDown() {
-        // 테스트 후 파일 삭제 (clean-up)
+    public void cleanUp() {
         for (int i = 1; i <= 5; i++) {
             File file = new File("saves/savefile" + i + ".txt");
-            if (file.exists()) {
-                file.delete();
-            }
+            if (file.exists()) file.delete();
         }
+    }
+
+    @Test
+    @Order(1)
+    public void testSingletonInstance() {
+        FileManager instance1 = FileManager.getInstance();
+        FileManager instance2 = FileManager.getInstance();
+        assertSame(instance1, instance2, "FileManager는 싱글턴이어야 함");
+    }
+
+    @Test
+    @Order(2)
+    public void testSaveFilesInAllSlots() {
+        for (int i = 1; i <= 5; i++) {
+            boolean result = fileManager.overWriteSavedFile(i);
+            assertTrue(result, "슬롯 " + i + " 저장에 실패함");
+        }
+
+        for (int i = 1; i <= 5; i++) {
+            File file = new File("saves/savefile" + i + ".txt");
+            assertTrue(file.exists(), "슬롯 " + i + " 파일이 존재하지 않음");
+        }
+    }
+
+    @Test
+    @Order(3)
+    public void testLoadSavedFile() {
+        // 1. 저장용 보드 준비
+        Board board = new Board();
+        Cell from = board.getCell(6, 4); // E2
+        Cell to = board.getCell(5, 4);   // E3
+        to.setPiece(from.getPiece());
+        from.setPiece(null);
+
+        fileManager.setCurrentBoard(board);
+        boolean saved = fileManager.overWriteSavedFile(1);
+        assertTrue(saved, "슬롯 1 저장 실패");
+
+        // 2. 보드 초기화
+        Board emptyBoard = new Board();
+        fileManager.setCurrentBoard(emptyBoard);
+
+        // 3. 불러오기
+        boolean loaded = fileManager.loadSavedFile(1);
+        assertTrue(loaded, "슬롯 1에서 불러오기에 실패함");
+
+        // 4. 불러온 보드 확인
+        Board loadedBoard = fileManager.getCurrentBoard();
+        assertNotNull(loadedBoard.getCell(5, 4).getPiece(), "e3에 기물이 없음");
+        assertEquals("P", loadedBoard.getCell(5, 4).getPiece().getSymbol(), "불러온 보드에 P가 e3에 없음");
+    }
+
+    @Test
+    @Order(4)
+    public void testDeleteSavedFile() {
+        fileManager.overWriteSavedFile(2);
+        File file = new File("saves/savefile2.txt");
+        assertTrue(file.exists(), "삭제 전 파일이 존재해야 함");
+
+        boolean deleted = fileManager.deleteSavedFile(2);
+        assertTrue(deleted, "슬롯 2 삭제 실패");
+
+        assertFalse(file.exists(), "파일이 삭제되지 않음");
+    }
+
+    @Test
+    @Order(5)
+    public void testInvalidSlotOperations() {
+        assertFalse(fileManager.overWriteSavedFile(0), "0번 슬롯 저장은 실패해야 함");
+        assertFalse(fileManager.loadSavedFile(6), "6번 슬롯 로드는 실패해야 함");
+        assertFalse(fileManager.deleteSavedFile(-1), "음수 슬롯 삭제는 실패해야 함");
     }
 }

@@ -1,5 +1,7 @@
 package fileManager;
 
+import data.FileMessage;
+import data.FileError;
 import data.PrintTemplate;
 
 import java.util.ArrayList;
@@ -22,28 +24,28 @@ public class FilePrint {
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.overWriteSavedFile(slot)) {
             showFileList();
-            System.out.println("| The save "+slot+" has been created.|");
+            System.out.println(FileMessage.SAVE_CREATED.format(slot));
         }
-        else System.out.println("| Failed to save the game. |");
+        else System.out.println(FileError.FAILED_SAVE);
         System.out.println(PrintTemplate.BOLDLINE);
     }
     public void deleteFilePrint(int slot) { // ./delsave 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.deleteSavedFile(slot)) {
             showFileList();
-            System.out.println("| The save "+slot+" has deleted |");
+            System.out.println(FileMessage.SAVE_DELETED.format(slot));
         }
-        else System.out.println("| Failed to delete the save file |");
+        else System.out.println(FileError.FAILED_DELETE);
         System.out.println(PrintTemplate.BOLDLINE);
     }
 
     public void loadFilePrint(int slot) {
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.loadSavedFile(slot)) {
-            System.out.println("| The save "+slot+" has loaded |");
-            System.out.println("|save "+slot+".|< "+fileManager.getFilename().get(slot-1)+" >");
+            System.out.println(FileMessage.SAVE_LOADED.format(slot));
+            System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
         }
-        else System.out.println("| Failed to load the savefile. |");
+        else System.out.println(FileError.FAILED_LOAD);
         System.out.println(PrintTemplate.BOLDLINE);
     }
 
@@ -51,13 +53,14 @@ public class FilePrint {
 
         ArrayList<String> filename = fileManager.getFilename();
         String LSFile = fileManager.getLastSavedFile();
-        int LSFileNum = fileManager.getLastSaveFileNum();
+        String LSFileNum = Integer.toString(fileManager.getLastSaveFileNum()+1); //값 0~4에서 1~5로 맞춰주기
+        if(LSFileNum.equals("0")){LSFileNum = "No";} //기획서에 맞게 LSF가 없을경우, No로 출력해주기
 
-        System.out.println("-----------------<Last Save File>-----------------");
-        System.out.println("|save " + (LSFileNum+1) + ".| " + LSFile);
+        System.out.println(FileMessage.LSF_LINE);
+        System.out.println(FileMessage.LSF_NAME.format(LSFileNum,LSFile));
         System.out.println(PrintTemplate.INTERLINE);
         for (int i = 0; i < filename.size(); i++) {
-            System.out.println("|save " + (i+1) + ".|<" + filename.get(i) + ">");
+            System.out.println(FileMessage.SAVE_NAME.format((i+1),filename.get(i)));
         }
         System.out.println(PrintTemplate.INTERLINE);
     }
