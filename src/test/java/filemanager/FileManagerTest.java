@@ -68,7 +68,7 @@ public class FileManagerTest {
 
     @Test
     void testBoardLast() {
-        Board originalBoard = new Board();
+        //Board originalBoard = new Board();
         fileManager.overWriteSavedFile(2, board);
         String lastSaved = fileManager.getLastSavedFile();
         int lastSlot = fileManager.getLastSaveFileNum();
