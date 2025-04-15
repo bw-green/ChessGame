@@ -26,7 +26,7 @@ public enum Command {
             "-------------------------------------------------\n" +
             "A collection of commands for quick execution."),
     SAVEFILE("-----------------<last save file>---------------—\n" +
-            "|save No.|Last saved file\n" +
+            "|save %d.|%s\n" +
             " -------------------------------------------------\n" +
             "|save 1.|<%s> \n" +
             "|save 2.|<%s> \n" +

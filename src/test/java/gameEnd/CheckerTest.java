@@ -33,12 +33,14 @@ public class CheckerTest {
     @DisplayName("Check 되는지 확인")
     void checkBoard2() {
         Board board = new Board(true);
-        board.setPieceTest(3,3,new King(PieceColor.WHITE));
-        board.setPieceTest(3,6,new Queen(PieceColor.BLACK));
+        board.setPieceTest(0,6,new King(PieceColor.WHITE));
+        board.setPieceTest(2,6,new Queen(PieceColor.BLACK));
+        board.setPieceTest(3,6,new King(PieceColor.BLACK));
         Checker whiteChecker = new Checker(PieceColor.WHITE);
+        Checker blackChecker = new Checker(PieceColor.BLACK);
         System.out.println(board);
         whiteChecker.findKing(board);
-        System.out.println(whiteChecker.isCheck(board));// 가능
+        System.out.println(blackChecker.isCheck(board));// 가능
 
 
     }

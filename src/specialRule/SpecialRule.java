@@ -3,6 +3,9 @@ package specialRule;
 import java.util.Scanner;
 import board.Board;
 import board.Cell;
+import data.InvalidCoordinate;
+import data.PrintTemplate;
+import data.Unspecified;
 import piece.Piece;
 import piece.King;
 import piece.Rook;
@@ -24,6 +27,7 @@ public class SpecialRule {
         Piece targetPiece = enPassant.getPiece(); // 앙파상 당할 모든 자격을 갖춘 piece다.
         if (targetPiece.getColor() != movingPiece.getColor()){  //색깔이 달라야한다.
             enPassant.setPiece(null); //캡쳐당하는 기물과 실제 이동 기물의 위치가 다르므로, 특수룰에서 캡쳐된 기물을 제거해준다.
+            System.out.println(PrintTemplate.BOLDLINE);
             System.out.println("EnPassant Success");
             return true;
         }
@@ -42,7 +46,17 @@ public class SpecialRule {
         {
             while(true) {
                 System.out.print("Enter the PIECE to promote to (e.g., \"Q\", \"R\", \"N\", \"B\").\n ");
-                char promoteName = scanner.next().charAt(0);
+                String line = scanner.nextLine();
+                char promoteName;
+                if(line.isEmpty()) {
+                        promoteName = 'x'; // 불일치
+                }else{
+                        promoteName = line.charAt(0);
+                    String rest = line.substring(1);
+                    if (!rest.chars().allMatch(Character::isWhitespace)) {
+                        promoteName = 'x'; //불일치
+                    }
+                }
                 Piece newPiece = switch (promoteName) {
                     case 'q', 'Q' -> new Queen(pawn.getColor());
                     case 'r', 'R' -> new Rook(pawn.getColor());
@@ -56,11 +70,14 @@ public class SpecialRule {
                     System.out.println("Promote success");
                     break;
                 } else if (promoteName == 'p' || promoteName == 'P') {
-                    System.out.println("Invalid input: Pawn (P, p) cannot be selected for promotion. Try again. ");
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(InvalidCoordinate.PROMO_NOT_PAWN);
                 } else if (promoteName == 'k' || promoteName == 'K') {
-                    System.out.println("Invalid input: King (K, k) cannot be selected for promotion. Try again. ");
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(InvalidCoordinate.PROMO_NOT_KING);
                 } else {
-                    System.out.println("Invalid input: Only Q, R, B, or N allowed. Try again.");
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(InvalidCoordinate.PROMO_INVALID_PIECE);
                 }
             }
         }
@@ -88,11 +105,14 @@ public class SpecialRule {
         //룩 셀에 룩이 없거나, 길이 열려있지 않으면, 실패. 룩이나 킹이 한번이라도 움직였어도 실패.
         Piece movingPiece = rookCell.getPiece();
         if (movingPiece == null||!("R".equals(movingPiece.getSymbol())||"r".equals(movingPiece.getSymbol())) || !board.isPathClear(kingStart, rookCell) || ((Rook) movingPiece).firstMove || ((King)king).firstMove) {
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(Unspecified.CASTLING_FAILED);
             return false;
         }
         //룩을 이동시킴 (true 반환하면 king은 보드 클래스에서 움직임)
         rookEndCell.setPiece(movingPiece);
         rookCell.setPiece(null);
+        System.out.println(PrintTemplate.BOLDLINE);
         System.out.println("Castling Success");
         return true;
     }
