@@ -66,9 +66,89 @@ public class PawnPromotionTest {
             "g7,g8",
             "h7,h8"
     })
-    @DisplayName("백의 기물 프로모션 확인용")
-    void WhitePawnPromotionTest(String start, String end) {
+    @DisplayName("백의 기물 프로모션 확인용 Q")
+    void WhitePawnPromotionTestQ(String start, String end) {
         promotionTest(start, end,"Q");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "a7,a8",
+            "b7,b8",
+            "c7,c8",
+            "d7,d8",
+            "e7,e8",
+            "f7,f8",
+            "g7,g8",
+            "h7,h8"
+    })
+    @DisplayName("백의 기물 프로모션 확인용 R")
+    void WhitePawnPromotionTestR(String start, String end) {
+        promotionTest(start, end,"R");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "a7,a8",
+            "b7,b8",
+            "c7,c8",
+            "d7,d8",
+            "e7,e8",
+            "f7,f8",
+            "g7,g8",
+            "h7,h8"
+    })
+    @DisplayName("백의 기물 프로모션 확인용 N")
+    void WhitePawnPromotionTestN(String start, String end) {
+        promotionTest(start, end,"N");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "a7,a8",
+            "b7,b8",
+            "c7,c8",
+            "d7,d8",
+            "e7,e8",
+            "f7,f8",
+            "g7,g8",
+            "h7,h8"
+    })
+    @DisplayName("백의 기물 프로모션 확인용 B")
+    void WhitePawnPromotionTest(String start, String end) {
+        promotionTest(start, end,"B");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "a7,a8",
+            "b7,b8",
+            "c7,c8",
+            "d7,d8",
+            "e7,e8",
+            "f7,f8",
+            "g7,g8",
+            "h7,h8"
+    })
+    @DisplayName("백의 기물 프로모션 확인용 K")
+    void WhitePawnPromotionTestK(String start, String end) {
+        promotionTest(start, end,"K");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "a7,a8",
+            "b7,b8",
+            "c7,c8",
+            "d7,d8",
+            "e7,e8",
+            "f7,f8",
+            "g7,g8",
+            "h7,h8"
+    })
+    @DisplayName("백의 기물 프로모션 확인용 P")
+    void WhitePawnPromotionTestP(String start, String end) {
+        promotionTest(start, end,"P");
     }
 
     @ParameterizedTest

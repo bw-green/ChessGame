@@ -46,7 +46,7 @@ public class SpecialRule {
         {
             while(true) {
                 System.out.print("Enter the PIECE to promote to (e.g., \"Q\", \"R\", \"N\", \"B\").\n ");
-                char promoteName = scanner.next().charAt(0);
+                char promoteName = scanner.nextLine().charAt(0);
                 Piece newPiece = switch (promoteName) {
                     case 'q', 'Q' -> new Queen(pawn.getColor());
                     case 'r', 'R' -> new Rook(pawn.getColor());
