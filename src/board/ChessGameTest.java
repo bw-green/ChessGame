@@ -648,7 +648,7 @@ public class ChessGameTest {
         if (loadAnswer.equalsIgnoreCase("y")) {
             // 예시 세이브 파일 데이터:
             // 첫 줄: 현재 턴, 이후 8줄: 보드 상태 (기호: r, n, b, q, k, b, n, r, p, ., etc.)
-            currentTurn = PieceColor.BLACK;  // 예: 저장된 파일에 현재 턴이 BLACK으로 기록됨.
+            currentTurn = PieceColor.WHITE;  // 예: 저장된 파일에 현재 턴이 BLACK으로 기록됨.
             String[] savedBoard = {
                     "r n b q k b n r",
                     "p p p p . p p p",

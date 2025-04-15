@@ -36,34 +36,42 @@ public class Board {
      * 체스판의 초기 기물 배치를 설정합니다.
      * 흑색 기물은 상단(0,1행), 백색 기물은 하단(6,7행)에 배치.
      */
+    // 0416 update - PieceFactory 사용하게끔 수정
     public void initializeBoard() {
         // Black pieces (위쪽)
-        cells[0][0].setPiece(new Rook(PieceColor.BLACK));
-        cells[0][1].setPiece(new Knight(PieceColor.BLACK));
-        cells[0][2].setPiece(new Bishop(PieceColor.BLACK));
-        cells[0][3].setPiece(new Queen(PieceColor.BLACK));
-        cells[0][4].setPiece(new King(PieceColor.BLACK));
-        cells[0][5].setPiece(new Bishop(PieceColor.BLACK));
-        cells[0][6].setPiece(new Knight(PieceColor.BLACK));
-        cells[0][7].setPiece(new Rook(PieceColor.BLACK));
+        // 기존: cells[0][0].setPiece(new Rook(PieceColor.BLACK));
+        // 변경: PieceFactory.createPieceFromSymbol("r") 사용 ("r"은 Black Rook)
+        cells[0][0].setPiece(PieceFactory.createPieceFromSymbol("r"));
+        cells[0][1].setPiece(PieceFactory.createPieceFromSymbol("n")); // Black Knight
+        cells[0][2].setPiece(PieceFactory.createPieceFromSymbol("b")); // Black Bishop
+        cells[0][3].setPiece(PieceFactory.createPieceFromSymbol("q")); // Black Queen
+        cells[0][4].setPiece(PieceFactory.createPieceFromSymbol("k")); // Black King
+        cells[0][5].setPiece(PieceFactory.createPieceFromSymbol("b")); // Black Bishop
+        cells[0][6].setPiece(PieceFactory.createPieceFromSymbol("n")); // Black Knight
+        cells[0][7].setPiece(PieceFactory.createPieceFromSymbol("r")); // Black Rook
+
         for (int col = 0; col < 8; col++) {
-            cells[1][col].setPiece(new Pawn(PieceColor.BLACK));
+            // Black Pawn: "p"
+            cells[1][col].setPiece(PieceFactory.createPieceFromSymbol("p"));
         }
 
         // White pieces (아래쪽)
-        cells[7][0].setPiece(new Rook(PieceColor.WHITE));
-        cells[7][1].setPiece(new Knight(PieceColor.WHITE));
-        cells[7][2].setPiece(new Bishop(PieceColor.WHITE));
-        cells[7][3].setPiece(new Queen(PieceColor.WHITE));
-        cells[7][4].setPiece(new King(PieceColor.WHITE));
-        cells[7][5].setPiece(new Bishop(PieceColor.WHITE));
-        cells[7][6].setPiece(new Knight(PieceColor.WHITE));
-        cells[7][7].setPiece(new Rook(PieceColor.WHITE));
+        cells[7][0].setPiece(PieceFactory.createPieceFromSymbol("R")); // White Rook
+        cells[7][1].setPiece(PieceFactory.createPieceFromSymbol("N")); // White Knight
+        cells[7][2].setPiece(PieceFactory.createPieceFromSymbol("B")); // White Bishop
+        cells[7][3].setPiece(PieceFactory.createPieceFromSymbol("Q")); // White Queen
+        cells[7][4].setPiece(PieceFactory.createPieceFromSymbol("K")); // White King
+        cells[7][5].setPiece(PieceFactory.createPieceFromSymbol("B")); // White Bishop
+        cells[7][6].setPiece(PieceFactory.createPieceFromSymbol("N")); // White Knight
+        cells[7][7].setPiece(PieceFactory.createPieceFromSymbol("R")); // White Rook
+
         for (int col = 0; col < 8; col++) {
-            cells[6][col].setPiece(new Pawn(PieceColor.WHITE));
+            // White Pawn: "P"
+            cells[6][col].setPiece(PieceFactory.createPieceFromSymbol("P"));
         }
         // 나머지 칸은 비어 있음.
     }
+
 
     /**
      * 주어진 좌표의 board.Cell 객체를 반환합니다.
