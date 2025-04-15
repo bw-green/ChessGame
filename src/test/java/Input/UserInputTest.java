@@ -33,6 +33,8 @@ public class UserInputTest {
             "e2",
             "e2f2",
             "c8 e3 f2",
+            "' '", //빈 문자열
+            "null"
     })
     @DisplayName("input_fail")
     void InputFalseTest(String input) {
