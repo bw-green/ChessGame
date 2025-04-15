@@ -18,7 +18,7 @@ public class FilePrint {
         System.out.println(PrintTemplate.BOLDLINE);
     }
 
-    public void saveFilePrint(int slot) {
+    public void saveFilePrint(int slot) { // ./save 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.overWriteSavedFile(slot)) {
             showFileList();
