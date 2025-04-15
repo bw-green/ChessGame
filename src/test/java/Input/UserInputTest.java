@@ -1,14 +1,14 @@
 package test.java.Input;
 
-import Input.GameInput;
+
 import data.GameInputReturn;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import userinput.UserInput;
 
-import java.io.ByteArrayInputStream;
 
 public class UserInputTest {
 
@@ -25,6 +25,7 @@ public class UserInputTest {
     @DisplayName("input_success")
     void InputTrueTest(String input) {
         Assertions.assertEquals(GameInputReturn.COORDINATE_TRUE.getCode(), UserInput.handleInput(input));
+        System.out.println(UserInput.toStringMove());
     }
 
 
@@ -34,12 +35,19 @@ public class UserInputTest {
             "e2",
             "e2f2",
             "c8 e3 f2",
-            "' '", //빈 문자열
+            "'  '", // 여러 칸 공백
+            "''",    // 진짜 빈 문자열
             "null"
     })
     @DisplayName("input_fail")
     void InputFalseTest(String input) {
         Assertions.assertEquals(GameInputReturn.ERROR.getCode(), UserInput.handleInput(input));
+    }
+
+    @DisplayName("null input 처리")
+    @Test
+    void nullInputTest() {
+        Assertions.assertEquals(GameInputReturn.ERROR.getCode(), UserInput.handleInput(null));
     }
 
 }

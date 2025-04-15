@@ -62,9 +62,9 @@ import data.GameInputReturn;
         /**
          * "e2 e4" 형태로 움직임을 문자열로 반환 (FileManager 기록용)
          */
-        @Override
-        public String toString() {
+        public static String toStringMove() {
             return fromNotation + " " + toNotation;
         }
-    }
+
+}
 
