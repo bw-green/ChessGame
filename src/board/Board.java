@@ -7,6 +7,8 @@ import specialRule.SpecialRule;
 //////////////////////////////////////////////
 public class Board {
     private Cell[][] cells; // 8x8 board.Cell 배열
+    private PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
+
 
     /**
      * 생성자
@@ -222,24 +224,25 @@ public class Board {
     }
 
     //Todo: 기획서에 있는대로 디자인을 바꿔야합니다.
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+
+        sb.append("    a b c d e f g h\n");
+        sb.append("  ===================\n");
+
         for (int row = 0; row < 8; row++) {
+            int rank = 8 - row;  // 실제 출력되는 행 번호 (8 ~ 1)
+            sb.append(rank).append(" | ");
             for (int col = 0; col < 8; col++) {
                 sb.append(cells[row][col].toString()).append(" ");
             }
-            sb.append("\n");
+            sb.append("| ").append(rank).append("\n");
         }
-        return sb.toString();
-    }
 
-    public Piece getPieceAt(int row, int col) {
-        // 0415 update - 좌표에 있는 기물을 받아옴.
-        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-            return null; // 보드 범위를 벗어난 경우
-        }
-        return cells[row][col].getPiece();
+        sb.append("  ===================\n");
+        sb.append("    a b c d e f g h\n");
+
+        return sb.toString();
     }
 
     public boolean isCellUnderAttack(int targetRow, int targetCol, PieceColor targetColor) {
@@ -274,11 +277,25 @@ public class Board {
         return false;
     }
 
+    public Piece getPieceAt(int row, int col) {
+        // 0415 update - 좌표에 있는 기물을 받아옴.
+        if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+            return null; // 보드 범위를 벗어난 경우
+        }
+        return cells[row][col].getPiece();
+    }
 
-    // 기물 배치를 통해 test용이용으로 만든 함수.
+    // 기물 배치를 통해 test용으로 만든 함수.
     // 실제는 사용하지 않아야함
     public void setPieceTest(int row, int col, Piece piece) {
         cells[row][col].setPiece(piece);
     }
-}
 
+    public void turnChange() {
+        currentTurn = (currentTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+    }
+    public PieceColor getCurrentTurn() {
+        return currentTurn;
+    }
+
+}
