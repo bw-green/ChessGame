@@ -1,11 +1,13 @@
 package test.java.piece;
 
 import board.Board;
+import board.PieceFactory;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import piece.Knight;
 import piece.Pawn;
+import piece.Piece;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,7 +43,7 @@ public class KnightTest {
     // 1. 기본 이동 테스트: Knight가 모든 8가지 L자 이동을 수행할 수 있는지
     @Test
     void testKnightBasicMovement() {
-        Knight knight = new Knight(PieceColor.WHITE);
+        Piece knight = PieceFactory.createPieceFromSymbol("N");
         testBoard.setPieceTest(START_ROW, START_COL, knight);
 
         // 모든 유효한 L자 이동에 대해 테스트
@@ -62,7 +64,7 @@ public class KnightTest {
     // 2. 보드 밖 이동 테스트: Knight가 보드 범위를 벗어나면 이동이 거부되어야 함
     @Test
     void testKnightCantMoveOutOfBoard() {
-        Knight knight = new Knight(PieceColor.WHITE);
+        Piece knight = PieceFactory.createPieceFromSymbol("N");
         // 예를 들어, 좌상단 모서리에 배치
         testBoard.setPieceTest(0, 0, knight);
         // 보드 범위를 벗어난 L자 이동 시도: (-2,-1)
@@ -73,8 +75,8 @@ public class KnightTest {
     // 3. 적군 캡처 테스트: 목적지에 상대 기물이 있으면 이동(캡처) 가능해야 함
     @Test
     void testKnightCaptureEnemy() {
-        Knight knight = new Knight(PieceColor.WHITE);
-        Pawn enemyPawn = new Pawn(PieceColor.BLACK);
+        Piece knight = PieceFactory.createPieceFromSymbol("N");
+        Piece enemyPawn = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(START_ROW, START_COL, knight);
         // 첫번째 이동 벡터를 사용하여 테스트
         int targetRow = START_ROW + MOVES[0][0];
@@ -87,8 +89,8 @@ public class KnightTest {
     // 4. 아군 기물이 있는 경우 이동 불가 테스트: 목적지에 아군 기물이 있으면 이동이 불가능해야 함
     @Test
     void testKnightCannotMoveToAlly() {
-        Knight knight = new Knight(PieceColor.WHITE);
-        Pawn allyPawn = new Pawn(PieceColor.WHITE);
+        Piece knight = PieceFactory.createPieceFromSymbol("N");
+        Piece allyPawn = PieceFactory.createPieceFromSymbol("P");
         testBoard.setPieceTest(START_ROW, START_COL, knight);
         // 두번째 이동 벡터를 사용하여 테스트
         int targetRow = START_ROW + MOVES[1][0];
@@ -101,7 +103,7 @@ public class KnightTest {
     // 5. 중간 경로 점프 테스트: Knight는 이동 경로에 기물이 있어도 영향을 받지 않아야 한다.
     @Test
     void testKnightJumpingOverPieces() {
-        Knight knight = new Knight(PieceColor.WHITE);
+        Piece knight = PieceFactory.createPieceFromSymbol("N");
         testBoard.setPieceTest(START_ROW, START_COL, knight);
         // 예: (4,4)에서 (-2,-1) 이동 → (2,3)로 이동 (첫번째 이동 벡터)
         // 중간에 몇 개의 기물을 배치하여 경로가 막혀 있더라도 점프가 가능해야 함.

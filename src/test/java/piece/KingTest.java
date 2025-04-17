@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import piece.King;
 import piece.Pawn;
+import piece.Piece;
 import piece.Rook;
 import test.java.board.BoardTest;
 
@@ -42,7 +43,7 @@ public class KingTest {
     @Test
     void testKingBasicMovementInAllDirections() {
         testBoard = new Board(false);
-        King king = new King(PieceColor.WHITE);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
         testBoard.setPieceTest(4, 4, king); // e5 중앙
 
 
@@ -67,7 +68,7 @@ public class KingTest {
     @Test
     void testKingCantMoveOutOfBoard() {
         testBoard = new Board(false);
-        King king = new King(PieceColor.WHITE);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
         testBoard.setPieceTest(7, 7, king); // 킹을 h8에 배치
         boolean move = testBoard.movePiece(7,7,8,8); // false가 의도 결과
         assertTrue(!move, "킹은 보드 밖으로 나갈 수 없는데 가능하다고?"); // true가 발생할 시
@@ -79,7 +80,7 @@ public class KingTest {
     @Test
     void testKingCaptureInAllDirections() {
         testBoard = new Board(false);
-        King king = new King(PieceColor.WHITE);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
         testBoard.setPieceTest(4, 4, king); // 킹을 중앙 e5에 배치
 
         // 8방향 상대 기물 배치 (BLACK)
@@ -105,7 +106,7 @@ public class KingTest {
     // 아군 기물 있는지
     @Test
     void testKingCannotMoveToAllyInAllDirections() {
-        King king = new King(PieceColor.WHITE);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
         testBoard.setPieceTest(START_ROW, START_COL, king); // 킹 중앙 배치
 
         for (int i = 0; i < DIRECTIONS.length; i++) {
@@ -131,8 +132,8 @@ public class KingTest {
     void testKingSideCastlingSuccess() {
         testBoard = new Board(false);
 
-        King king = new King(PieceColor.WHITE);
-        Rook rook = new Rook(PieceColor.WHITE);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
 
         // 킹과 룩 배치 (e1, h1)
         testBoard.setPieceTest(7, 4, king);
@@ -152,8 +153,8 @@ public class KingTest {
     @Test
     void testKingCannotMoveIntoCheck() { // 킹이 체크가 되는 칸으로 이동하려는 경우!
         testBoard = new Board(false);
-        King king = new King(PieceColor.WHITE);
-        Rook enemyRook = new Rook(PieceColor.BLACK);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
+        Piece enemyRook = PieceFactory.createPieceFromSymbol("r");
 
         // 킹을 중앙 e5 (4,4)에 배치
         testBoard.setPieceTest(4, 4, king);
@@ -167,8 +168,8 @@ public class KingTest {
     @Test
     void testKingCanEscapeFromCheck() { // 킹이 체크에서 벗어나려고 이동하는 경우(탈출)
         testBoard = new Board(false);
-        King king = new King(PieceColor.WHITE);
-        Rook enemyRook = new Rook(PieceColor.BLACK);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
+        Piece enemyRook = PieceFactory.createPieceFromSymbol("r");
 
         // 적 룩이 같은 행에서 킹을 공격
         testBoard.setPieceTest(4, 0, enemyRook); // a5

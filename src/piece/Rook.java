@@ -13,6 +13,16 @@ public class Rook extends Piece {
         super(color);
     }
 
+    // 복사 생성자
+    public Rook(Rook other) {
+        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
+        this.firstMove = other.firstMove;
+    }
+    // 복사 메소드
+    public Rook deepCopy() {
+        return new Rook(this);
+    }
+
     @Override
     public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
         // piece.Rook: 수평 또는 수직 이동

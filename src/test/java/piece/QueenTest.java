@@ -1,10 +1,12 @@
 package test.java.piece;
 
 import board.Board;
+import board.PieceFactory;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import piece.Pawn;
+import piece.Piece;
 import piece.Queen;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -39,7 +41,7 @@ public class QueenTest {
     // 1. Queen 기본 이동 (여러 칸 이동 가능)
     @Test
     void testQueenBasicMovementInAllDirections() {
-        Queen queen = new Queen(PieceColor.WHITE);
+        Piece queen = PieceFactory.createPieceFromSymbol("Q");
         testBoard.setPieceTest(START_ROW, START_COL, queen); // 중앙 배치
 
         // 각 방향으로 3칸 이동하는 경우를 테스트
@@ -60,7 +62,7 @@ public class QueenTest {
     // 2. Queen이 보드 밖으로 이동할 수 없는지 테스트
     @Test
     void testQueenCantMoveOutOfBoard() {
-        Queen queen = new Queen(PieceColor.WHITE);
+        Piece queen = PieceFactory.createPieceFromSymbol("Q");
         // 예: 보드의 왼쪽 상단에 배치
         testBoard.setPieceTest(0, 0, queen);
         boolean moved = testBoard.movePiece(0, 0, -1, -1); // 보드 밖으로 이동 시도
@@ -70,8 +72,8 @@ public class QueenTest {
     // 3. Queen 캡처 테스트: 대상 칸에 상대 기물이 있는 경우 이동 가능 (캡처)
     @Test
     void testQueenCaptureEnemy() {
-        Queen queen = new Queen(PieceColor.WHITE);
-        Pawn enemyPawn = new Pawn(PieceColor.BLACK);
+        Piece queen = PieceFactory.createPieceFromSymbol("Q");
+        Piece enemyPawn = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(START_ROW, START_COL, queen);
         // 예: 좌우 방향으로 3칸 떨어진 칸에 적 기물을 배치
         int targetRow = START_ROW;
@@ -85,8 +87,8 @@ public class QueenTest {
     // 4. Queen 경로가 아군 기물에 의해 차단된 경우 이동 실패
     @Test
     void testQueenCannotMoveIfBlockedByAlly() {
-        Queen queen = new Queen(PieceColor.WHITE);
-        Pawn allyPawn = new Pawn(PieceColor.WHITE);
+        Piece queen = PieceFactory.createPieceFromSymbol("Q");
+        Piece allyPawn = PieceFactory.createPieceFromSymbol("P");
         testBoard.setPieceTest(START_ROW, START_COL, queen);
         // 예: 좌우 방향으로 Queen이 3칸 이동할 때, 중간 칸 (예를 들어, 2칸 이동한 지점)에 아군 기물이 존재
         // Queen이 (4,4)에서 (4,7)로 이동하려고 할 때, (4,6)에 아군 기물 배치
@@ -100,8 +102,8 @@ public class QueenTest {
     //    하지만, 만약 중간 경로에 기물이 있다면 이동 불가능.
     @Test
     void testQueenCannotJumpOverPieces() {
-        Queen queen = new Queen(PieceColor.WHITE);
-        Pawn blockingPawn = new Pawn(PieceColor.WHITE); // 중간에 있는 기물이므로 이동 불가
+        Piece queen = PieceFactory.createPieceFromSymbol("Q");
+        Piece blockingPawn = PieceFactory.createPieceFromSymbol("P"); // 중간에 있는 기물이므로 이동 불가
         testBoard.setPieceTest(START_ROW, START_COL, queen);
         // 예: 대각선 우상으로 3칸 이동할 때,
         // 중간 칸: (3,5)에 기물 배치 → (2,6)으로 이동 시도
