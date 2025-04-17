@@ -280,12 +280,13 @@ public class Board {
      * 체스 기물 이동 명령에 대해 의미적 오류를 판단하는 메서드입니다.
      *
      * 아래 우선순위에 따라 오류를 판별하며, 가장 중요한 의미 오류 하나만 리턴합니다:
-     *  1. INVALID_MOVE_FOR_THIS_PIECE : 이동 규칙 자체 위반
-     *  2. PATH_BLOCKED                 : 직선/대각선 기물의 경로에 장애물 존재
-     *  3. OWN_PIECE_AT_DESTINATION     : 도착지에 같은 색 기물이 있음
-     *  4. NOT_YOUR_PIECE               : 현재 턴과 다른 색의 기물을 선택
-     *  5. NO_PIECE_AT_START            : 출발 위치에 기물이 없음
-     *  6. SAME_START_END               : 시작과 도착 좌표가 동일
+     *
+     1. SAME_START_END : 시작과 도착 좌표가 동일
+     2. NO_PIECE_AT_START : 출발 위치에 기물이 없음
+     3. NOT_YOUR_PIECE : 현재 턴과 다른 색의 기물을 선택
+     4. OWN_PIECE_AT_DESTINATION : 도착 좌표에 같은 색 기물이 있음
+     5. INVALID_MOVE_FOR_THIS_PIECE : 이동 규칙 자체 위반
+     6. PATH_BLOCKED : 직선/대각선 기물의 경로에 장애물 존재
      *
      * @param fromNotation 시작 좌표 (예: "e2")
      * @param toNotation   도착 좌표 (예: "e4")

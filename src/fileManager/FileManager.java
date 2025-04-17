@@ -7,16 +7,28 @@ import java.util.Random;
 public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
-    private Deque<String> moveHistory;
-    private ArrayList<String> filename;
 
+    private static FileManager instance = null;
+
+    private static final Deque<String> moveHistory = new ArrayDeque<>();
+    private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
+    private static final ArrayList<Integer> counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
+    private String deFault = "NO DATA";
+    private String lastSavedFile = deFault;
+    private int lastSaveFileNum;
+    private static int count = 0;
+    //moveHistroy, counter, count는 공유되야해서 static으로 선언
     public FileManager() {
-        this.moveHistory = new ArrayDeque<>();
-        filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, ""));
         ensureSaveDirectory();
         loadFileNames();
     }
 
+    public static FileManager getInstance() {
+        if (instance == null) {
+            instance = new FileManager();
+        }
+        return instance;
+    }
 
     public ArrayList<String> getFilename() {
         return new ArrayList<>(filename); //복사본 제공
@@ -24,6 +36,14 @@ public class FileManager {
 
     public ArrayList<String> getMoveHistory() {
         return new ArrayList<>(moveHistory); // 복사본만 제공
+    }
+
+    public String getLastSavedFile() {
+        return lastSavedFile;
+    }
+
+    public int getLastSaveFileNum() {
+        return lastSaveFileNum;
     }
 
     // 세이브 디렉토리 확인 및 생성
@@ -34,19 +54,22 @@ public class FileManager {
         }
     }
 
-    // Deque에 입력 받을 때 무결섬을 재차 검사해야하나
-
     // Deque에 움직임 저장
-    public void overWriteHistory(String string) { moveHistory.addLast(string);}
+    public void addHistory(String string) { moveHistory.addLast(string);}
+
+    public void clearMoveHistory() { moveHistory.clear(); } // 종료 관련 명령어의 경우에만 실행
+
 
     // 세이브 파일 덮어쓰기 (최대 5개 관리, 텍스트 형식)
     public boolean overWriteSavedFile(int slot) {
         if (slot < 1 || slot > MAX_SAVES) {
             return false;
         }
+        slot--;
         String saveName = generateRandomSaveName();
-        String filePath = getFilePath(slot);
-        filename.set(slot -1, saveName);
+        String filePath = getFilePath(slot+1);
+        filename.set(slot, saveName);
+        counter.set(slot, ++count);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write(saveName); // 첫 번째 줄: 무작위 세이브 이름
             writer.newLine();
@@ -55,6 +78,8 @@ public class FileManager {
                 writer.write(move); // 세 번째 줄부터: moveHistory 내용
                 writer.newLine();
             }
+            lastSavedFile = saveName;
+            lastSaveFileNum = slot;
             return true;
         } catch (IOException e) {
             //e.printStackTrace(); //디버깅용 후에 주석처리
@@ -68,7 +93,8 @@ public class FileManager {
             //System.out.println("세이브 슬롯 번호는 1~5 사이여야 합니다.");
             return false;
         }
-        String filePath = getFilePath(slot);
+        slot--;
+        String filePath = getFilePath(slot+1);
         moveHistory.clear();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             reader.readLine();// 첫째 줄: 세이브 이름
@@ -92,16 +118,40 @@ public class FileManager {
             //System.out.println("세이브 슬롯 번호는 1~5 사이여야 합니다.");
             return false;
         }
-        String filePath = getFilePath(slot);
+        slot--;
+        String filePath = getFilePath(slot+1);
         File saveFile = new File(filePath);
 
         if (!saveFile.exists()) {
             //System.out.println("삭제할 파일이 존재하지 않습니다: 슬롯 " + slot);
             return false;
         }
+        if (lastSavedFile.equals(filename.get(slot))) {
+            int secondMax = Integer.MIN_VALUE;
+            int secondIndex = -1;
+
+            for (int i = 0; i < MAX_SAVES; i++) {
+                if (i == slot) continue;
+                if (filename.get(i).equals(deFault)) continue;
+
+                int value = counter.get(i);
+                if (value > secondMax) {
+                    secondMax = value;
+                    secondIndex = i;
+                }
+            }
+            if (secondIndex != -1) {
+                lastSavedFile = filename.get(secondIndex);
+                lastSaveFileNum = secondIndex;
+            } else {
+                lastSavedFile = deFault;
+                lastSaveFileNum = -1;
+            }
+        }
 
         if (saveFile.delete()) {
-            filename.set(slot -1, "");
+            filename.set(slot, deFault);
+            counter.set(slot, 0);
             //System.out.println("세이브 파일이 성공적으로 삭제되었습니다: 슬롯 " + slot);
             return true;
         } else {
@@ -109,6 +159,8 @@ public class FileManager {
             return false;
         }
     }
+
+
 
     private void loadFileNames() {
         for (int i = 1; i <= MAX_SAVES; i++) {
