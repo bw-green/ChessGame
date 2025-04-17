@@ -34,7 +34,7 @@ public class Queen extends Piece {
         boolean straightMove = (startRow == endRow || startCol == endCol);
         boolean diagonalMove = (rowDiff == colDiff);
 
-        if ((straightMove || diagonalMove) && board.isPathClear(startCell, endCell)) {
+        if (straightMove || diagonalMove) {
             Piece dest = endCell.getPiece();
             if (dest == null || dest.getColor() != this.color)
                 return true;

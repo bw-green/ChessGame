@@ -2,6 +2,7 @@ package test.java.piece;
 
 import board.Board;
 import board.PieceFactory;
+import data.MoveResult;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,8 @@ public class PawnTest {
         testBoard.setPieceTest(6, 4, whitePawn);
 
         // 전진: (6,4) → (5,4)
-        boolean moved = testBoard.movePiece(6, 4, 5, 4);
-        assertTrue(moved, "화이트 Pawn은 한 칸 전진 가능해야 한다. (6,4)→(5,4)");
+        MoveResult moved = testBoard.movePiece(6, 4, 5, 4);
+        assertTrue(moved == MoveResult.SUCCESS, "화이트 Pawn은 한 칸 전진 가능해야 한다. (6,4)→(5,4)");
     }
 
     // 2. 두 칸 전진 테스트: Pawn의 초기 위치에서 (6,4)에서 (4,4)로 이동 (중간 칸 (5,4)가 비어 있어야 함)
@@ -46,8 +47,8 @@ public class PawnTest {
         testBoard.setPieceTest(6, 4, whitePawn);
 
         // 전진: (6,4) → (4,4) (2칸 전진)
-        boolean moved = testBoard.movePiece(6, 4, 4, 4);
-        assertTrue(moved, "화이트 Pawn은 초기 위치에서 두 칸 전진 가능해야 한다. (6,4)→(4,4)");
+        MoveResult moved = testBoard.movePiece(6, 4, 4, 4);
+        assertTrue(moved == MoveResult.SUCCESS, "화이트 Pawn은 초기 위치에서 두 칸 전진 가능해야 한다. (6,4)→(4,4)");
     }
 
     // 3. 전진 경로에 기물이 있으면 이동 불가 테스트
@@ -61,12 +62,12 @@ public class PawnTest {
         testBoard.setPieceTest(5, 4, blocker);
 
         // 한 칸 전진 시도: (6,4) → (5,4) → 실패해야 함
-        boolean singleMoved = testBoard.movePiece(6, 4, 5, 4);
-        assertFalse(singleMoved, "전진 경로에 기물이 있으면 Pawn은 한 칸 전진할 수 없어야 한다.");
+        MoveResult singleMoved = testBoard.movePiece(6, 4, 5, 4);
+        assertFalse(singleMoved == MoveResult.SUCCESS, "전진 경로에 기물이 있으면 Pawn은 한 칸 전진할 수 없어야 한다.");
 
         // 두 칸 전진 시도: (6,4) → (4,4) → 역시 실패해야 함
-        boolean doubleMoved = testBoard.movePiece(6, 4, 4, 4);
-        assertFalse(doubleMoved, "전진 경로에 기물이 있으면 Pawn은 두 칸 전진할 수 없어야 한다.");
+        MoveResult doubleMoved = testBoard.movePiece(6, 4, 4, 4);
+        assertFalse(doubleMoved == MoveResult.SUCCESS, "전진 경로에 기물이 있으면 Pawn은 두 칸 전진할 수 없어야 한다.");
     }
 
     // 4. 대각 캡처 테스트: White Pawn이 (6,4)에서 대각선 (5,3) 또는 (5,5)로 이동하여 적 기물을 캡처할 수 있어야 한다.
@@ -79,8 +80,8 @@ public class PawnTest {
         // 대각 왼쪽 캡처: (6,4) → (5,3)
         Piece blackPawnLeft = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(5, 3, blackPawnLeft);
-        boolean capturedLeft = testBoard.movePiece(6, 4, 5, 3);
-        assertTrue(capturedLeft, "화이트 Pawn은 대각선 왼쪽에 있는 적 기물을 캡처할 수 있어야 한다. (6,4)→(5,3)");
+        MoveResult capturedLeft = testBoard.movePiece(6, 4, 5, 3);
+        assertTrue(capturedLeft == MoveResult.SUCCESS, "화이트 Pawn은 대각선 왼쪽에 있는 적 기물을 캡처할 수 있어야 한다. (6,4)→(5,3)");
 
         // Reset: 동일 Pawn 다시 (6,4)에 배치
         testBoard.setPieceTest(6, 4, whitePawn);
@@ -88,8 +89,8 @@ public class PawnTest {
         // 대각 오른쪽 캡처: (6,4) → (5,5)
         Piece blackPawnRight = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(5, 5, blackPawnRight);
-        boolean capturedRight = testBoard.movePiece(6, 4, 5, 5);
-        assertTrue(capturedRight, "화이트 Pawn은 대각선 오른쪽에 있는 적 기물을 캡처할 수 있어야 한다. (6,4)→(5,5)");
+        MoveResult capturedRight = testBoard.movePiece(6, 4, 5, 5);
+        assertTrue(capturedRight == MoveResult.SUCCESS, "화이트 Pawn은 대각선 오른쪽에 있는 적 기물을 캡처할 수 있어야 한다. (6,4)→(5,5)");
     }
 
     // 5. 정면으로의 캡처 불가 테스트: 정면 칸에 적 기물이 있어도 전진 캡처는 불가능해야 한다.
@@ -103,7 +104,7 @@ public class PawnTest {
         Piece blackPawnFront = PieceFactory.createPieceFromSymbol("p");
         testBoard.setPieceTest(5, 4, blackPawnFront);
 
-        boolean moved = testBoard.movePiece(6, 4, 5, 4);
-        assertFalse(moved, "화이트 Pawn은 정면 전진 칸에 적 기물이 있어도 캡처할 수 없어야 한다. (6,4)→(5,4)");
+        MoveResult moved = testBoard.movePiece(6, 4, 5, 4);
+        assertFalse(moved == MoveResult.SUCCESS, "화이트 Pawn은 정면 전진 칸에 적 기물이 있어도 캡처할 수 없어야 한다. (6,4)→(5,4)");
     }
 }

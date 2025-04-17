@@ -27,12 +27,10 @@ public class Rook extends Piece {
     public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
         // piece.Rook: 수평 또는 수직 이동
         if (startCell.getRow() == endCell.getRow() || startCell.getCol() == endCell.getCol()) {
-            if (board.isPathClear(startCell, endCell)) {
-                Piece dest = endCell.getPiece();
-                if (dest == null || dest.getColor() != this.color){
-                    firstMove = true;
-                    return true;
-                }
+            Piece dest = endCell.getPiece();
+            if (dest == null || dest.getColor() != this.color) {
+                firstMove = true;
+                return true;
             }
         }
         return false;
