@@ -3,6 +3,7 @@ package fileManager;
 import board.Board;
 import board.PieceFactory;
 import data.PieceColor;
+import data.FileError;
 import piece.Piece;
 
 import java.io.*;
@@ -53,8 +54,8 @@ public class FileManager {
         if (!dir.exists()) {
             boolean success = dir.mkdirs();
             if (!success) {
-                System.err.println(" Failed to create save directory: " + SAVE_DIR); //임시 출력본
-                throw new IllegalStateException("Unable to create save directory. The program will terminate.");
+                System.err.println(FileError.FAILED_MAKDIR + SAVE_DIR); //임시 출력본
+                throw new IllegalStateException(String.valueOf(FileError.FAILED_MAKDIR_ERROR));
             }
         }
     }
@@ -73,7 +74,7 @@ public class FileManager {
             writer.write(saveName);
             writer.newLine(); // 두 번째 줄 공백
             writer.newLine();
-            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "White" : "Black"); // 세 번째 줄 턴 정보
+            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "WHITE" : "BLACK"); // 세 번째 줄 턴 정보
             writer.newLine();
 
             // 💡 여기서 보드 상태 직접 저장 (네 번째 줄부터)
@@ -92,6 +93,7 @@ public class FileManager {
 
             return true;
         } catch (IOException e) {
+            System.out.println(FileError.DEBUG_ERROR_OVERWRITE); //디버깅용
             return false;
         }
     }
@@ -126,6 +128,7 @@ public class FileManager {
 
             return true;
         } catch (IOException e) {
+            System.out.println(FileError.DEBUG_ERROR_LOAD); //디버깅용
             return false;
         }
     }
@@ -145,7 +148,7 @@ public class FileManager {
             //System.out.println("삭제할 파일이 존재하지 않습니다: 슬롯 " + slot);
             return false;
         }
-        if (lastSavedFile.equals(filename.get(slot))) {
+        if (lastSavedFile.equals(filename.get(slot))) { //last saved file update (start)
             int secondMax = -1;
             int secondIndex = -1;
 
@@ -166,7 +169,7 @@ public class FileManager {
                 lastSavedFile = deFault;
                 lastSaveFileNum = -1;
             }
-        }
+        }   //last saved file update (end)
 
         if (saveFile.delete()) {
             filename.set(slot, deFault);
@@ -194,6 +197,7 @@ public class FileManager {
                     filename.set(i - 1, saveName);
                 }
             } catch (IOException e) {
+                System.out.println(FileError.DEBUG_ERROR_LOAD_FN); //디버깅용
                 //e.printStackTrace(); //디버깅용 후에 주석처리
                 //손상된 파일이나 존재하지 않는 파일이나 똑같이 리스트에는 안들어옵니다.
             }
