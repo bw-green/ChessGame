@@ -2,6 +2,7 @@ package test.java.piece;
 
 import board.Board;
 import board.PieceFactory; // 추가
+import data.MoveResult;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,8 +57,8 @@ public class KingTest {
             int newRow = currentRow + dRow;
             int newCol = currentCol + dCol;
 
-            boolean moved = testBoard.movePiece(currentRow, currentCol, newRow, newCol);
-            assertTrue(moved, "킹은 " + DIRECTION_NAMES[i] + " 방향으로 한 칸 이동 가능해야 한다.");
+            MoveResult moved = testBoard.movePiece(currentRow, currentCol, newRow, newCol);
+            assertTrue(moved == MoveResult.SUCCESS, "킹은 " + DIRECTION_NAMES[i] + " 방향으로 한 칸 이동 가능해야 한다.");
 
             // 다음 방향 이동을 위해 킹을 다시 중앙으로 되돌림
             testBoard.setPieceTest(currentRow, currentCol, king);
@@ -70,8 +71,8 @@ public class KingTest {
         testBoard = new Board(false);
         Piece king = PieceFactory.createPieceFromSymbol("K");
         testBoard.setPieceTest(7, 7, king); // 킹을 h8에 배치
-        boolean move = testBoard.movePiece(7,7,8,8); // false가 의도 결과
-        assertTrue(!move, "킹은 보드 밖으로 나갈 수 없는데 가능하다고?"); // true가 발생할 시
+        MoveResult move = testBoard.movePiece(7,7,8,8); // false가 의도 결과
+        assertTrue(!(move == MoveResult.SUCCESS), "킹은 보드 밖으로 나갈 수 없는데 가능하다고?"); // true가 발생할 시
     }
     // 기물이동 사이 아군기물이나 상대기물 존재시
     // -> 킹은 상관 없지 않나? 캐슬링때만 필요한데 그건 아래 캐슬링 있어서 그냥 생략.
@@ -95,8 +96,8 @@ public class KingTest {
                 testBoard.setPieceTest(targetRow, targetCol, new Pawn(PieceColor.BLACK));
 
                 // 이동 및 캡처 시도
-                boolean captured = testBoard.movePiece(4, 4, targetRow, targetCol);
-                assertTrue(captured, String.format("킹은 상대 기물을 캡처할 수 있어야 한다: (%d,%d)", targetRow, targetCol));
+                MoveResult captured = testBoard.movePiece(4, 4, targetRow, targetCol);
+                assertTrue(captured == MoveResult.SUCCESS, String.format("킹은 상대 기물을 캡처할 수 있어야 한다: (%d,%d)", targetRow, targetCol));
 
                 // 다음 이동을 위해 킹을 다시 중앙에 배치
                 testBoard.setPieceTest(4, 4, king);
@@ -119,8 +120,8 @@ public class KingTest {
             testBoard.setPieceTest(targetRow, targetCol, new Pawn(PieceColor.WHITE));
 
             // 이동 시도 (성공하면 안 됨)
-            boolean moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
-            assertFalse(moved, "킹은 아군 기물이 있는 " + DIRECTION_NAMES[i] + " 방향으로 이동할 수 없어야 한다.");
+            MoveResult moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
+            assertFalse(moved == MoveResult.SUCCESS, "킹은 아군 기물이 있는 " + DIRECTION_NAMES[i] + " 방향으로 이동할 수 없어야 한다.");
 
             // 다시 중앙에 킹 복귀 (기물이 이동 실패하더라도 상태 보존을 위해 반복)
             testBoard.setPieceTest(START_ROW, START_COL, king);
@@ -140,9 +141,9 @@ public class KingTest {
         testBoard.setPieceTest(7, 7, rook);
 
         // 캐슬링을 수행 (예: e1 → g1)
-        boolean castled = testBoard.movePiece(7, 4, 7, 6); // g1
+        MoveResult castled = testBoard.movePiece(7, 4, 7, 6); // g1
 
-        assertTrue(castled, "킹사이드 캐슬링이 정상적으로 수행되어야 한다.");
+        assertTrue(castled == MoveResult.SUCCESS, "킹사이드 캐슬링이 정상적으로 수행되어야 한다.");
 
         // 킹이 g1에 있는지, 룩이 f1에 있는지 확인
         assertTrue(testBoard.getPieceAt(7, 6) instanceof King, "킹은 g1에 있어야 한다.");
@@ -162,8 +163,8 @@ public class KingTest {
         testBoard.setPieceTest(4, 6, enemyRook);
 
         // 킹이 오른쪽(f5)으로 이동 시도 → 룩 공격 방향
-        boolean movedIntoCheck = testBoard.movePiece(4, 4, 4, 5); // e5 → f5
-        assertTrue(!movedIntoCheck, "킹은 체크되는 위치로 이동할 수 없어야 한다.");
+        MoveResult movedIntoCheck = testBoard.movePiece(4, 4, 4, 5); // e5 → f5
+        assertTrue(!(movedIntoCheck == MoveResult.SUCCESS), "킹은 체크되는 위치로 이동할 수 없어야 한다.");
     }
     @Test
     void testKingCanEscapeFromCheck() { // 킹이 체크에서 벗어나려고 이동하는 경우(탈출)
@@ -178,8 +179,8 @@ public class KingTest {
         // 가정: 이동 전 상태에서 Board는 킹이 체크당하고 있음을 판단할 수 있어야 함
 
         // 킹이 한 칸 위로 피함 (e4)
-        boolean movedOutOfCheck = testBoard.movePiece(4, 4, 3, 4); // e5 → e4
-        assertTrue(movedOutOfCheck, "킹은 체크 상태에서 벗어나는 이동은 가능해야 한다.");
+        MoveResult movedOutOfCheck = testBoard.movePiece(4, 4, 3, 4); // e5 → e4
+        assertTrue(movedOutOfCheck == MoveResult.SUCCESS, "킹은 체크 상태에서 벗어나는 이동은 가능해야 한다.");
     }
 
     //등등

@@ -2,6 +2,7 @@ package test.java.piece;
 
 import board.Board;
 import board.PieceFactory;
+import data.MoveResult;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,8 @@ public class RookTest {
             int newRow = START_ROW + 3 * dRow;
             int newCol = START_COL + 3 * dCol;
 
-            boolean moved = testBoard.movePiece(START_ROW, START_COL, newRow, newCol);
-            assertTrue(moved, "Rook은 " + DIRECTION_NAMES[i] + " 방향으로 3칸 이동 가능해야 한다.");
+            MoveResult moved = testBoard.movePiece(START_ROW, START_COL, newRow, newCol);
+            assertTrue(moved == MoveResult.SUCCESS, "Rook은 " + DIRECTION_NAMES[i] + " 방향으로 3칸 이동 가능해야 한다.");
 
             // 다음 방향 테스트를 위해, 다시 시작 위치에 배치
             testBoard.setPieceTest(START_ROW, START_COL, rook);
@@ -59,8 +60,8 @@ public class RookTest {
         Piece rook = PieceFactory.createPieceFromSymbol("R");
         // 예: 보드의 좌상단 모서리에 배치
         testBoard.setPieceTest(0, 0, rook);
-        boolean moved = testBoard.movePiece(0, 0, -1, 0); // 위쪽으로 이동 시도 → 보드 밖
-        assertFalse(moved, "Rook은 보드 밖으로 이동할 수 없어야 한다.");
+        MoveResult moved = testBoard.movePiece(0, 0, -1, 0); // 위쪽으로 이동 시도 → 보드 밖
+        assertFalse(moved == MoveResult.SUCCESS, "Rook은 보드 밖으로 이동할 수 없어야 한다.");
     }
 
     // 3. Rook 캡처 테스트: 목적지에 상대 기물이 있으면 캡처할 수 있어야 함
@@ -73,8 +74,8 @@ public class RookTest {
         int targetRow = START_ROW;
         int targetCol = START_COL + 3;
         testBoard.setPieceTest(targetRow, targetCol, enemyPawn);
-        boolean moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
-        assertTrue(moved, "Rook은 상대 기물을 캡처할 수 있어야 한다.");
+        MoveResult moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
+        assertTrue(moved == MoveResult.SUCCESS, "Rook은 상대 기물을 캡처할 수 있어야 한다.");
     }
 
     // 4. Rook 이동 경로에 아군 기물이 있는 경우 이동 불가 테스트
@@ -85,8 +86,8 @@ public class RookTest {
         testBoard.setPieceTest(START_ROW, START_COL, rook);
         // 예: 수평 오른쪽 방향으로 이동할 때, 중간 칸 (예: (4,6))에 아군 기물이 존재할 경우
         testBoard.setPieceTest(START_ROW, START_COL + 2, allyPawn);
-        boolean moved = testBoard.movePiece(START_ROW, START_COL, START_ROW, START_COL + 3);
-        assertFalse(moved, "Rook은 경로에 아군 기물이 있으면 이동할 수 없어야 한다.");
+        MoveResult moved = testBoard.movePiece(START_ROW, START_COL, START_ROW, START_COL + 3);
+        assertFalse(moved == MoveResult.SUCCESS, "Rook은 경로에 아군 기물이 있으면 이동할 수 없어야 한다.");
     }
 
     // 5. Rook은 중간 경로에 기물이 있으면 뛰어넘어 이동할 수 없음 (점프 불가)
@@ -97,7 +98,7 @@ public class RookTest {
         testBoard.setPieceTest(START_ROW, START_COL, rook);
         // 예: 수직 아래 방향으로 이동할 때, 중간 칸 (예: (5,4))에 기물이 있으면, (6,4)로 이동 시도 시 이동 불가
         testBoard.setPieceTest(START_ROW + 1, START_COL, blockingPawn);
-        boolean moved = testBoard.movePiece(START_ROW, START_COL, START_ROW + 2, START_COL);
-        assertFalse(moved, "Rook은 중간 경로에 기물이 있으면 이동할 수 없어야 한다.");
+        MoveResult moved = testBoard.movePiece(START_ROW, START_COL, START_ROW + 2, START_COL);
+        assertFalse(moved == MoveResult.SUCCESS, "Rook은 중간 경로에 기물이 있으면 이동할 수 없어야 한다.");
     }
 }

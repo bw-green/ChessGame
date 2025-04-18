@@ -24,11 +24,9 @@ public class Bishop extends Piece {
         int colDiff = Math.abs(endCell.getCol() - startCell.getCol());
         // piece.Bishop: 대각선 이동
         if (rowDiff == colDiff) {
-            if (board.isPathClear(startCell, endCell)) {
-                Piece dest = endCell.getPiece();
-                if (dest == null || dest.getColor() != this.color)
-                    return true;
-            }
+            Piece dest = endCell.getPiece();
+            if (dest == null || dest.getColor() != this.color)
+                return true;
         }
         return false;
     }

@@ -2,6 +2,7 @@ package test.java.piece;
 
 import board.Board;
 import board.PieceFactory;
+import data.MoveResult;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,8 +52,8 @@ public class QueenTest {
             int newRow = START_ROW + 3 * dRow;
             int newCol = START_COL + 3 * dCol;
 
-            boolean moved = testBoard.movePiece(START_ROW, START_COL, newRow, newCol);
-            assertTrue(moved, "Queen은 " + DIRECTION_NAMES[i] + " 방향으로 3칸 이동 가능해야 한다.");
+            MoveResult moved = testBoard.movePiece(START_ROW, START_COL, newRow, newCol);
+            assertTrue(moved == MoveResult.SUCCESS, "Queen은 " + DIRECTION_NAMES[i] + " 방향으로 3칸 이동 가능해야 한다.");
 
             // 다음 이동을 위해 Queen을 다시 중앙에 배치
             testBoard.setPieceTest(START_ROW, START_COL, queen);
@@ -65,8 +66,8 @@ public class QueenTest {
         Piece queen = PieceFactory.createPieceFromSymbol("Q");
         // 예: 보드의 왼쪽 상단에 배치
         testBoard.setPieceTest(0, 0, queen);
-        boolean moved = testBoard.movePiece(0, 0, -1, -1); // 보드 밖으로 이동 시도
-        assertFalse(moved, "Queen은 보드 밖으로 이동할 수 없어야 한다.");
+        MoveResult moved = testBoard.movePiece(0, 0, -1, -1); // 보드 밖으로 이동 시도
+        assertFalse(moved == MoveResult.SUCCESS, "Queen은 보드 밖으로 이동할 수 없어야 한다.");
     }
 
     // 3. Queen 캡처 테스트: 대상 칸에 상대 기물이 있는 경우 이동 가능 (캡처)
@@ -80,8 +81,8 @@ public class QueenTest {
         int targetCol = START_COL + 3;
         testBoard.setPieceTest(targetRow, targetCol, enemyPawn);
 
-        boolean moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
-        assertTrue(moved, "Queen은 상대 기물을 캡처할 수 있어야 한다.");
+        MoveResult moved = testBoard.movePiece(START_ROW, START_COL, targetRow, targetCol);
+        assertTrue(moved == MoveResult.SUCCESS, "Queen은 상대 기물을 캡처할 수 있어야 한다.");
     }
 
     // 4. Queen 경로가 아군 기물에 의해 차단된 경우 이동 실패
@@ -94,8 +95,8 @@ public class QueenTest {
         // Queen이 (4,4)에서 (4,7)로 이동하려고 할 때, (4,6)에 아군 기물 배치
         testBoard.setPieceTest(4, 6, allyPawn);
 
-        boolean moved = testBoard.movePiece(START_ROW, START_COL, 4, 7);
-        assertFalse(moved, "Queen은 경로에 아군 기물이 있으면 이동할 수 없어야 한다.");
+        MoveResult moved = testBoard.movePiece(START_ROW, START_COL, 4, 7);
+        assertFalse(moved == MoveResult.SUCCESS, "Queen은 경로에 아군 기물이 있으면 이동할 수 없어야 한다.");
     }
 
     // 5. Queen 경로에 적군 기물이 존재하는 경우, 목적지에만 적군 기물이 있다면 캡처 가능.
@@ -108,7 +109,7 @@ public class QueenTest {
         // 예: 대각선 우상으로 3칸 이동할 때,
         // 중간 칸: (3,5)에 기물 배치 → (2,6)으로 이동 시도
         testBoard.setPieceTest(START_ROW - 1, START_COL + 1, blockingPawn);
-        boolean moved = testBoard.movePiece(START_ROW, START_COL, START_ROW - 2, START_COL + 2);
-        assertFalse(moved, "Queen은 중간 경로에 기물이 있으면 이동할 수 없어야 한다.");
+        MoveResult moved = testBoard.movePiece(START_ROW, START_COL, START_ROW - 2, START_COL + 2);
+        assertFalse(moved == MoveResult.SUCCESS, "Queen은 중간 경로에 기물이 있으면 이동할 수 없어야 한다.");
     }
 }
