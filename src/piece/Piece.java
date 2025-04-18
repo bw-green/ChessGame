@@ -17,6 +17,10 @@ public abstract class Piece {
         this.color = color;
     }
 
+    // 0416 update - 각 기물들에 deepcopy 메소드와 생성자 추가함.
+    // deep copy 메소드에 대한 추상 선언(명시적)
+    public abstract Piece deepCopy();
+
     /**
      * 기물의 색상을 반환합니다.
      * @return data.PieceColor
