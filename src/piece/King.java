@@ -5,13 +5,20 @@ import board.Cell;
 import data.PieceColor;
 import specialRule.SpecialRule;
 
-//////////////////////////////////////////////
-// 4) piece.Piece 추상 클래스 및 구체 기물들
-
 public class King extends Piece {
     public boolean firstMove = false; //캐슬링 조건
     public King(PieceColor color) {
         super(color);
+    }
+
+    // 복사 생성자
+    public King(King other) {
+        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
+        this.firstMove = other.firstMove;
+    }
+    // 복사 메소드
+    public King deepCopy() {
+        return new King(this);
     }
 
     @Override
