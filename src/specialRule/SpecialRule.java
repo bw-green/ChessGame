@@ -3,6 +3,7 @@ package specialRule;
 import java.util.Scanner;
 import board.Board;
 import board.Cell;
+import check.Checker;
 import data.InvalidCoordinate;
 import data.PrintTemplate;
 import data.Unspecified;
@@ -22,11 +23,22 @@ public class SpecialRule {
      * @param end 도착 위치 셀
      * @return boolean값
      */
-    public static boolean enPassant(Cell start, Cell end,Cell enPassant){
+    public static boolean enPassant(Board board, Cell start, Cell end,Cell enPassant){
         Piece movingPiece = start.getPiece(); //움직이는 piece고, 폰이다.
         Piece targetPiece = enPassant.getPiece(); // 앙파상 당할 모든 자격을 갖춘 piece다.
-        if (targetPiece.getColor() != movingPiece.getColor()){  //색깔이 달라야한다.
-            enPassant.setPiece(null); //캡쳐당하는 기물과 실제 이동 기물의 위치가 다르므로, 특수룰에서 캡쳐된 기물을 제거해준다.
+        if (targetPiece.getColor() != movingPiece.getColor()){//색깔이 달라야한다.
+            Checker checker = new Checker(movingPiece.getColor());
+            enPassant.setPiece(null);
+            end.setPiece(movingPiece);
+            start.setPiece(null);
+            if(checker.isCheck(board)) {
+                enPassant.setPiece(targetPiece);
+                end.setPiece(null);
+                start.setPiece(movingPiece);
+                return false;
+            }//미리두고 체크 확인
+            end.setPiece(null);
+            start.setPiece(movingPiece);//원상복귀
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println("EnPassant Success");
             return true;
@@ -109,9 +121,45 @@ public class SpecialRule {
             System.out.println(Unspecified.CASTLING_FAILED);
             return false;
         }
+        Checker checker = new Checker(movingPiece.getColor());
+        Cell kingGoing;
+        if(rookCol == 7)//아까 정한 rookcol에 따른 킹의 이동지점 정하기
+            kingGoing = board.getCell(kingStart.getRow(), kingStart.getCol()+1);
+        else
+            kingGoing = board.getCell(kingStart.getRow(), kingStart.getCol()-1);
+
+        kingGoing.setPiece(king);
+        kingStart.setPiece(null);
+        if (checker.isCheck(board)){
+            kingGoing.setPiece(null);
+            kingStart.setPiece(king);
+            return false;
+        }//중간지점 체킹확인
+
+        kingGoing.setPiece(null);
+        kingEnd.setPiece(king);
+        kingStart.setPiece(null);
+        if (checker.isCheck(board)){
+            kingEnd.setPiece(null);
+            kingStart.setPiece(king);
+            return false;
+        } //도착 지점 체킹 확인
+
+
         //룩을 이동시킴 (true 반환하면 king은 보드 클래스에서 움직임)
         rookEndCell.setPiece(movingPiece);
         rookCell.setPiece(null);
+        kingEnd.setPiece(king);
+        kingStart.setPiece(null); //미리 둬보기
+        if(checker.isCheck(board)){
+            rookEndCell.setPiece(null);
+            rookCell.setPiece(movingPiece);
+            kingStart.setPiece(king);
+            kingEnd.setPiece(null); //전부 원상 복구
+            return false;
+        }
+        kingStart.setPiece(king);
+        kingEnd.setPiece(null); //킹은 보드쪽에서 이동되므로 원상 복구
         System.out.println(PrintTemplate.BOLDLINE);
         System.out.println("Castling Success");
         return true;
