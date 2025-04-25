@@ -10,15 +10,15 @@ public class PieceFactory {
      */
     public static Piece createPiece(String pieceType, PieceColor color) {
         String lowerType = pieceType.toLowerCase();
-        switch (lowerType) {
-            case "king":   return new King(color);
-            case "queen":  return new Queen(color);
-            case "rook":   return new Rook(color);
-            case "bishop": return new Bishop(color);
-            case "knight": return new Knight(color);
-            case "pawn":   return new Pawn(color);
-            default: throw new IllegalArgumentException("유효하지 않은 기물 유형: " + pieceType);
-        }
+        return switch (lowerType) {
+            case "king" -> new King(color);
+            case "queen" -> new Queen(color);
+            case "rook" -> new Rook(color);
+            case "bishop" -> new Bishop(color);
+            case "knight" -> new Knight(color);
+            case "pawn" -> new Pawn(color);
+            default -> throw new IllegalArgumentException("유효하지 않은 기물 유형: " + pieceType);
+        };
     }
 
     /**

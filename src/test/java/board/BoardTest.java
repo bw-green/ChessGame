@@ -20,7 +20,8 @@ public class BoardTest {
             "e2,e4",
             "a2, a3" ,
             "a1,a2",
-            "h2,h4"
+            "h2,h4",
+            "g4,h4"
     })
     @DisplayName("보드 움직임 확인용")
     void testLadderResult(String start, String end) {
