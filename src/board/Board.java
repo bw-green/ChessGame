@@ -152,13 +152,19 @@ public class Board {
     public MoveResult movePiece(int startRow, int startCol, int endRow, int endCol) {
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
-        if (start == null || end == null) return MoveResult.FAIL;
+        if (start == null || end == null) return MoveResult.FAIL;  // input에서 처리됌
 
         Piece movingPiece = start.getPiece();
-        if (movingPiece == null) return MoveResult.FAIL;
+        if (movingPiece == null){
+            System.out.println(MoveErrorType.NO_PIECE_AT_START);
+            return MoveResult.FAIL;
+        }
 
         // 1. 이동 가능성 자체 확인
-        if (!movingPiece.isValidMove(this, start, end)) return MoveResult.FAIL;
+        if (!movingPiece.isValidMove(this, start, end)){
+            System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
+            return MoveResult.FAIL;
+        }
 
         // 2. 의미 오류 검사 추가 (6가지 의미 오류)
         MoveErrorType error = validateMoveMeaning(
