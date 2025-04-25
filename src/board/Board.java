@@ -100,6 +100,13 @@ public class Board {
         // endCell 직전까지 검사
         while (currentRow != endRow || currentCol != endCol) {
             Cell cell = getCell(currentRow, currentCol);
+
+            if (!(0 <= currentRow && currentRow < 8 && 0 <= currentCol && currentCol < 8)){
+                //System.out.println(startRow + "," + startCol + "," + endRow + "," + endCol);
+                //System.out.println("range is out of bounds");
+                break;
+            }
+
             if (cell != null && cell.getPiece() != null) {
                 return false;
             }
@@ -137,10 +144,42 @@ public class Board {
             if(end.getRow()==7 || end.getRow()==0){
                 SpecialRule.promotion(end);//프로모션은 흐름도에 따라 기물 이동을 수행한 후 결정됩니다.
             }
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {
+
+        Cell start = getCell(startRow, startCol);
+        Cell end = getCell(endRow, endCol);
+
+        if (start == null || end == null)
+            return false;
+
+        Piece movingPiece = start.getPiece();
+        if (movingPiece == null)
+            return false;
+
+        // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
+        if (movingPiece.isValidMove(this, start, end)) {
+            // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
+
+            end.setPiece(movingPiece);
+            start.setPiece(null);
+
+            // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
             return true;
         }
+
         return false;
+
     }
+
 
     public void enPassantChecking(){
         for(int i = 0 ; i<8; i++){
@@ -151,6 +190,7 @@ public class Board {
                         pawn.enPassantCounter = 1; //한턴은 앙파상을 유지시켜야하므로
                     } else if (pawn.enPassantable && pawn.enPassantCounter == 1) {
                         pawn.enPassantCounter = 0;
+                        pawn.enPassantable = false;
                     }
                 }
             }

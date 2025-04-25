@@ -39,4 +39,6 @@ public abstract class Piece {
      * @return String (기물 기호)
      */
     public abstract String getSymbol();
+
+    public abstract Piece deepCopy();
 }
