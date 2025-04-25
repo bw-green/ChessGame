@@ -1,8 +1,7 @@
 import Input.GameInput;
 import board.Board;
 import data.GameInputReturn;
-import data.MoveResult;
-import userinput.UserInput;
+import Input.UserInput;
 
 public class TestMain {
 

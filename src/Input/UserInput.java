@@ -1,4 +1,4 @@
-package userinput;
+package Input;
 
 import data.GameInputReturn;
 import data.InvalidCoordinate;
