@@ -1,6 +1,7 @@
 package test.java.piece;
 
 import board.Board;
+import data.MoveResult;
 import data.PieceColor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,11 +40,11 @@ public class    PawnPromotionTest {
         //when
         int[][] coordinates =helpTest(start, end);
         System.setIn(new ByteArrayInputStream(set.getBytes()));
-        boolean moved=board.movePiece(coordinates[0][0], coordinates[0][1], coordinates[1][0], coordinates[1][1]);
+        MoveResult moved = board.movePiece(coordinates[0][0], coordinates[0][1], coordinates[1][0], coordinates[1][1]);
 
 
         //then
-        System.out.println(moved);
+        System.out.println(moved == MoveResult.SUCCESS);
         System.out.println(board);
     }
     // 보드 내 이동 좌표에 문제 없는지 대각만 움직이는지 확인해야함

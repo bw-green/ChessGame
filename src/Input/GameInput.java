@@ -2,7 +2,6 @@ package Input;
 
 import data.CommandError;
 import data.GameInputReturn;
-import userinput.UserInput;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

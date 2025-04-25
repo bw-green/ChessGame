@@ -1,6 +1,7 @@
 import board.Board;
-import board.Cell;
+import data.MoveResult;
 import data.PieceColor;
+import data.MoveErrorType;
 
 import java.util.Scanner;
 
@@ -36,53 +37,55 @@ public class mainChess {
         }
 
         // 초기 상태 출력
-        System.out.println("[현재 체스판 상태]");
         System.out.println(board);
-        System.out.println("현재 턴: " + currentTurn);
 
         // 게임 루프
         while (true) {
-            System.out.print("이동할 기물의 위치와 도착 위치를 입력하세요 (예: e2 e4): ");
-            String input = scan.nextLine();
-            String[] tokens = input.split("\\s+");
+            System.out.println("이동할 기물의 위치와 도착 위치를 입력하세요 (예: e2 e4): ");
+            System.out.print(currentTurn + " > ");
+            String input = scan.nextLine().trim();
 
+            // 1. 입력 비었는지 확인
+            if (input == null || input.isBlank()) {
+                printError(MoveErrorType.EMPTY_OR_NULL); // ← 문법 오류지만 예외적으로 같이 씀
+                continue;
+            }
+
+            // 2. 좌표 개수 확인
+            String[] tokens = input.split("\\s+");
             if (tokens.length != 2) {
-                System.out.println("❌ 입력은 시작 위치와 도착 위치, 두 개여야 합니다. 예: e2 e4\n");
+                printError(MoveErrorType.COORDINATE_COUNT); // ← 역시 문법 오류 범주
                 continue;
             }
 
             String startNotation = tokens[0];
             String endNotation = tokens[1];
 
+            // 3. 좌표 형식 검사
             if (!isValidNotation(startNotation) || !isValidNotation(endNotation)) {
-                System.out.println("❌ 좌표 형식이 잘못되었습니다. 예: e2 e4\n");
+                printError(MoveErrorType.INVALID_CHARACTER);
                 continue;
             }
 
+            // 4. 의미 오류 검사 (보드 상태 기반)
+            MoveErrorType error = board.validateMoveMeaning(startNotation, endNotation, currentTurn);
+            if (error != null) {
+                printError(error);
+                continue;
+            }
+
+            // 5. 의미 오류 없음 → 이동 수행
             int[] startRC = Board.notationToCoordinate(startNotation);
             int[] endRC = Board.notationToCoordinate(endNotation);
-            Cell startCell = board.getCell(startRC[0], startRC[1]);
+            MoveResult result = board.movePiece(startRC[0], startRC[1], endRC[0], endRC[1]);
 
-            if (startCell.getPiece() == null) {
-                System.out.println("❌ 선택한 칸에 기물이 없습니다.\n");
-                continue;
-            }
-
-            if (startCell.getPiece().getColor() != currentTurn) {
-                System.out.println("❌ 현재 턴의 기물이 아닙니다. (" + currentTurn + " 턴인데 다른 색 기물 선택)\n");
-                continue;
-            }
-
-            boolean result = board.movePiece(startRC[0], startRC[1], endRC[0], endRC[1]);
-            if (result) {
-                System.out.println("✅ 이동 성공!");
+            if (result== MoveResult.SUCCESS) {
                 System.out.println(board);
-                // 턴 전환
                 currentTurn = (currentTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-                System.out.println("턴이 전환되었습니다. 현재 턴: " + currentTurn + "\n");
+            } else {
+                // (보통 여기 안 와야 함)
+                printError(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
             }
-
-
         }
         // scan.close(); // 무한 루프로 종료되지 않으므로 닫지 않습니다.
     }
@@ -101,5 +104,12 @@ public class mainChess {
         char rank = input.charAt(1);
         if (rank < '1' || rank > '8') return false;
         return true;
+    }
+
+    static void printError(MoveErrorType error) {
+        System.out.println("==================================================");
+        System.out.println(error.getMessage());
+        System.out.println("==================================================");
+        System.out.println();
     }
 }
