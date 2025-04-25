@@ -14,7 +14,17 @@ import piece.Queen;
 public class BoardTest {
     static Board board;
 
+
     @Test
+    @ParameterizedTest
+    @CsvSource({
+            "e2,e4",
+            "a2, a3" ,
+            "a1,a2",
+            "h2,h4",
+            "g4,h4"
+    })
+
     @DisplayName("보드 움직임 확인용")
     public void testLadderResult() {
         Board board = new Board();

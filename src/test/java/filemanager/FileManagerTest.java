@@ -1,65 +1,79 @@
 package test.java.filemanager;
 
+import board.Board;
 import fileManager.FileManager;
 import org.junit.jupiter.api.*;
-import java.util.List;
-import java.io.File;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileManagerTest {
+
+public class FileManagerTest {
+
     private FileManager fileManager;
-    //!!saves 폴더 자동생성됩니다.!! 폴더 삭제하는건 따로 구현 안했습니다. 회의때 논의하면 좋을 것 같습니다.
+    private Board board;
+
     @BeforeEach
     void setUp() {
-        fileManager = new FileManager();
-        fileManager.getMoveHistory().clear(); // 초기화된 moveHistory와는 다른 복사본이지만, 테스트용 클린업 습관
+        board = new Board();
+        fileManager = FileManager.getInstance();
     }
 
     @Test
-    void testOverwriteAndLoadSavedFile() {
-        // 준비: 움직임을 수동으로 추가
-        fileManager.overWriteHistory("P A2 A4");
-        fileManager.overWriteHistory("k B1 C3");
-
-        // 저장
-        boolean saveResult = fileManager.overWriteSavedFile(1);
-        assertTrue(saveResult, "파일 저장에 실패했습니다.");
-
-        // 로드
-        boolean loadResult = fileManager.loadSavedFile(1);
-        assertTrue(loadResult, "파일 로딩에 실패했습니다.");
-
-        // 검증
-        List<String> loadedMoves = fileManager.getMoveHistory();
-        assertEquals(2, loadedMoves.size());
-        assertEquals("P A2 A4", loadedMoves.get(0));
-        assertEquals("k B1 C3", loadedMoves.get(1));
+    void testSingletonBehavior() {
+        FileManager anotherInstance = FileManager.getInstance();
+        assertSame(fileManager, anotherInstance, "FileManager는 싱글턴이어야 합니다.");
     }
 
     @Test
-    void testInvalidSlotSave() {
-        boolean result = fileManager.overWriteSavedFile(6); // 1~5 이외
-        assertFalse(result, "1~5 범위를 벗어난 슬롯 저장은 실패해야 합니다.");
-    }
-
-    @Test
-    void testInvalidSlotLoad() {
-        boolean result = fileManager.loadSavedFile(0); // 잘못된 슬롯
-        assertFalse(result, "1~5 범위를 벗어난 슬롯 로딩은 실패해야 합니다.");
-    }
-
-    /*슬롯 자리에 문자열 등 아예 벗어나는 값이 들어가는 경우는 GameManager
-    에서 처리해야 되는 오류라 생각해서<("Wrong number")-인자 오류 부분> 단순한 오류 식별 능력이 있는지만 봤습니다.
-    아마 추후 slot부분은 완성된 입력이 들어온다 가정하여, 위 테스트 부분은 필요없는 테스트 부분이 될 것 같습니다.*/
-    @AfterEach
-    void tearDown() {
-        // 테스트 후 파일 삭제 (clean-up)
-        for (int i = 1; i <= 5; i++) {
-            File file = new File("saves/savefile" + i + ".txt");
-            if (file.exists()) {
-                file.delete();
-            }
+    void testSaveToAllSlots() {
+        for (int slot = 1; slot <= 5; slot++) {
+            assertTrue(fileManager.overWriteSavedFile(slot, board), "슬롯 " + slot + " 저장 실패");
         }
+    }
+
+    @Test
+    void testLoadFromAllSlots() {
+        for (int slot = 1; slot <= 5; slot++) {
+            Board loadedBoard = new Board();
+            assertTrue(fileManager.loadSavedFile(slot, loadedBoard), "슬롯 " + slot + " 로드 실패");
+        }
+    }
+
+    @Test
+    void testGetSaveNameAndCount() {
+        fileManager.overWriteSavedFile(1, board);
+        ArrayList<String> filename = fileManager.getFilename();
+        String name = filename.get(0);
+
+        assertNotNull(name);
+    }
+
+    @Test
+    void testInvalidSlotReturnsFalse() {
+        assertFalse(fileManager.overWriteSavedFile(0, board));
+        assertFalse(fileManager.loadSavedFile(6, board));
+    }
+
+    @Test
+    void testLastSaveData() {
+        fileManager.overWriteSavedFile(2, board);
+        String lastSaved = fileManager.getLastSavedFile();
+        int lastSlot = fileManager.getLastSaveFileNum();
+
+        assertNotNull(lastSaved);
+        assertEquals(1, lastSlot); // 슬롯 인덱스는 내부적으로 0부터 시작하므로
+    }
+
+    @Test
+    void testBoardLast() {
+        //Board originalBoard = new Board();
+        fileManager.overWriteSavedFile(2, board);
+        String lastSaved = fileManager.getLastSavedFile();
+        int lastSlot = fileManager.getLastSaveFileNum();
+
+        assertNotNull(lastSaved);
+        assertEquals(1, lastSlot); // 슬롯 인덱스는 내부적으로 0부터 시작하므로
     }
 }

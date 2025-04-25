@@ -2,6 +2,7 @@ package Input;
 
 import data.CommandError;
 import data.GameInputReturn;
+import userinput.UserInput;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -38,7 +39,7 @@ public class GameInput {
 
     private static int checkInput() {
         if(input.isEmpty()){
-            return NOT_MINE;
+            return UserInput.handleInput(input);
         }
         if(input.charAt(0)=='/'){
             try{
@@ -55,7 +56,7 @@ public class GameInput {
 
         }
         // 유신님 인풋으로 보내기
-        return NOT_MINE;
+        return UserInput.handleInput(input);
 
     }
     private static int checkOrderInput(){

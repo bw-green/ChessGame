@@ -12,6 +12,16 @@ public class Pawn extends Piece {
         super(color);
     }
 
+    // 복사 생성자
+    public Pawn(Pawn other) {
+        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
+        this.enPassantable = other.enPassantable;
+        this.enPassantCounter = other.enPassantCounter;
+    }
+    // 복사 메소드
+    public Pawn deepCopy() {
+        return new Pawn(this);
+    }
     @Override
     public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
         int startRow = startCell.getRow();
@@ -49,7 +59,7 @@ public class Pawn extends Piece {
             Cell enPassantCell = board.getCell(startRow,endCol); //앙파상이었을 경우를 가정하여 그 셀을 가져온다.
             Pawn enPassantPiece = (Pawn) enPassantCell.getPiece(); // 그 셀에서 기물을 받고 폰으로 변환한다.
             if(enPassantPiece!=null && enPassantPiece.enPassantable){ // null이 아니고, enPassatable이 true라면,
-                return SpecialRule.enPassant(startCell,endCell, enPassantCell);
+                return SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
             }
         }
 
