@@ -130,7 +130,14 @@ public class Board {
         while (currentRow != endRow || currentCol != endCol) {
 
             Cell cell = getCell(currentRow, currentCol);
-            if (cell.getPiece() != null) {
+
+            if (!(0 <= currentRow && currentRow < 8 && 0 <= currentCol && currentCol < 8)){
+                //System.out.println(startRow + "," + startCol + "," + endRow + "," + endCol);
+                //System.out.println("range is out of bounds");
+                break;
+            }
+
+            if (cell != null && cell.getPiece() != null) {
                 return false;
             }
             currentRow += stepRow;
@@ -179,25 +186,44 @@ public class Board {
             Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
             end.setPiece(movingPiece);
             start.setPiece(null);
+            enPassantChecking();  // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
+            if(end.getRow()==7 || end.getRow()==0){
+                SpecialRule.promotion(end);//프로모션은 흐름도에 따라 기물 이동을 수행한 후 결정됩니다.
+            }
 
-            boolean isInCheck = isCellUnderAttack(endRow, endCol, king.getColor());
+            return true;
 
-            // 상태 복원
-            start.setPiece(movingPiece);
-            end.setPiece(targetPieceBackup);
-
-            if (isInCheck) return MoveResult.FAIL; // 체크되는 칸으로는 이동 불가
         }
 
-        // 3. 이동 수행
-        end.setPiece(movingPiece);
-        start.setPiece(null);
-        enPassantChecking();
+        return false;
 
-        if (endRow == 0 || endRow == 7) {
-            SpecialRule.promotion(end);
+    }
+
+    public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {
+
+        Cell start = getCell(startRow, startCol);
+        Cell end = getCell(endRow, endCol);
+
+        if (start == null || end == null)
+            return false;
+
+        Piece movingPiece = start.getPiece();
+        if (movingPiece == null)
+            return false;
+
+        // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
+        if (movingPiece.isValidMove(this, start, end)) {
+            // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
+
+            end.setPiece(movingPiece);
+            start.setPiece(null);
+
+            // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
+            return true;
         }
-        return MoveResult.SUCCESS;
+
+        return false;
+
     }
 
 
