@@ -41,14 +41,5 @@ public class Rook extends Piece {
         return (color == PieceColor.WHITE) ? "R" : "r";
     }
 
-    // 복사 생성자
-    public Rook(Rook other) {
-        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
-        this.firstMove = other.firstMove;
-    }
-    // 복사 메소드
-    public Rook deepCopy() {
-        return new Rook(this);
-    }
 
 }
