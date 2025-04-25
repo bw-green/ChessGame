@@ -60,4 +60,16 @@ public class Pawn extends Piece {
     public String getSymbol() {
         return (color == PieceColor.WHITE) ? "P" : "p";
     }
+
+    // 복사 생성자
+    public Pawn(Pawn other) {
+        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
+        this.enPassantable = other.enPassantable;
+        this.enPassantCounter = other.enPassantCounter;
+    }
+    // 복사 메소드
+    public Pawn deepCopy() {
+        return new Pawn(this);
+    }
+
 }

@@ -42,4 +42,14 @@ public class King extends Piece {
     public String getSymbol() {
         return (color == PieceColor.WHITE) ? "K" : "k";
     }
+
+
+    public King(King other) {
+        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
+        this.firstMove = other.firstMove;
+    }
+    // 복사 메소드
+    public King deepCopy() {
+        return new King(this);
+    }
 }
