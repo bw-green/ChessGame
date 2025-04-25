@@ -179,24 +179,35 @@ public class Board {
                 Board.coordinateToNotation(endRow, endCol),
                 currentTurn
         );
-        if (error != null) return MoveResult.FAIL;
+        if (error != null){
+            System.out.println(error);
+            return MoveResult.FAIL;
+        }
 
         // 2. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
         if (movingPiece instanceof King king) {
             Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
             end.setPiece(movingPiece);
             start.setPiece(null);
-            enPassantChecking();  // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
-            if(end.getRow()==7 || end.getRow()==0){
-                SpecialRule.promotion(end);//프로모션은 흐름도에 따라 기물 이동을 수행한 후 결정됩니다.
-            }
 
-            return true;
+            boolean isInCheck = isCellUnderAttack(endRow, endCol, king.getColor());
 
+            // 상태 복원
+            start.setPiece(movingPiece);
+            end.setPiece(targetPieceBackup);
+
+            if (isInCheck) return MoveResult.FAIL; // 체크되는 칸으로는 이동 불가
         }
 
-        return false;
+        // 3. 이동 수행
+        end.setPiece(movingPiece);
+        start.setPiece(null);
+        enPassantChecking();
 
+        if (endRow == 0 || endRow == 7) {
+            SpecialRule.promotion(end);
+        }
+        return MoveResult.SUCCESS;
     }
 
     public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {

@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import piece.King;
 import piece.Rook;
 
-public class CastlingTest {
+public class CastlingTest2 {
     static Board board;
 
     @BeforeEach
