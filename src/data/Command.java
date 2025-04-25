@@ -36,9 +36,9 @@ public enum Command {
             "-------------------------------------------------\n" +
             "|the last save file and the list of save files"),
     NO_DATA("No Data"),
-    YES_OR_NO_EXIT("Would you exit? (y/n)"),
-    YES_OR_NO_QUIT("Would you quit? (y/n)"),
-    YES_OR_NO_LOAD("Would you load? (y/n)"),
+    YES_OR_NO_EXIT(" Would you exit? (y/n) : "),
+    YES_OR_NO_QUIT(" Would you quit? (y/n) : "),
+    YES_OR_NO_LOAD(" Would you load? (y/n) : "),
 
     EXIT("Successfully exited program."), //내용 없지만 명시 위해 놔둠
     QUIT("Successfully quited program."), //내용 없지만 명시 위해 놔둠

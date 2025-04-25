@@ -17,7 +17,7 @@ public enum PrintTemplate {
     MENU_LAST_SAVE("|the last save file and the list of save files"),
 
     //게임 지시문
-    GAME_BASE_INSTRUCT("Enter the STARTING and ENDING positions of the piece (e.g., \"e2 e4\")");
+    GAME_BASE_INSTRUCT("Enter the starting and ending positions of the piece (e.g., \"e2 e4\")");
 
     private final String printTmp;
     PrintTemplate(String printTmp){
