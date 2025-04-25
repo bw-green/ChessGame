@@ -7,7 +7,7 @@ import fileManager.*;
 import board.Board;
 
 import Input.GameInput;
-import userinput.UserInput;
+import Input.UserInput;
 import Menu.MenuInput;
 
 
@@ -39,10 +39,15 @@ public class GameManager {
 
     public GameManager() {
         fileManager = FileManager.getInstance();
-        menu = new Menu();
+        filePrint = new FilePrint(fileManager);
+        menu = new Menu(filePrint);
 
         runProgram();
 
+    }
+
+    public static void main(){
+        GameManager gameManager = new GameManager();
     }
 
 
@@ -56,7 +61,7 @@ public class GameManager {
             }
             if(cmdCode == COORDINATECODE) {
                 //좌표입력시 받을 int return 값, 아직 값 미확정
-            }else{
+            }else if(cmdCode >= HELPCODE && cmdCode <= SAVEFILECODE){
                 runCommand(cmdCode);
             }
         }
@@ -64,10 +69,14 @@ public class GameManager {
         return 0;
     }
 
+    public void testCmd(int cmdCode){
+        runCommand(cmdCode);
+    }
+
     private int runGame(){
         printGame();
         int input = GameInput.gameInput();
-        if(input == COORDINATECODE){ //좌표 입력 시 -> 아직 미완성임!!!!!!!
+        if(input == COORDINATECODE){
             String fromNotation = UserInput.getFromNotation();
             String toNotation = UserInput.getToNotation();
             // 시작 좌표, 끝 좌표 String 얻는 메서드 필요
@@ -80,15 +89,16 @@ public class GameManager {
                 throw new IllegalArgumentException("Failed to handle String coordinates");
             }
 
-            boolean moveSuccess = board.movePiece(start[0], start[1], end[0], end[1]);
-            if(moveSuccess){
-                playerTurn = (playerTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
-            }else{
+            MoveResult moveSuccess = board.movePiece(start[0], start[1], end[0], end[1]);
+            if(moveSuccess == MoveResult.SUCCESS){
+                board.turnChange();
+                playerTurn = board.getCurrentTurn();
 
+            }else{
+                System.out.println(InvalidCoordinate.EMPTY_INPUT);
             }
         }else{
-            //input으로 cmdRun
-            //여기서 input이 isRunning 또는 isPlaying에 영향을 줄 경우 return값 받아 사용해야함.
+            return input;
         }
 
 
@@ -105,63 +115,100 @@ public class GameManager {
 
         //플레이어 턴에 따른 프롬프트 구문
         if(playerTurn == PieceColor.WHITE)
-            System.out.println(PrintTemplate.WHITE_PROMPT);
+            System.out.print(PrintTemplate.WHITE_PROMPT);
         else if(playerTurn == PieceColor.BLACK)
-            System.out.println(PrintTemplate.BLACK_PROMPT);
+            System.out.print(PrintTemplate.BLACK_PROMPT);
     }
 
     private int runMenu(){
         menu.printDefaultMenu();
-
-        return 0;
+        return MenuInput.menuInput();
     }
 
     //runCommand
     private int runCommand(int cmdCode){
 
+        //CMD : HELP
         if(cmdCode == HELPCODE){
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(Command.HELP);
             System.out.println(PrintTemplate.BOLDLINE + "\n");
         }
+
+        //CMD : EXIT
         if(cmdCode == EXITCODE){
             if(isPlaying){
-                if(isSaved){
-
-                }else{
-
-                }
+                System.out.println(PrintTemplate.BOLDLINE);
+                filePrint.showFileList();
+                if(isSaved)
+                    System.out.println(PrintTemplate.GAME_SAVED);
+                else
+                    System.out.println(PrintTemplate.GAME_NOT_SAVED);
+                System.out.println(PrintTemplate.BOLDLINE);
                 if(playerTurn == PieceColor.WHITE)
-                    System.out.println(PrintTemplate.WHITE_PROMPT);
+                    System.out.print(PrintTemplate.WHITE_PROMPT);
                 else if(playerTurn == PieceColor.BLACK)
-                    System.out.println(PrintTemplate.BLACK_PROMPT);
+                    System.out.print(PrintTemplate.BLACK_PROMPT);
             }else{
-                System.out.println(PrintTemplate.MENU_PROMPT);
-
+                System.out.print(PrintTemplate.MENU_PROMPT);
             }
-            System.out.print(PrintTemplate.MENU_PROMPT);
+
             System.out.print(Command.YES_OR_NO_EXIT);
             boolean input = MenuInput.yesornoInput();
             if(input){
                 menu.printWithTemplate(Command.EXIT.toString());
-            }else{
-
+                System.exit(0);
             }
         }
+
+        //CMD : START
         if(cmdCode == STARTCODE){
-
-            playerTurn = PieceColor.WHITE;
-
+            if(!isPlaying){
+                playerTurn = PieceColor.WHITE;
+                isPlaying = true;
+                board = new Board();
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.START_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
+            }
         }
+
+        //CMD : QUIT
         if(cmdCode == QUITCODE){
+            if(isPlaying){
+                System.out.println(PrintTemplate.BOLDLINE);
+                filePrint.showFileList();
+                if(isSaved)
+                    System.out.println(PrintTemplate.GAME_SAVED);
+                else
+                    System.out.println(PrintTemplate.GAME_NOT_SAVED);
+                System.out.println(PrintTemplate.BOLDLINE);
+                if(playerTurn == PieceColor.WHITE)
+                    System.out.print(PrintTemplate.WHITE_PROMPT);
+                else if(playerTurn == PieceColor.BLACK)
+                    System.out.print(PrintTemplate.BLACK_PROMPT);
 
+                System.out.print(Command.YES_OR_NO_EXIT);
+                boolean input = MenuInput.yesornoInput();
+                if(input){
+                    menu.printWithTemplate(Command.EXIT.toString());
+                    isPlaying = false;
+                }
+            }
         }
+
+        // TODO : Numbering issue with playing Game + zazal han error
         if(cmdCode == SAVECODE){
-            filePrint.saveFilePrint(MenuInput.number);
-
+            if(!isPlaying){
+                board = new  Board();
+            }
+            filePrint.saveFilePrint(MenuInput.number, board);
         }
+
+        // TODO : make it
         if(cmdCode == LOADCODE) {
-            boolean isLoad = fileManager.loadSavedFile(MenuInput.number);
+            boolean isLoad = fileManager.loadSavedFile(MenuInput.number, board);
             if (isLoad) {
 //                    menuStr = Command.LOAD.formatStr(MenuInput.number, MenuInput.number, "");
 //                }else{
@@ -169,12 +216,17 @@ public class GameManager {
 //                }
             }
         }
-        if (cmdCode == DELSAVECODE) {
-                filePrint.deleteFilePrint(MenuInput.number);
 
+        if (cmdCode == DELSAVECODE) {
+            if(!isPlaying){
+                filePrint.deleteFilePrint(MenuInput.number);
+            }else{
+                System.out.println(CommandError.DELSAVE_BLOCK);
+            }
         }
+
         if (cmdCode == SAVEFILECODE) {
-                filePrint.saveListPrint();
+            filePrint.saveListPrint();
 
         }
 
