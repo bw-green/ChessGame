@@ -363,7 +363,7 @@ public class Board {
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
 
-        Piece movingPiece = (start != null) ? start.getPiece() : null;
+            Piece movingPiece = (start != null) ? start.getPiece() : null;
         Piece destPiece = (end != null) ? end.getPiece() : null;
 
         // 1. 시작과 끝이 같은 칸
