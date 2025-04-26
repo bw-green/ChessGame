@@ -36,8 +36,13 @@ public enum Command {
             "-------------------------------------------------\n" +
             "|the last save file and the list of save files"),
     NO_DATA("No Data"),
-    YES_OR_NO("Would you continue? (y/n)"),
-    EXIT("Successfully exited program."), //내용 없지만 명시 위해 놔둠
+    YES_OR_NO_EXIT(" Would you exit? (y/n) : "),
+    YES_OR_NO_QUIT(" Would you quit? (y/n) : "),
+    YES_OR_NO_LOAD(" Would you load? (y/n) : "),
+
+    EXIT("| Exit command received. Closing the game. |"), //내용 없지만 명시 위해 놔둠
+
+    //TODO : fix it
     QUIT("Successfully quited program."), //내용 없지만 명시 위해 놔둠
     SAVE("|The save %d has been created.|"),
     LOAD("| The save %d has loaded |\n" +

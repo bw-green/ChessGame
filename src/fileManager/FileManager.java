@@ -65,6 +65,10 @@ public class FileManager {
         if (slot < 1 || slot > MAX_SAVES) return false;
         slot--;
 
+        if (!new File(SAVE_DIR).exists()) {
+            ensureSaveDirectory();
+        }
+
         String saveName = generateRandomSaveName();
         String filePath = getFilePath(slot + 1); //savefile 1~5생성을 위해 +1
 
@@ -109,9 +113,13 @@ public class FileManager {
             reader.readLine(); // 공백 줄
             String getLine = reader.readLine(); // 턴 정보 읽기
 
-            if(getLine == null) return false; //currentTurn에 turn 값 넣기
-            if(getLine.equalsIgnoreCase("BLACK")) targetBoard.turnChange(); /*코드 확인해봐야될듯,
-                                                                            기본값이 WHITE니까 BLACK이면 바꿔주는걸로 했습니다. */
+            if (getLine == null) return false;
+
+            if (getLine.equalsIgnoreCase("BLACK")) {
+                targetBoard.turnChange();
+            } else if (!getLine.equalsIgnoreCase("WHITE")) {
+                throw new IllegalArgumentException("Invalid save file: " + getLine);
+            }
 
             for (int row = 0; row < 8; row++) {
                 String line = reader.readLine();
@@ -127,7 +135,7 @@ public class FileManager {
             }
 
             return true;
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             System.out.println(FileError.DEBUG_ERROR_LOAD); //디버깅용
             return false;
         }
@@ -148,7 +156,8 @@ public class FileManager {
             //System.out.println("삭제할 파일이 존재하지 않습니다: 슬롯 " + slot);
             return false;
         }
-        if (lastSavedFile.equals(filename.get(slot))) { //last saved file update (start)
+        if (!filename.get(slot).equals(deFault) &&
+                lastSavedFile.equals(filename.get(slot))) { //last saved file update (start)
             int secondMax = -1;
             int secondIndex = -1;
 
@@ -182,6 +191,15 @@ public class FileManager {
         }
     }
 
+    public void resetTestState() { //Test 제작을 위한 함수 절대 임의로 호출하지 말것!!
+        for (int i = 0; i < MAX_SAVES; i++) {
+            filename.set(i, "NO DATA");
+            counter.set(i, 0);
+        }
+        count = 0;
+        lastSavedFile = deFault;
+        lastSaveFileNum = -1;
+    }
 
 
     private void loadFileNames() {
@@ -189,7 +207,11 @@ public class FileManager {
             String filePath = getFilePath(i);
             File file = new File(filePath);
 
-            if (!file.exists()) continue;
+            if (!file.exists()) {
+                filename.set(i - 1, deFault);
+                counter.set(i - 1, 0);
+                continue;
+            }
 
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String saveName = reader.readLine();// 첫 줄
