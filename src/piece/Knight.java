@@ -35,4 +35,6 @@ public class Knight extends Piece {
     public String getSymbol() {
         return (color == PieceColor.WHITE) ? "N" : "n";
     }
+
+
 }

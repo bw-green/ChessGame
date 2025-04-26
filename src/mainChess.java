@@ -79,8 +79,7 @@ public class mainChess {
             int[] endRC = Board.notationToCoordinate(endNotation);
             MoveResult result = board.movePiece(startRC[0], startRC[1], endRC[0], endRC[1]);
 
-            if (result == MoveResult.SUCCESS) {
-                System.out.println("✅ 이동 성공!");
+            if (result== MoveResult.SUCCESS) {
                 System.out.println(board);
                 currentTurn = (currentTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
             } else {
