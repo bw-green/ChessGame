@@ -130,7 +130,14 @@ public class Board {
         while (currentRow != endRow || currentCol != endCol) {
 
             Cell cell = getCell(currentRow, currentCol);
-            if (cell.getPiece() != null) {
+
+            if (!(0 <= currentRow && currentRow < 8 && 0 <= currentCol && currentCol < 8)){
+                //System.out.println(startRow + "," + startCol + "," + endRow + "," + endCol);
+                //System.out.println("range is out of bounds");
+                break;
+            }
+
+            if (cell != null && cell.getPiece() != null) {
                 return false;
             }
             currentRow += stepRow;
@@ -152,7 +159,7 @@ public class Board {
     public MoveResult movePiece(int startRow, int startCol, int endRow, int endCol) {
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
-        if (start == null || end == null) return MoveResult.FAIL;  // input에서 처리됌
+        if (start == null || end == null) return MoveResult.FAIL;  // input에서 처리됨
 
         Piece movingPiece = start.getPiece();
         if (movingPiece == null){
@@ -161,9 +168,26 @@ public class Board {
         }
 
         // 1. 이동 가능성 자체 확인
-        if (!movingPiece.isValidMove(this, start, end)){
-            System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
-            return MoveResult.FAIL;
+        if (movingPiece instanceof King) {
+            int colDiff = Math.abs(start.getCol() - end.getCol());
+            int rowDiff = Math.abs(start.getRow() - end.getRow());
+
+            if (colDiff == 2 && rowDiff == 0) {
+                // 캐슬링 시도 중
+                if (!SpecialRule.castling(this, start, end)) {
+                    return MoveResult.FAIL;
+                }
+            } else {
+                // 일반 이동이면 isValidMove 검사
+                if (!movingPiece.isValidMove(this, start, end)) {
+                    return MoveResult.FAIL;
+                }
+            }
+        } else {
+            // 킹이 아닌 경우
+            if (!movingPiece.isValidMove(this, start, end)) {
+                return MoveResult.FAIL;
+            }
         }
 
         // 2. 의미 오류 검사 추가 (6가지 의미 오류)
@@ -172,9 +196,12 @@ public class Board {
                 Board.coordinateToNotation(endRow, endCol),
                 currentTurn
         );
-        if (error != null) return MoveResult.FAIL;
+        if (error != null){
+            System.out.println(error);
+            return MoveResult.FAIL;
+        }
 
-        // 2. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
+        // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
         if (movingPiece instanceof King king) {
             Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
             end.setPiece(movingPiece);
@@ -189,7 +216,7 @@ public class Board {
             if (isInCheck) return MoveResult.FAIL; // 체크되는 칸으로는 이동 불가
         }
 
-        // 3. 이동 수행
+        // 4. 이동 수행
         end.setPiece(movingPiece);
         start.setPiece(null);
         enPassantChecking();
@@ -198,6 +225,33 @@ public class Board {
             SpecialRule.promotion(end);
         }
         return MoveResult.SUCCESS;
+    }
+
+    public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {
+
+        Cell start = getCell(startRow, startCol);
+        Cell end = getCell(endRow, endCol);
+
+        if (start == null || end == null)
+            return false;
+
+        Piece movingPiece = start.getPiece();
+        if (movingPiece == null)
+            return false;
+
+        // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
+        if (movingPiece.isValidMove(this, start, end)) {
+            // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
+
+            end.setPiece(movingPiece);
+            start.setPiece(null);
+
+            // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
+            return true;
+        }
+
+        return false;
+
     }
 
 
@@ -350,8 +404,22 @@ public class Board {
         }
 
         // 5. 이동 규칙 위반
-        if (!movingPiece.isValidMove(this, start, end)) {
-            return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+        if (movingPiece instanceof King) {
+            int rowDiff = Math.abs(start.getRow() - end.getRow());
+            int colDiff = Math.abs(start.getCol() - end.getCol());
+
+            if (rowDiff == 0 && colDiff == 2) {
+                // 캐슬링 시도 중 → 이동 규칙 위반으로 판단하지 않는다
+                // 여기서는 오류를 리턴하지 않고 넘어감
+            } else {
+                if (!movingPiece.isValidMove(this, start, end)) {
+                    return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+                }
+            }
+        } else {
+            if (!movingPiece.isValidMove(this, start, end)) {
+                return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+            }
         }
 
         // 6. Rook, Bishop, Queen 이동 시 경로 막힘

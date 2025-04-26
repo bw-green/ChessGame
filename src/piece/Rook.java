@@ -40,4 +40,6 @@ public class Rook extends Piece {
     public String getSymbol() {
         return (color == PieceColor.WHITE) ? "R" : "r";
     }
+
+
 }
