@@ -3,7 +3,7 @@ package test.java.board;
 import board.Board;
 
 import data.PieceColor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
