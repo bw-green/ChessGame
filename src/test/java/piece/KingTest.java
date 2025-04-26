@@ -135,7 +135,6 @@ public class KingTest {
 
         Piece king = PieceFactory.createPieceFromSymbol("K");
         Piece rook = PieceFactory.createPieceFromSymbol("R");
-
         // 킹과 룩 배치 (e1, h1)
         testBoard.setPieceTest(7, 4, king);
         testBoard.setPieceTest(7, 7, rook);
@@ -183,5 +182,54 @@ public class KingTest {
         assertTrue(movedOutOfCheck == MoveResult.SUCCESS, "킹은 체크 상태에서 벗어나는 이동은 가능해야 한다.");
     }
 
+    // 추가 테스트: 퀸 사이드 캐슬링
+    @Test
+    void testQueenSideCastlingSuccess() {
+        testBoard = new Board(false);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
+
+        testBoard.setPieceTest(7, 4, king); // e1
+        testBoard.setPieceTest(7, 0, rook); // a1
+
+        MoveResult castled = testBoard.movePiece(7, 4, 7, 2); // e1 → c1
+
+        assertTrue(castled == MoveResult.SUCCESS, "퀸사이드 캐슬링이 정상적으로 수행되어야 한다.");
+        assertTrue(testBoard.getPieceAt(7, 2) instanceof King, "킹은 c1에 있어야 한다.");
+        assertTrue(testBoard.getPieceAt(7, 3) instanceof Rook, "룩은 d1에 있어야 한다.");
+    }
+
+    // 추가 테스트: 중간에 기물이 있을 때 캐슬링 시도
+    @Test
+    void testCastlingFailsIfBlocked() {
+        testBoard = new Board(false);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
+        Piece pawn = PieceFactory.createPieceFromSymbol("P"); // 중간 장애물
+
+        testBoard.setPieceTest(7, 4, king); // e1
+        testBoard.setPieceTest(7, 7, rook); // h1
+        testBoard.setPieceTest(7, 5, pawn); // f1
+
+        MoveResult castled = testBoard.movePiece(7, 4, 7, 6); // e1 → g1
+        assertFalse(castled == MoveResult.SUCCESS, "중간에 기물이 있으면 캐슬링이 실패해야 한다.");
+    }
+
+    // 추가 테스트: 킹이 체크인 상태에서 캐슬링 시도
+    @Test
+    void testCastlingFailsIfKingIsInCheck() {
+        testBoard = new Board(false);
+        Piece king = PieceFactory.createPieceFromSymbol("K");
+        Piece rook = PieceFactory.createPieceFromSymbol("R");
+        Piece enemyRook = PieceFactory.createPieceFromSymbol("r");
+
+        testBoard.setPieceTest(7, 4, king); // e1
+        testBoard.setPieceTest(7, 7, rook); // h1
+        testBoard.setPieceTest(6, 4, enemyRook); // e2 → 킹을 체크
+
+        MoveResult castled = testBoard.movePiece(7, 4, 7, 6); // e1 → g1
+
+        assertFalse(castled == MoveResult.SUCCESS, "킹이 체크당하고 있으면 캐슬링이 실패해야 한다.");
+    }
     //등등
 }

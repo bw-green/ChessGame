@@ -1,4 +1,4 @@
-package test.java.piece;
+package test.java;
 
 import board.Board;
 import data.MoveResult;
