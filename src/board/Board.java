@@ -241,17 +241,20 @@ public class Board {
     }
 
     public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {
-
+        //        soutBlock = true;
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
 
-        if (start == null || end == null)
+        if (start == null || end == null) {
+//            soutBlock = false;
             return false;
+        }
 
         Piece movingPiece = start.getPiece();
-        if (movingPiece == null)
+        if (movingPiece == null) {
+//            soutBlock = false;
             return false;
-
+        }
         // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
         if (movingPiece.isValidMove(this, start, end)) {
             // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
@@ -260,9 +263,10 @@ public class Board {
             start.setPiece(null);
 
             // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
+//            soutBlock = false;
             return true;
         }
-
+//        soutBlock = false;
         return false;
 
     }

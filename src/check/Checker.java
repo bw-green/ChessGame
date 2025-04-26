@@ -39,7 +39,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     public boolean isCheck(Board board) { //isBlack이 true면 블랙이 check 상태인지 false면 화이트가 check인지 리턴
 
         findKing(board);
-
+        board.soutBlock=true;
         if(King == null){
             System.out.println("못찾음");
         }
@@ -54,13 +54,14 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                 if(now.getPiece().getColor()!= pieceColor){
 
                     if(now.getPiece().isValidMove(board,now,King)){
+                        board.soutBlock=false;
                         return true;
                     }
 
                 }
             }
         }
-
+        board.soutBlock=false;
         return false;
 
     }
@@ -82,20 +83,19 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     }
 
     public boolean canMove(Board board) {
-
         initBoard(board);
         findKing(board);
-
+        newBoard.soutBlock = true;
         for(int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
-                Cell now = board.getCell(row, col);
+                Cell now = newBoard.getCell(row, col);
 
                 if(now.getPiece() == null) continue;
 
                 if(now.getPiece().getColor() == pieceColor){
                     for(int i=0; i<BOARD_SIZE; i++){
                         for(int j=0; j<BOARD_SIZE; j++){
-                            Cell to = board.getCell(i, j);
+                            Cell to = newBoard.getCell(i, j);
 
                             if(to == null){
                                 continue;
@@ -113,19 +113,21 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                             }
 
 
-                            if(now.getPiece().isValidMove(board,now,to)){
+                            if(now.getPiece().isValidMove(newBoard,now,to)){
                                 newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
                                 if(!isCheck(newBoard)) {
+                                    System.out.println("debug1");
+
                                     return true;
                                 }
                             }
-                            newBoard.setPieceTest(i,j,piece1);
-                            newBoard.setPieceTest(row,col,piece2);
                         }
                     }
                 }
             }
         }
+
+        System.out.println("debug2");
         return false;
     }
 
