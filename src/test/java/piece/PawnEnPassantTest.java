@@ -215,9 +215,7 @@ public class PawnEnPassantTest {
         Checker blackChecker = new Checker(PieceColor.BLACK);
         board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));
         board.turnChange();
-        System.out.println("위치1");
         board.movePiece(1,1,3,1);
-        System.out.println("위치2");
         System.out.println(board);
         System.out.println("white : "+ whiteChecker.canMove(board));
         System.out.println("black : "+ blackChecker.canMove(board));
