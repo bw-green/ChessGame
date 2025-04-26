@@ -193,10 +193,14 @@ public class CheckerTest {
     @DisplayName("isOneMoveCheck 테스트")
     public void isOneMoveCheck() {
         board = new Board(true);
+        Checker whiteChecker = new Checker(PieceColor.WHITE);
+        Checker blackChecker = new Checker(PieceColor.BLACK);
         board.setPieceTest(0,5,new King(PieceColor.WHITE));
         board.setPieceTest(2,6,new Queen(PieceColor.BLACK));
         board.setPieceTest(7,7,new King(PieceColor.BLACK));
         System.out.println(board);
+        System.out.println(whiteChecker.isOneMoveCheck(board,board.getCell(0,5),board.getCell(0,6)));
+        System.out.println(blackChecker.isOneMoveCheck(board,board.getCell(0,5),board.getCell(0,6)));
         System.out.println(board.movePiece(0,5,0,6));
 
         System.out.println(board);
