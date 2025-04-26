@@ -1,8 +1,11 @@
 package board;
 
+import check.Checker;
 import data.MoveErrorType;
 import data.MoveResult;
 import data.PieceColor;
+import data.Unspecified;
+import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
 
@@ -175,12 +178,14 @@ public class Board {
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
                 if (!SpecialRule.castling(this, start, end)) {
+                    System.out.println(Unspecified.CASTLING_FAILED);
 //                    System.out.println("캐슬링 시도중에서 걸림");
                     return MoveResult.FAIL;
                 }
             } else {
                 // 일반 이동이면 isValidMove 검사
                 if (!movingPiece.isValidMove(this, start, end)) {
+                    System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
 //                    System.out.println("킹의 일반 이동에서 걸림");
                     return MoveResult.FAIL;
                 }
@@ -188,6 +193,7 @@ public class Board {
         } else {
             // 킹이 아닌 경우
             if (!movingPiece.isValidMove(this, start, end)) {
+                System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
 //                System.out.println("일반 기물인데 이동 불가능");
                 return MoveResult.FAIL;
             }
@@ -205,13 +211,14 @@ public class Board {
             return MoveResult.FAIL;
         }
 
-        // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
+        // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사(isCellunderAttack 함수 제거함)
         if (movingPiece instanceof King king) {
             Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
             end.setPiece(movingPiece);
             start.setPiece(null);
 
-            boolean isInCheck = isCellUnderAttack(endRow, endCol, king.getColor());
+            Checker checker = new Checker(king.getColor());       // 변경
+            boolean isInCheck = checker.isCheck(this);            // 변경
 
             // 상태 복원
             start.setPiece(movingPiece);
@@ -438,16 +445,6 @@ public class Board {
                 return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
             }
         }
-
-        // 6. Rook, Bishop, Queen 이동 시 경로 막힘
-        boolean pathBlocked = (movingPiece instanceof Rook || movingPiece instanceof Bishop || movingPiece instanceof Queen)
-                && !isPathClear(start, end);
-        if (pathBlocked) {
-            return MoveErrorType.PATH_BLOCKED;
-        }
-
-
-
         return null; // 의미 오류 없음
     }
 
