@@ -20,6 +20,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
         this.pieceColor = pieceColor;
         Symbol = (this.pieceColor == PieceColor.WHITE) ? "K" : "k";
         //System.out.println(Symbol);
+        newBoard.soutBlock = true;
     }
 
     public void findKing(Board board){
@@ -68,8 +69,6 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     private void initBoard(Board board){
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-
-
                 if (board.getCell(i,j).getPiece() == null) {
                     newBoard.getCell(i,j).setPiece(null);
                 }
@@ -115,12 +114,14 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
 
                             if(now.getPiece().isValidMove(board,now,to)){
                                 newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
+                                //System.out.println(newBoard.soutBlock);
                                 if(!isCheck(newBoard)) {
                                     return true;
                                 }
                             }
-                            newBoard.setPieceTest(i,j,piece1);
-                            newBoard.setPieceTest(row,col,piece2);
+
+                            initBoard(board);
+
                         }
                     }
                 }
