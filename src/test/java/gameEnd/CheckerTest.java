@@ -177,7 +177,9 @@ public class CheckerTest {
         board = new Board();
         board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));
         board.turnChange();
+
         board.movePiece(1,1,3,1);
+
         System.out.println(board);
         System.out.println("white : "+whiteChecker.canMove(board));
         System.out.println("black : "+blackChecker.canMove(board));
@@ -185,5 +187,19 @@ public class CheckerTest {
         System.out.println(board);
 
         System.out.println();
+    }
+
+    @Test
+    @DisplayName("isOneMoveCheck 테스트")
+    public void isOneMoveCheck() {
+        board = new Board(true);
+        board.setPieceTest(0,5,new King(PieceColor.WHITE));
+        board.setPieceTest(2,6,new Queen(PieceColor.BLACK));
+        board.setPieceTest(7,7,new King(PieceColor.BLACK));
+        System.out.println(board);
+        System.out.println(board.movePiece(0,5,0,6));
+
+        System.out.println(board);
+
     }
 }

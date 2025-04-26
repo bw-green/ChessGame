@@ -39,6 +39,7 @@ public class SpecialRule {
 //            }//미리두고 체크 확인
 //            end.setPiece(null);
 //            start.setPiece(movingPiece);//원상복귀
+            System.out.println(board.soutBlock);
             if(!board.soutBlock) {
                 System.out.println(board);
                 System.out.println(PrintTemplate.BOLDLINE);
