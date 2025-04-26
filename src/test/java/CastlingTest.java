@@ -24,7 +24,7 @@ public class CastlingTest {
     void templete(String start, String end) {
         int[][] coordinates = helpTest(start, end);
         MoveResult move = board.movePiece(coordinates[0][0], coordinates[0][1], coordinates[1][0], coordinates[1][1]);
-        if (move == MoveResult.SUCCESS)
+        if(move== MoveResult.SUCCESS)
             System.out.println(board);
         else
             System.out.println("테스트 실패");

@@ -130,7 +130,14 @@ public class Board {
         while (currentRow != endRow || currentCol != endCol) {
 
             Cell cell = getCell(currentRow, currentCol);
-            if (cell.getPiece() != null) {
+
+            if (!(0 <= currentRow && currentRow < 8 && 0 <= currentCol && currentCol < 8)){
+                //System.out.println(startRow + "," + startCol + "," + endRow + "," + endCol);
+                //System.out.println("range is out of bounds");
+                break;
+            }
+
+            if (cell != null && cell.getPiece() != null) {
                 return false;
             }
             currentRow += stepRow;
@@ -152,13 +159,19 @@ public class Board {
     public MoveResult movePiece(int startRow, int startCol, int endRow, int endCol) {
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
-        if (start == null || end == null) return MoveResult.FAIL;
+        if (start == null || end == null) return MoveResult.FAIL;  // input에서 처리됌
 
         Piece movingPiece = start.getPiece();
-        if (movingPiece == null) return MoveResult.FAIL;
+        if (movingPiece == null){
+            System.out.println(MoveErrorType.NO_PIECE_AT_START);
+            return MoveResult.FAIL;
+        }
 
         // 1. 이동 가능성 자체 확인
-        if (!movingPiece.isValidMove(this, start, end)) return MoveResult.FAIL;
+        if (!movingPiece.isValidMove(this, start, end)){
+            System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
+            return MoveResult.FAIL;
+        }
 
         // 2. 의미 오류 검사 추가 (6가지 의미 오류)
         MoveErrorType error = validateMoveMeaning(
@@ -166,7 +179,10 @@ public class Board {
                 Board.coordinateToNotation(endRow, endCol),
                 currentTurn
         );
-        if (error != null) return MoveResult.FAIL;
+        if (error != null){
+            System.out.println(error);
+            return MoveResult.FAIL;
+        }
 
         // 2. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
         if (movingPiece instanceof King king) {
@@ -192,6 +208,33 @@ public class Board {
             SpecialRule.promotion(end);
         }
         return MoveResult.SUCCESS;
+    }
+
+    public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {
+
+        Cell start = getCell(startRow, startCol);
+        Cell end = getCell(endRow, endCol);
+
+        if (start == null || end == null)
+            return false;
+
+        Piece movingPiece = start.getPiece();
+        if (movingPiece == null)
+            return false;
+
+        // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
+        if (movingPiece.isValidMove(this, start, end)) {
+            // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
+
+            end.setPiece(movingPiece);
+            start.setPiece(null);
+
+            // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
+            return true;
+        }
+
+        return false;
+
     }
 
 
