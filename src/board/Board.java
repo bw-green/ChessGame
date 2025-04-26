@@ -1,5 +1,6 @@
 package board;
 
+import check.Checker;
 import data.MoveErrorType;
 import data.MoveResult;
 import data.PieceColor;
@@ -222,13 +223,14 @@ public class Board {
             return MoveResult.FAIL;
         }
 
-        // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사
+        // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사(isCellunderAttack 함수 제거함)
         if (movingPiece instanceof King king) {
             Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
             end.setPiece(movingPiece);
             start.setPiece(null);
 
-            boolean isInCheck = isCellUnderAttack(endRow, endCol, king.getColor());
+            Checker checker = new Checker(king.getColor());       // 변경
+            boolean isInCheck = checker.isCheck(this);            // 변경
 
             // 상태 복원
             start.setPiece(movingPiece);
