@@ -93,9 +93,9 @@ public class GameManager {
             if(moveSuccess == MoveResult.SUCCESS){
                 board.turnChange();
                 playerTurn = board.getCurrentTurn();
-
+                isSaved = false;
             }else{
-                System.out.println(InvalidCoordinate.EMPTY_INPUT);
+
             }
         }else{
             return input;
@@ -125,30 +125,34 @@ public class GameManager {
         return MenuInput.menuInput();
     }
 
-    //runCommand
-    private int runCommand(int cmdCode){
+    public void showSaveAndList(){
+        System.out.println(PrintTemplate.BOLDLINE);
+        filePrint.showFileList();
+        if(isSaved)
+            System.out.println(PrintTemplate.GAME_SAVED);
+        else
+            System.out.println(PrintTemplate.GAME_NOT_SAVED);
+        System.out.println(PrintTemplate.BOLDLINE);
+        if(playerTurn == PieceColor.WHITE)
+            System.out.print(PrintTemplate.WHITE_PROMPT);
+        else if(playerTurn == PieceColor.BLACK)
+            System.out.print(PrintTemplate.BLACK_PROMPT);
+    }
 
-        //CMD : HELP
+    //runCommand
+    private void runCommand(int cmdCode){
+
+
         if(cmdCode == HELPCODE){
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(Command.HELP);
             System.out.println(PrintTemplate.BOLDLINE + "\n");
         }
 
-        //CMD : EXIT
+
         if(cmdCode == EXITCODE){
             if(isPlaying){
-                System.out.println(PrintTemplate.BOLDLINE);
-                filePrint.showFileList();
-                if(isSaved)
-                    System.out.println(PrintTemplate.GAME_SAVED);
-                else
-                    System.out.println(PrintTemplate.GAME_NOT_SAVED);
-                System.out.println(PrintTemplate.BOLDLINE);
-                if(playerTurn == PieceColor.WHITE)
-                    System.out.print(PrintTemplate.WHITE_PROMPT);
-                else if(playerTurn == PieceColor.BLACK)
-                    System.out.print(PrintTemplate.BLACK_PROMPT);
+                showSaveAndList();
             }else{
                 System.out.print(PrintTemplate.MENU_PROMPT);
             }
@@ -161,7 +165,7 @@ public class GameManager {
             }
         }
 
-        //CMD : START
+
         if(cmdCode == STARTCODE){
             if(!isPlaying){
                 playerTurn = PieceColor.WHITE;
@@ -174,20 +178,9 @@ public class GameManager {
             }
         }
 
-        //CMD : QUIT
         if(cmdCode == QUITCODE){
             if(isPlaying){
-                System.out.println(PrintTemplate.BOLDLINE);
-                filePrint.showFileList();
-                if(isSaved)
-                    System.out.println(PrintTemplate.GAME_SAVED);
-                else
-                    System.out.println(PrintTemplate.GAME_NOT_SAVED);
-                System.out.println(PrintTemplate.BOLDLINE);
-                if(playerTurn == PieceColor.WHITE)
-                    System.out.print(PrintTemplate.WHITE_PROMPT);
-                else if(playerTurn == PieceColor.BLACK)
-                    System.out.print(PrintTemplate.BLACK_PROMPT);
+                showSaveAndList();
 
                 System.out.print(Command.YES_OR_NO_EXIT);
                 boolean input = MenuInput.yesornoInput();
@@ -200,20 +193,47 @@ public class GameManager {
 
         // TODO : Numbering issue with playing Game + zazal han error
         if(cmdCode == SAVECODE){
+            int slot;
             if(!isPlaying){
-                board = new  Board();
+                board = new Board();
+                slot = MenuInput.number;
+            }else { slot = GameInput.number; }
+            isSaved = fileManager.overWriteSavedFile(slot, board);
+            if(isSaved){
+                System.out.println(PrintTemplate.BOLDLINE);
+                filePrint.showFileList();
+                System.out.println(FileMessage.SAVE_CREATED.format(slot));
+                System.out.println(PrintTemplate.BOLDLINE + "\n");
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(FileError.FAILED_SAVE);
+                System.out.println(PrintTemplate.BOLDLINE + "\n");
             }
-            filePrint.saveFilePrint(MenuInput.number, board);
         }
 
-        // TODO : make it
         if(cmdCode == LOADCODE) {
-            boolean isLoad = fileManager.loadSavedFile(MenuInput.number, board);
+            int slot;
+            if(isPlaying){
+                showSaveAndList();
+                System.out.print(Command.YES_OR_NO_EXIT);
+                boolean input = MenuInput.yesornoInput();
+                if(!input){ return; }
+                slot = GameInput.number;
+            }else{
+                slot = MenuInput.number;
+            }
+            board = new Board();
+            boolean isLoad = fileManager.loadSavedFile(slot, board);
             if (isLoad) {
-//                    menuStr = Command.LOAD.formatStr(MenuInput.number, MenuInput.number, "");
-//                }else{
-//                    menuStr = FileError.FAILED_LOAD.toString();
-//                }
+                playerTurn = board.getCurrentTurn();
+                isPlaying = true;
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(FileMessage.SAVE_LOADED.format(slot));
+                System.out.println(PrintTemplate.BOLDLINE + "\n");
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(FileError.FAILED_LOAD);
+                System.out.println(PrintTemplate.BOLDLINE+ "\n");
             }
         }
 
@@ -230,6 +250,5 @@ public class GameManager {
 
         }
 
-        return 0;
     }
 }
