@@ -1,6 +1,7 @@
 package test.java.piece;
 
 import board.Board;
+import check.Checker;
 import data.MoveResult;
 import data.PieceColor;
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import piece.Knight;
 import piece.Pawn;
 
 public class PawnEnPassantTest {
@@ -188,5 +190,38 @@ public class PawnEnPassantTest {
         templete(start4, end4);
         templete(start5, end5);
     }
+    @ParameterizedTest
+    @CsvSource({
+            "d2,d4, h7,h6, d4, d5, b7,b5, d5,b6"
+    })
+    @DisplayName("다른 기물을 잡으려 할때는?")
+    void CanEnPassantTest12(String start, String end) throws Exception {
+        board = new Board();
+        board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));
+//        board.setPieceTest(3,1,new Knight(PieceColor.BLACK));
+        System.out.println(board);
+        board.movePiece(3,2,2,1);
+        System.out.println(board);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "d2,d4, h7,h6, d4, d5, b7,b5, d5,b6"
+    })
+    @DisplayName("다른 기물을 잡으려 할때는?")
+    void CanEnPassantTest13(String start, String end) throws Exception {
+        board = new Board();
+        Checker whiteChecker = new Checker(PieceColor.WHITE);
+        Checker blackChecker = new Checker(PieceColor.BLACK);
+        board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));
+        board.turnChange();
+        board.movePiece(1,1,3,1);
+        System.out.println(board);
+        System.out.println("white : "+ whiteChecker.canMove(board));
+        System.out.println("black : "+ blackChecker.canMove(board));
+        System.out.println(board);
+    }
+
+
 }
 

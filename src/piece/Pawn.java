@@ -58,10 +58,11 @@ public class Pawn extends Piece {
         // 4) 대각선으로 이동하려는 시도인데, 기물이 없을 때. 앙파상 의심
         if (Math.abs(endCol - startCol) == 1 && endRow == startRow + direction && dest == null) {
             Cell enPassantCell = board.getCell(startRow,endCol); //앙파상이었을 경우를 가정하여 그 셀을 가져온다.
-            Pawn enPassantPiece = (Pawn) enPassantCell.getPiece(); // 그 셀에서 기물을 받고 폰으로 변환한다.
-            if(enPassantPiece!=null && enPassantPiece.enPassantable){ // null이 아니고, enPassatable이 true라면,
-//                System.out.println("앙파상 체킹 조건 충족");
-                return enPassant=SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
+            Piece enPassantPiece = enPassantCell.getPiece(); // 그 셀에서 기물을 받고 폰으로 변환한다.
+            if(enPassantPiece instanceof Pawn)
+                if(((Pawn) enPassantPiece).enPassantable){ // null이 아니고, enPassatable이 true라면,
+//                  System.out.println("앙파상 체킹 조건 충족");
+                    return enPassant=SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
             }
         }
 
