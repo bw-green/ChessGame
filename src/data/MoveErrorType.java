@@ -12,6 +12,8 @@ public enum MoveErrorType {
     /** 기물의 이동 규칙에 어긋난 경우 */
     INVALID_MOVE_FOR_THIS_PIECE("Invalid input: Invalid move for this piece. Try again."),
 
+    KING_IS_ATTACK("Your king would be in check. Try again."),
+
     // ===== 추가: 문법 오류 관련 =====
 
     /** 입력값이 비어 있거나 null인 경우 */
