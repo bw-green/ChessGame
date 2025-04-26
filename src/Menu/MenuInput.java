@@ -1,6 +1,5 @@
 package Menu;
 
-import data.Command;
 import data.CommandError;
 import data.GameInputReturn;
 import data.PrintTemplate;
@@ -26,18 +25,25 @@ public class MenuInput {
     public static int number = 0;
     public static String input;
 
-    public static boolean yesornoInput(){
-        Scanner sc = new Scanner(System.in);
-        input = sc.nextLine();
+    public static boolean yesOrNoInput(){
+        while(true){
+            Scanner sc = new Scanner(System.in);
+            input = sc.nextLine();
 
-        if(input.isEmpty()){
-            return false;
+            if(input.isEmpty()){
+                System.out.println(CommandError.WRONG_COMMAND);
+                continue;
+            }
+
+            if(input.charAt(0) == 'y' && input.length() == 1){
+                return true;
+            }
+            if(input.charAt(0) == 'n' && input.length() == 1){
+                return false;
+            }
+            System.out.println(CommandError.WRONG_COMMAND);
         }
 
-        if(input.charAt(0) == 'y' || input.length() == 1){
-            return true;
-        }else
-            return false;
     }
 
     public static int menuInput() {
