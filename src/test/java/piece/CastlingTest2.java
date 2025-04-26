@@ -11,9 +11,9 @@ import org.junit.jupiter.params.provider.CsvSource;
 import piece.King;
 import piece.Rook;
 
-public class CastlingTest {
+public class CastlingTest2 {
     static Board board;
-
+    PieceColor pieceColor = PieceColor.WHITE;
     @BeforeEach
     void setUpBeforeClass() throws Exception {
         board = new Board();
@@ -48,10 +48,12 @@ public class CastlingTest {
     void templete(String start, String end) {
         int[][] coordinates = helpTest(start, end);
         MoveResult move = board.movePiece(coordinates[0][0], coordinates[0][1], coordinates[1][0], coordinates[1][1]);
-        if (move == MoveResult.SUCCESS)
+        if (move == MoveResult.SUCCESS){
             System.out.println(board);
+            board.turnChange();
+        }
         else
-            System.out.println("테스트 실패");
+            System.out.println("이 움직임은 안됨");
     }
 
     @ParameterizedTest
@@ -146,6 +148,16 @@ public class CastlingTest {
         templete(start13, end13);
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "e1,g1"
+    })
+    @DisplayName("킹사이드 : 체크일 때 캐슬링 테스트")
+    void CanCastlingTest10_1(String start,String end) throws Exception {
+        setWhiteCastlingable();
+        System.out.println(board);
+        templete(start,end);
+    }
 
     @ParameterizedTest
     @CsvSource({
@@ -236,6 +248,22 @@ public class CastlingTest {
         board.setPieceTest(6,0,null);
         System.out.println(board);
         templete(start,end);
+    }
+    @ParameterizedTest
+    @CsvSource({
+            "e1,c1"
+    })
+    @DisplayName("퀸사이드 : 체크일 때 캐슬링 테스트3 (성공예측)")
+    void CanCastlingTest17(String start,String end) throws Exception {
+        Board board = new Board();
+
+        board.setPieceTest(7,6,null);
+        board.setPieceTest(7,5,null);
+        System.out.println(board);
+        System.out.println(board.movePiece(7,4,7,6));
+
+
+        System.out.println(board);
     }
 }
 

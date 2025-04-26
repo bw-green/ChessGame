@@ -38,10 +38,10 @@ public class King extends Piece {
                 return true;
             }
         }
-        //캐슬링에 대한 기본적인 입장 조건입니다. board 인자로 받는거 제거하려고 일단 노력중
-        if (colDiff == 2 && board.isPathClear(startCell, endCell))
-
-            return SpecialRule.castling(board, startCell, endCell);
+//        //캐슬링에 대한 기본적인 입장 조건입니다. board 인자로 받는거 제거하려고 일단 노력중
+//        if (colDiff == 2 && board.isPathClear(startCell, endCell))
+//
+//            return SpecialRule.castling(board, startCell, endCell);
 
         return false;
     }
@@ -52,12 +52,4 @@ public class King extends Piece {
     }
 
 
-    public King(King other) {
-        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
-        this.firstMove = other.firstMove;
-    }
-    // 복사 메소드
-    public King deepCopy() {
-        return new King(this);
-    }
 }
