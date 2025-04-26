@@ -2,6 +2,7 @@ import board.Board;
 import data.MoveResult;
 import data.PieceColor;
 import data.MoveErrorType;
+import fileManager.FileManager;
 
 import java.util.Scanner;
 
@@ -14,22 +15,23 @@ public class mainChess {
         // 세이브 파일 로드 여부 결정 (파일 입출력은 외부 처리)
         System.out.print("세이브 파일을 불러오시겠습니까? (y/n): ");
         String loadAnswer = scan.nextLine().trim();
+
         if (loadAnswer.equalsIgnoreCase("y")) {
-            // 예시 세이브 파일 데이터:
-            // 첫 줄: 현재 턴, 이후 8줄: 보드 상태 (기호: r, n, b, q, k, b, n, r, p, ., etc.)
-            currentTurn = PieceColor.BLACK;  // 예: 저장된 파일에 현재 턴이 BLACK으로 기록됨.
-            String[] savedBoard = {
-                    "r n b q k b n r",
-                    "p p p p . p p p",
-                    ". . . . . . . .",
-                    ". . . . p . . .",
-                    ". . . . P . . .",
-                    ". . . . . . . .",
-                    "P P P P . P P P",
-                    "R N B Q K B N R"
-            };
-            board = new Board(true);
-            System.out.println("세이브 파일 불러오기 완료!");
+            System.out.print("불러올 세이브 슬롯 번호를 입력하세요 (1~5): ");
+            int slot = Integer.parseInt(scan.nextLine().trim());
+
+            board = new Board(true); // 초기화 안된 보드 생성
+            boolean success = FileManager.getInstance().loadSavedFile(slot, board);
+
+            if (success) {
+                System.out.println("세이브 파일 불러오기 완료!");
+                currentTurn = board.getCurrentTurn();
+            } else {
+                System.out.println("세이브 파일 불러오기 실패. 새 게임을 시작합니다.");
+                board = new Board();  // 실패했으면 새 보드
+                currentTurn = PieceColor.WHITE;
+            }
+
         } else {
             // 새 게임 시작
             board = new Board();

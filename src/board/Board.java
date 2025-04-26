@@ -3,6 +3,7 @@ package board;
 import data.MoveErrorType;
 import data.MoveResult;
 import data.PieceColor;
+import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
 
@@ -33,7 +34,23 @@ public class Board {
             }
         }
     }
+    public Board(int saveSlot) {
+        cells = new Cell[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                cells[row][col] = new Cell(row, col);
+            }
+        }
 
+        // 파일 매니저 통해 세이브 파일 불러오기 시도
+        FileManager fileManager = FileManager.getInstance();
+        boolean success = fileManager.loadSavedFile(saveSlot, this);
+
+        if (!success) {
+            // 실패하면 예외를 던지거나, 기본 초기화를 하게 할 수 있어
+            throw new IllegalStateException("세이브 파일을 불러오지 못했습니다: 슬롯 " + saveSlot);
+        }
+    }
     /**
      * 체스판의 초기 기물 배치를 설정합니다.
      * 흑색 기물은 상단(0,1행), 백색 기물은 하단(6,7행)에 배치.
