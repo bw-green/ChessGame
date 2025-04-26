@@ -24,12 +24,14 @@ public class Rook extends Piece {
     }
 
     @Override
-    public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
-        // piece.Rook: 수평 또는 수직 이동
-        if (startCell.getRow() == endCell.getRow() || startCell.getCol() == endCell.getCol()) {
-            Piece dest = endCell.getPiece();
+    public boolean isValidMove(Board board, Cell start, Cell end) {
+        if (start.getRow() == end.getRow() || start.getCol() == end.getCol()) {
+            if (!board.isPathClear(start, end)) {
+                return false; // 경로에 기물이 있으면 이동 불가
+            }
+            Piece dest = end.getPiece();
             if (dest == null || dest.getColor() != this.color) {
-                firstMove = true;
+                firstMove = true; // 룩 이동했으면 firstMove true로 변경
                 return true;
             }
         }
@@ -41,14 +43,5 @@ public class Rook extends Piece {
         return (color == PieceColor.WHITE) ? "R" : "r";
     }
 
-    // 복사 생성자
-    public Rook(Rook other) {
-        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
-        this.firstMove = other.firstMove;
-    }
-    // 복사 메소드
-    public Rook deepCopy() {
-        return new Rook(this);
-    }
 
 }

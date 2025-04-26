@@ -107,4 +107,46 @@ public class PawnTest {
         MoveResult moved = testBoard.movePiece(6, 4, 5, 4);
         assertFalse(moved == MoveResult.SUCCESS, "화이트 Pawn은 정면 전진 칸에 적 기물이 있어도 캡처할 수 없어야 한다. (6,4)→(5,4)");
     }
+
+    // 추가 테스트: 초기 위치가 아닌 곳에서는 2칸 전진 불가
+    @Test
+    void testPawnCannotDoubleStepAfterFirstMove() {
+        Piece whitePawn = PieceFactory.createPieceFromSymbol("P");
+        testBoard.setPieceTest(5, 4, whitePawn); // 이미 한 칸 전진한 상태
+
+        MoveResult moved = testBoard.movePiece(5, 4, 3, 4); // 2칸 전진 시도
+        assertFalse(moved == MoveResult.SUCCESS, "초기 위치를 벗어난 Pawn은 두 칸 전진할 수 없어야 한다. (5,4)→(3,4)");
+    }
+
+    // 추가 테스트: 뒤로 이동 불가
+    @Test
+    void testPawnCannotMoveBackward() {
+        Piece whitePawn = PieceFactory.createPieceFromSymbol("P");
+        testBoard.setPieceTest(5, 4, whitePawn);
+
+        MoveResult moved = testBoard.movePiece(5, 4, 6, 4); // 뒤로 이동 시도
+        assertFalse(moved == MoveResult.SUCCESS, "Pawn은 뒤로 이동할 수 없어야 한다. (5,4)→(6,4)");
+    }
+
+    // 추가 테스트: 제자리 이동(같은 칸 이동) 불가
+    @Test
+    void testPawnCannotStayInPlace() {
+        Piece whitePawn = PieceFactory.createPieceFromSymbol("P");
+        testBoard.setPieceTest(6, 4, whitePawn);
+
+        MoveResult moved = testBoard.movePiece(6, 4, 6, 4); // 제자리 이동 시도
+        assertFalse(moved == MoveResult.SUCCESS, "Pawn은 제자리 이동할 수 없어야 한다. (6,4)→(6,4)");
+    }
+
+    // 추가 테스트: 칸 전진할 때 중간에 기물이 있으면 이동 불가
+    @Test
+    void testPawnCannotDoubleStepOverPiece() {
+        Piece whitePawn = PieceFactory.createPieceFromSymbol("P");
+        Piece blocker = PieceFactory.createPieceFromSymbol("P");
+        testBoard.setPieceTest(6, 4, whitePawn);
+        testBoard.setPieceTest(5, 4, blocker); // 중간에 기물 있음
+
+        MoveResult moved = testBoard.movePiece(6, 4, 4, 4); // 2칸 전진 시도
+        assertFalse(moved == MoveResult.SUCCESS, "Pawn은 중간에 기물이 있으면 두 칸 전진할 수 없어야 한다. (6,4)→(4,4)");
+    }
 }

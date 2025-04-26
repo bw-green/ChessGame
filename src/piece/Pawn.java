@@ -8,6 +8,7 @@ import specialRule.SpecialRule;
 public class Pawn extends Piece {
     public boolean enPassantable = false;
     public int enPassantCounter;
+    public boolean enPassant = false;
     public Pawn(PieceColor color) {
         super(color);
     }
@@ -29,7 +30,7 @@ public class Pawn extends Piece {
         int endRow = endCell.getRow();
         int endCol = endCell.getCol();
         Piece dest = endCell.getPiece();
-
+//        System.out.println("실행됨");
         // 백은 위(-1), 흑은 아래(+1)
         int direction = (color == PieceColor.WHITE) ? -1 : 1;
         // 초기 2칸 이동을 위한 시작 행
@@ -59,7 +60,8 @@ public class Pawn extends Piece {
             Cell enPassantCell = board.getCell(startRow,endCol); //앙파상이었을 경우를 가정하여 그 셀을 가져온다.
             Pawn enPassantPiece = (Pawn) enPassantCell.getPiece(); // 그 셀에서 기물을 받고 폰으로 변환한다.
             if(enPassantPiece!=null && enPassantPiece.enPassantable){ // null이 아니고, enPassatable이 true라면,
-                return SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
+//                System.out.println("앙파상 체킹 조건 충족");
+                return enPassant=SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
             }
         }
 
@@ -71,15 +73,5 @@ public class Pawn extends Piece {
         return (color == PieceColor.WHITE) ? "P" : "p";
     }
 
-    // 복사 생성자
-    public Pawn(Pawn other) {
-        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
-        this.enPassantable = other.enPassantable;
-        this.enPassantCounter = other.enPassantCounter;
-    }
-    // 복사 메소드
-    public Pawn deepCopy() {
-        return new Pawn(this);
-    }
 
 }

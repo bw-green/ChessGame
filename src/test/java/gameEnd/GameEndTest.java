@@ -3,7 +3,7 @@ package test.java.gameEnd;
 import board.Board;
 import check.GameEnd;
 import data.PieceColor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import piece.*;
 

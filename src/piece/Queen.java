@@ -22,22 +22,21 @@ public class Queen extends Piece {
     }
 
     @Override
-    public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
-        int startRow = startCell.getRow();
-        int startCol = startCell.getCol();
-        int endRow = endCell.getRow();
-        int endCol = endCell.getCol();
-        int rowDiff = Math.abs(endRow - startRow);
-        int colDiff = Math.abs(endCol - startCol);
+    public boolean isValidMove(Board board, Cell start, Cell end) {
+        int rowDiff = Math.abs(start.getRow() - end.getRow());
+        int colDiff = Math.abs(start.getCol() - end.getCol());
 
-        // piece.Queen: 수직, 수평, 대각선 이동
-        boolean straightMove = (startRow == endRow || startCol == endCol);
+        boolean straightMove = (start.getRow() == end.getRow() || start.getCol() == end.getCol());
         boolean diagonalMove = (rowDiff == colDiff);
 
         if (straightMove || diagonalMove) {
-            Piece dest = endCell.getPiece();
-            if (dest == null || dest.getColor() != this.color)
+            if (!board.isPathClear(start, end)) {
+                return false; // 경로에 기물이 있으면 이동 불가
+            }
+            Piece dest = end.getPiece();
+            if (dest == null || dest.getColor() != this.color) {
                 return true;
+            }
         }
         return false;
     }
@@ -47,13 +46,5 @@ public class Queen extends Piece {
         return (color == PieceColor.WHITE) ? "Q" : "q";
     }
 
-    // 복사 생성자
-    public Queen(Queen other) {
-        super(other.getColor());  // Piece 클래스의 복사: enum은 immutable하므로 그대로 사용 가능
-    }
-    // 복사 메소드
-    public Queen deepCopy() {
-        return new Queen(this);
-    }
 
 }
