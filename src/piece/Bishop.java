@@ -35,4 +35,5 @@ public class Bishop extends Piece {
     public String getSymbol() {
         return (color == PieceColor.WHITE) ? "B" : "b";
     }
+
 }

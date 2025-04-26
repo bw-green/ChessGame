@@ -27,18 +27,18 @@ public class SpecialRule {
         Piece movingPiece = start.getPiece(); //움직이는 piece고, 폰이다.
         Piece targetPiece = enPassant.getPiece(); // 앙파상 당할 모든 자격을 갖춘 piece다.
         if (targetPiece.getColor() != movingPiece.getColor()){//색깔이 달라야한다.
-            Checker checker = new Checker(movingPiece.getColor());
-            enPassant.setPiece(null);
-            end.setPiece(movingPiece);
-            start.setPiece(null);
-            if(checker.isCheck(board)) {
-                enPassant.setPiece(targetPiece);
-                end.setPiece(null);
-                start.setPiece(movingPiece);
-                return false;
-            }//미리두고 체크 확인
-            end.setPiece(null);
-            start.setPiece(movingPiece);//원상복귀
+//            Checker checker = new Checker(movingPiece.getColor());
+//            enPassant.setPiece(null);
+//            end.setPiece(movingPiece);
+//            start.setPiece(null);
+//            if(checker.isCheck(board)) {
+//                enPassant.setPiece(targetPiece);
+//                end.setPiece(null);
+//                start.setPiece(movingPiece);
+//                return false;
+//            }//미리두고 체크 확인
+//            end.setPiece(null);
+//            start.setPiece(movingPiece);//원상복귀
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println("EnPassant Success");
             return true;
@@ -54,7 +54,7 @@ public class SpecialRule {
         Scanner scanner = new Scanner(System.in);
         Piece pawn = end.getPiece(); //폰 확정은 아니지만 일단 이름은 pawn
         int targetEndRow = (pawn.getColor() == PieceColor.WHITE) ? 0 : 7; // 판별할 끝을 정하기
-        if (("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol())) && end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
+        if ("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol()) && end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
         {
             while(true) {
                 System.out.print("Enter the PIECE to promote to (e.g., \"Q\", \"R\", \"N\", \"B\").\n ");
@@ -117,8 +117,10 @@ public class SpecialRule {
         //룩 셀에 룩이 없거나, 길이 열려있지 않으면, 실패. 룩이나 킹이 한번이라도 움직였어도 실패.
         Piece movingPiece = rookCell.getPiece();
         if (movingPiece == null||!("R".equals(movingPiece.getSymbol())||"r".equals(movingPiece.getSymbol())) || !board.isPathClear(kingStart, rookCell) || ((Rook) movingPiece).firstMove || ((King)king).firstMove) {
-            System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println(Unspecified.CASTLING_FAILED);
+            if(!board.soutBlock) {
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(Unspecified.CASTLING_FAILED);
+            }
             return false;
         }
         Checker checker = new Checker(movingPiece.getColor());

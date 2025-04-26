@@ -46,4 +46,6 @@ public class Queen extends Piece {
     public String getSymbol() {
         return (color == PieceColor.WHITE) ? "Q" : "q";
     }
+
+
 }

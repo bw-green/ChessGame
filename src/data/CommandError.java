@@ -8,7 +8,7 @@ public enum CommandError {
 
     //Error.EMPTY_SLOT.formatMessage([1~5 중 해당하는 수]);
     EMPTY_SLOT("the save %d is empty."),
-    START_BLOCK("/start is not available during a game.");
+    START_BLOCK("| /start is not available during a game! |");
 
     private final String message;
 

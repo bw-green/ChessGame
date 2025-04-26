@@ -16,7 +16,7 @@ public class CommandTest {
         System.out.println(Command.START);
         System.out.println(Command.QUIT);
         System.out.println(Command.YES_OR_NO_WHILE_NOT_SAVED);
-        System.out.println(Command.YES_OR_NO);
+
 
         try{
             System.out.println(Command.SAVE);
