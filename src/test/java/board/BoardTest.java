@@ -15,7 +15,7 @@ public class BoardTest {
     static Board board;
 
 
-    @Test
+
     @ParameterizedTest
     @CsvSource({
             "e2,e4",
