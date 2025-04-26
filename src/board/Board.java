@@ -225,7 +225,7 @@ public class Board {
             end.setPiece(targetPieceBackup);
 
             if (isInCheck) {
-//                System.out.println("킹이 체크였음");
+                System.out.println(MoveErrorType.KING_IS_ATTACK);
                 return MoveResult.FAIL;
             } // 체크되는 칸으로는 이동 불가
         }
