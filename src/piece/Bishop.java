@@ -19,14 +19,18 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public boolean isValidMove(Board board, Cell startCell, Cell endCell) {
-        int rowDiff = Math.abs(endCell.getRow() - startCell.getRow());
-        int colDiff = Math.abs(endCell.getCol() - startCell.getCol());
-        // piece.Bishop: 대각선 이동
-        if (rowDiff == colDiff) {
-            Piece dest = endCell.getPiece();
-            if (dest == null || dest.getColor() != this.color)
+    public boolean isValidMove(Board board, Cell start, Cell end) {
+        int rowDiff = Math.abs(start.getRow() - end.getRow());
+        int colDiff = Math.abs(start.getCol() - end.getCol());
+
+        if (rowDiff == colDiff) { // 대각선 이동
+            if (!board.isPathClear(start, end)) {
+                return false; // 경로에 기물이 있으면 이동 불가
+            }
+            Piece dest = end.getPiece();
+            if (dest == null || dest.getColor() != this.color) {
                 return true;
+            }
         }
         return false;
     }
