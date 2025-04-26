@@ -3,6 +3,7 @@ package board;
 import data.MoveErrorType;
 import data.MoveResult;
 import data.PieceColor;
+import data.Unspecified;
 import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
@@ -192,17 +193,20 @@ public class Board {
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
                 if (!SpecialRule.castling(this, start, end)) {
+                    System.out.println(Unspecified.CASTLING_FAILED);
                     return MoveResult.FAIL;
                 }
             } else {
                 // 일반 이동이면 isValidMove 검사
                 if (!movingPiece.isValidMove(this, start, end)) {
+                    System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
                     return MoveResult.FAIL;
                 }
             }
         } else {
             // 킹이 아닌 경우
             if (!movingPiece.isValidMove(this, start, end)) {
+                System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
                 return MoveResult.FAIL;
             }
         }
@@ -438,14 +442,6 @@ public class Board {
                 return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
             }
         }
-
-        // 6. Rook, Bishop, Queen 이동 시 경로 막힘
-        boolean pathBlocked = (movingPiece instanceof Rook || movingPiece instanceof Bishop || movingPiece instanceof Queen)
-                && !isPathClear(start, end);
-        if (pathBlocked) {
-            return MoveErrorType.PATH_BLOCKED;
-        }
-
 
 
         return null; // 의미 오류 없음

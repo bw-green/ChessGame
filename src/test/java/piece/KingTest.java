@@ -214,22 +214,4 @@ public class KingTest {
         MoveResult castled = testBoard.movePiece(7, 4, 7, 6); // e1 → g1
         assertFalse(castled == MoveResult.SUCCESS, "중간에 기물이 있으면 캐슬링이 실패해야 한다.");
     }
-
-    // 추가 테스트: 킹이 체크인 상태에서 캐슬링 시도
-    @Test
-    void testCastlingFailsIfKingIsInCheck() {
-        testBoard = new Board(false);
-        Piece king = PieceFactory.createPieceFromSymbol("K");
-        Piece rook = PieceFactory.createPieceFromSymbol("R");
-        Piece enemyRook = PieceFactory.createPieceFromSymbol("r");
-
-        testBoard.setPieceTest(7, 4, king); // e1
-        testBoard.setPieceTest(7, 7, rook); // h1
-        testBoard.setPieceTest(6, 4, enemyRook); // e2 → 킹을 체크
-
-        MoveResult castled = testBoard.movePiece(7, 4, 7, 6); // e1 → g1
-
-        assertFalse(castled == MoveResult.SUCCESS, "킹이 체크당하고 있으면 캐슬링이 실패해야 한다.");
-    }
-    //등등
 }

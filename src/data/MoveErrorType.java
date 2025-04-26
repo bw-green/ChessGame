@@ -9,8 +9,6 @@ public enum MoveErrorType {
     NOT_YOUR_PIECE("Invalid input: Not your piece. Try again."),
     /** 도착 위치에 자기 색상의 기물이 있는 경우 */
     OWN_PIECE_AT_DESTINATION("Invalid input: Own piece at destination. Try again."),
-    /** 도착지까지의 경로가 막혀 있는 경우 (Rook, Bishop, Queen 등) */
-    PATH_BLOCKED("Invalid input: Path is blocked. Try again."),
     /** 기물의 이동 규칙에 어긋난 경우 */
     INVALID_MOVE_FOR_THIS_PIECE("Invalid input: Invalid move for this piece. Try again."),
 
@@ -29,7 +27,8 @@ public enum MoveErrorType {
         this.message = message;
     }
 
-    public String getMessage() {
+    @Override
+    public String toString() {
         return message;
     }
 }
