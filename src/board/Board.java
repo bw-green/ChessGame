@@ -212,23 +212,13 @@ public class Board {
         }
 
         // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사(isCellunderAttack 함수 제거함)
-        if (movingPiece instanceof King king) {
-            Piece targetPieceBackup = end.getPiece(); // 캡처되는 기물이 있다면 임시 저장
-            end.setPiece(movingPiece);
-            start.setPiece(null);
 
-            Checker checker = new Checker(king.getColor());       // 변경
-            boolean isInCheck = checker.isCheck(this);            // 변경
 
-            // 상태 복원
-            start.setPiece(movingPiece);
-            end.setPiece(targetPieceBackup);
-
-            if (isInCheck) {
-                System.out.println(MoveErrorType.KING_IS_ATTACK);
-                return MoveResult.FAIL;
-            } // 체크되는 칸으로는 이동 불가
-        }
+        Checker check = new Checker(currentTurn);
+        if (check.isOneMoveCheck(this,start,end)) {
+            System.out.println(MoveErrorType.KING_IS_ATTACK);
+            return MoveResult.FAIL;
+        } // 체크되는 칸으로는 이동 불가
 
         // 4. 이동 수행
         end.setPiece(movingPiece);
@@ -247,30 +237,70 @@ public class Board {
         return MoveResult.SUCCESS;
     }
 
-    public boolean movePieceTest(int startRow, int startCol, int endRow, int endCol) {
+    public void movePieceTest(int startRow, int startCol, int endRow, int endCol) {
 
         Cell start = getCell(startRow, startCol);
         Cell end = getCell(endRow, endCol);
-
-        if (start == null || end == null)
-            return false;
+        if (start == null || end == null) return;  // input에서 처리됨
 
         Piece movingPiece = start.getPiece();
-        if (movingPiece == null)
-            return false;
-
-        // 기물의 이동 규칙에 따라 이동 가능 여부를 확인
-        if (movingPiece.isValidMove(this, start, end)) {
-            // 도착 Cell에 기물을 배치하고, 시작 Cell은 비움
-
-            end.setPiece(movingPiece);
-            start.setPiece(null);
-
-            // 앙파상에대한 업데이트는 기물이 이동한 후 수행하는 것이 적절합니다.
-            return true;
+        if (movingPiece == null){
+//            System.out.println(MoveErrorType.NO_PIECE_AT_START);
+            return;
         }
 
-        return false;
+        // 1. 이동 가능성 자체 확인
+        if (movingPiece instanceof King) {
+            int colDiff = Math.abs(start.getCol() - end.getCol());
+            int rowDiff = Math.abs(start.getRow() - end.getRow());
+
+            if (colDiff == 2 && rowDiff == 0) {
+                // 캐슬링 시도 중
+                if (!SpecialRule.castling(this, start, end)) {
+//                    System.out.println(Unspecified.CASTLING_FAILED);
+//                    System.out.println("캐슬링 시도중에서 걸림");
+                    return;
+                }
+            } else {
+                // 일반 이동이면 isValidMove 검사
+                if (!movingPiece.isValidMove(this, start, end)) {
+//                    System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
+//                    System.out.println("킹의 일반 이동에서 걸림");
+                    return;
+                }
+            }
+        } else {
+            // 킹이 아닌 경우
+            if (!movingPiece.isValidMove(this, start, end)) {
+//                System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
+//                System.out.println("일반 기물인데 이동 불가능");
+                return;
+            }
+        }
+
+        // 2. 의미 오류 검사 추가 (6가지 의미 오류)
+        MoveErrorType error = validateMoveMeaning(
+                Board.coordinateToNotation(startRow, startCol),
+                Board.coordinateToNotation(endRow, endCol),
+                currentTurn
+        );
+        if (error != null){
+            return;
+        }
+
+
+        // 4. 이동 수행
+        end.setPiece(movingPiece);
+        start.setPiece(null);
+        if(end.getPiece() instanceof Pawn){
+            if(((Pawn) end.getPiece()).enPassant){
+                getCell(start.getRow(), end.getCol()).setPiece(null);
+                System.out.println("앙파상이 제대로 실행됨.");
+                System.out.println(this);
+//                System.out.println("지우기 수행");
+            }
+        }
+        enPassantChecking();
 
     }
 
