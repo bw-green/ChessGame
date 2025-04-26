@@ -2,6 +2,7 @@ package Input;
 
 import data.CommandError;
 import data.GameInputReturn;
+import data.PrintTemplate;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -45,10 +46,14 @@ public class GameInput {
                 return checkOrderInput();
             } catch (Exception e) {
                 if(e instanceof InputMismatchException){
-                    System.out.println(CommandError.WRONG_COMMAND);
+                    System.out.println(PrintTemplate.BOLDLINE.toString() + "\n"
+                            + CommandError.WRONG_COMMAND + "\n"
+                            + PrintTemplate.BOLDLINE.toString());
                 }
                 else{
-                    System.out.println(CommandError.WRONG_NUMBER);
+                    System.out.println( PrintTemplate.BOLDLINE.toString() + "\n"
+                            + CommandError.WRONG_NUMBER + "\n"
+                            + PrintTemplate.BOLDLINE.toString());
                 }
                 return ERROR;
             }
@@ -100,7 +105,9 @@ public class GameInput {
             String now = parts[1].substring("delsave".length());
             if(checking(now)!=0){
                 number= checking(now);
-                System.out.println(CommandError.DELSAVE_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE.toString() + "\n"
+                        + CommandError.DELSAVE_BLOCK + "\n"
+                        + PrintTemplate.BOLDLINE.toString());
                 return ERROR;
             }
             else{
@@ -122,7 +129,9 @@ public class GameInput {
         else if(parts[1].startsWith("start")){
             parts[1]=blank(parts[1]) ;
             if(parts[1].equals("start")){
-                System.out.println(CommandError.DELSAVE_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE.toString() + "\n"
+                        + CommandError.START_BLOCK + "\n"
+                        + PrintTemplate.BOLDLINE.toString());
                 return ERROR;
             }
             else{

@@ -1,5 +1,6 @@
 package Menu;
 
+import Input.UserInput;
 import data.CommandError;
 import data.GameInputReturn;
 import data.PrintTemplate;
@@ -54,7 +55,7 @@ public class MenuInput {
 
     private static int checkInput() {
         if(input.isEmpty()){
-            return NOT_MINE;
+            return UserInput.handleInput(input);
         }
         if(input.charAt(0)=='/'){
             try{
@@ -75,9 +76,11 @@ public class MenuInput {
             }
 
         }
-        // 유신님 인풋으로 보내기
-        // 메뉴에서 좌표 입력 없을 때 에러 날리는 Mockup 있어야 됨
-        return NOT_MINE;
+
+        System.out.println(PrintTemplate.BOLDLINE.toString() + "\n" +
+                CommandError.WRONG_COMMAND.toString() + "\n" +
+                PrintTemplate.BOLDLINE.toString());
+        return ERROR;
 
     }
     private static int checkOrderInput(){
