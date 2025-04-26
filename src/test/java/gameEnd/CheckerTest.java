@@ -183,5 +183,7 @@ public class CheckerTest {
         System.out.println("black : "+blackChecker.canMove(board));
         System.out.println();
         System.out.println(board);
+
+        System.out.println();
     }
 }
