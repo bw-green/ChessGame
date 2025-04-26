@@ -10,7 +10,7 @@ import specialRule.SpecialRule;
 public class Board {
     private Cell[][] cells; // 8x8 board.Cell 배열
     private PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
-
+    public boolean soutBlock = false;
 
     /**
      * 생성자
@@ -175,17 +175,20 @@ public class Board {
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
                 if (!SpecialRule.castling(this, start, end)) {
+//                    System.out.println("캐슬링 시도중에서 걸림");
                     return MoveResult.FAIL;
                 }
             } else {
                 // 일반 이동이면 isValidMove 검사
                 if (!movingPiece.isValidMove(this, start, end)) {
+//                    System.out.println("킹의 일반 이동에서 걸림");
                     return MoveResult.FAIL;
                 }
             }
         } else {
             // 킹이 아닌 경우
             if (!movingPiece.isValidMove(this, start, end)) {
+//                System.out.println("일반 기물인데 이동 불가능");
                 return MoveResult.FAIL;
             }
         }
@@ -198,6 +201,7 @@ public class Board {
         );
         if (error != null){
             System.out.println(error);
+//            System.out.println("에러에 걸림");
             return MoveResult.FAIL;
         }
 
@@ -213,12 +217,21 @@ public class Board {
             start.setPiece(movingPiece);
             end.setPiece(targetPieceBackup);
 
-            if (isInCheck) return MoveResult.FAIL; // 체크되는 칸으로는 이동 불가
+            if (isInCheck) {
+//                System.out.println("킹이 체크였음");
+                return MoveResult.FAIL;
+            } // 체크되는 칸으로는 이동 불가
         }
 
         // 4. 이동 수행
         end.setPiece(movingPiece);
         start.setPiece(null);
+        if(end.getPiece() instanceof Pawn){
+            if(((Pawn) end.getPiece()).enPassant){
+                getCell(start.getRow(), end.getCol()).setPiece(null);
+//                System.out.println("지우기 수행");
+            }
+        }
         enPassantChecking();
 
         if (endRow == 0 || endRow == 7) {
@@ -261,8 +274,10 @@ public class Board {
                 Piece enpassantTest = getCell(i, j).getPiece();
                 if (enpassantTest instanceof Pawn pawn) {
                     if (pawn.enPassantable && pawn.enPassantCounter == 0) {
+//                        System.out.println("앙파상카운터 1로 증가");
                         pawn.enPassantCounter = 1; //한턴은 앙파상을 유지시켜야하므로
                     } else if (pawn.enPassantable && pawn.enPassantCounter == 1) {
+//                        System.out.println("앙파상 꺼짐");
                         pawn.enPassantCounter = 0;
                         pawn.enPassantable = false;
                     }
@@ -345,6 +360,7 @@ public class Board {
                     Cell to = getCell(targetRow, targetCol);
 
                     if (attacker.isValidMove(this, from, to)) {
+//                        System.out.println(attacker.getSymbol());
                         return true;
                     }
                 }
@@ -418,6 +434,7 @@ public class Board {
             }
         } else {
             if (!movingPiece.isValidMove(this, start, end)) {
+//                System.out.println("갑자기 여기서 안됨");
                 return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
             }
         }
