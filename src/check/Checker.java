@@ -116,7 +116,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                             if(now.getPiece().isValidMove(newBoard,now,to)){
                                 newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
                                 if(!isCheck(newBoard)) {
-                                    System.out.println("debug1");
+//                                    System.out.println("debug1");
 
                                     return true;
                                 }
@@ -127,7 +127,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
             }
         }
 
-        System.out.println("debug2");
+//        System.out.println("debug2");
         return false;
     }
 
