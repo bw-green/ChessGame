@@ -46,14 +46,14 @@ public class GameInput {
                 return checkOrderInput();
             } catch (Exception e) {
                 if(e instanceof InputMismatchException){
-                    System.out.println(PrintTemplate.BOLDLINE.toString() + "\n"
+                    System.out.println(PrintTemplate.BOLDLINE + "\n"
                             + CommandError.WRONG_COMMAND + "\n"
-                            + PrintTemplate.BOLDLINE.toString());
+                            + PrintTemplate.BOLDLINE);
                 }
                 else{
-                    System.out.println( PrintTemplate.BOLDLINE.toString() + "\n"
+                    System.out.println( PrintTemplate.BOLDLINE + "\n"
                             + CommandError.WRONG_NUMBER + "\n"
-                            + PrintTemplate.BOLDLINE.toString());
+                            + PrintTemplate.BOLDLINE);
                 }
                 return ERROR;
             }
@@ -105,9 +105,9 @@ public class GameInput {
             String now = parts[1].substring("delsave".length());
             if(checking(now)!=0){
                 number= checking(now);
-                System.out.println(PrintTemplate.BOLDLINE.toString() + "\n"
+                System.out.println(PrintTemplate.BOLDLINE + "\n"
                         + CommandError.DELSAVE_BLOCK + "\n"
-                        + PrintTemplate.BOLDLINE.toString());
+                        + PrintTemplate.BOLDLINE);
                 return ERROR;
             }
             else{
@@ -129,9 +129,9 @@ public class GameInput {
         else if(parts[1].startsWith("start")){
             parts[1]=blank(parts[1]) ;
             if(parts[1].equals("start")){
-                System.out.println(PrintTemplate.BOLDLINE.toString() + "\n"
+                System.out.println(PrintTemplate.BOLDLINE + "\n"
                         + CommandError.START_BLOCK + "\n"
-                        + PrintTemplate.BOLDLINE.toString());
+                        + PrintTemplate.BOLDLINE);
                 return ERROR;
             }
             else{

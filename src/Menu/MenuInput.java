@@ -10,7 +10,6 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class MenuInput {
-    static int NOT_MINE = -1; //유신님 코드 불러야함
     static int ERROR = GameInputReturn.ERROR.getCode();
     static int HELP = GameInputReturn.HELP.getCode();
 
@@ -62,24 +61,24 @@ public class MenuInput {
                 return checkOrderInput();
             } catch (Exception e) {
                 if(e instanceof InputMismatchException){
-                    System.out.println(PrintTemplate.BOLDLINE.toString() + "\n" +
-                            CommandError.WRONG_COMMAND.toString() + "\n" +
-                            PrintTemplate.BOLDLINE.toString());
+                    System.out.println(PrintTemplate.BOLDLINE + "\n" +
+                            CommandError.WRONG_COMMAND+ "\n" +
+                            PrintTemplate.BOLDLINE);
 
                 }
                 else{
-                    System.out.println(PrintTemplate.BOLDLINE.toString() + "\n" +
-                            CommandError.WRONG_NUMBER.toString() + "\n" +
-                            PrintTemplate.BOLDLINE.toString());
+                    System.out.println(PrintTemplate.BOLDLINE+ "\n" +
+                            CommandError.WRONG_NUMBER+ "\n" +
+                            PrintTemplate.BOLDLINE);
                 }
                 return ERROR;
             }
 
         }
 
-        System.out.println(PrintTemplate.BOLDLINE.toString() + "\n" +
-                CommandError.WRONG_COMMAND.toString() + "\n" +
-                PrintTemplate.BOLDLINE.toString());
+        System.out.println(PrintTemplate.BOLDLINE+ "\n" +
+                CommandError.WRONG_COMMAND + "\n" +
+                PrintTemplate.BOLDLINE);
         return ERROR;
 
     }
