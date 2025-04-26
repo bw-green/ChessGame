@@ -158,7 +158,7 @@ public class GameManager {
             }
 
             System.out.print(Command.YES_OR_NO_EXIT);
-            boolean input = MenuInput.yesornoInput();
+            boolean input = MenuInput.yesOrNoInput();
             if(input){
                 menu.printWithTemplate(Command.EXIT.toString());
                 System.exit(0);
@@ -183,7 +183,7 @@ public class GameManager {
                 showSaveAndList();
 
                 System.out.print(Command.YES_OR_NO_EXIT);
-                boolean input = MenuInput.yesornoInput();
+                boolean input = MenuInput.yesOrNoInput();
                 if(input){
                     menu.printWithTemplate(Command.EXIT.toString());
                     isPlaying = false;
@@ -216,7 +216,7 @@ public class GameManager {
             if(isPlaying){
                 showSaveAndList();
                 System.out.print(Command.YES_OR_NO_EXIT);
-                boolean input = MenuInput.yesornoInput();
+                boolean input = MenuInput.yesOrNoInput();
                 if(!input){ return; }
                 slot = GameInput.number;
             }else{
