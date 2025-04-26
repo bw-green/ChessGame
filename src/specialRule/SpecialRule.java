@@ -40,11 +40,10 @@ public class SpecialRule {
 //            end.setPiece(null);
 //            start.setPiece(movingPiece);//원상복귀
             System.out.println(board.soutBlock);
-            if (!board.soutBlock){
+            if(!board.soutBlock) {
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println("EnPassant Success");
             }
-
             return true;
         }
         return false;

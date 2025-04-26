@@ -20,19 +20,8 @@ public class GameEndTest {
         board.setPieceTest(2,7,new King(PieceColor.WHITE));
         board.setPieceTest(2,1,new Queen(PieceColor.WHITE));
         System.out.println(board);
-
-        if (blackGameEnd.isStaleMate(board)) {
-            System.out.println("black's isStaleMate isTrue");
-        }
-        else{
-            System.out.println("black's isStaleMate isFalse");
-        }
-        if (whiteGameEnd.isStaleMate(board)) {
-            System.out.println("white's isStaleMate isTrue");
-        }
-        else{
-            System.out.println("white's isStaleMate isFalse");
-        }
+        System.out.println("black's isStaleMate : " + blackGameEnd.isStaleMate(board));
+        System.out.println("white's isStaleMate : " + whiteGameEnd.isStaleMate(board));
 
         board = new Board(true);
         board.setPieceTest(0,0,new King(PieceColor.BLACK));
@@ -41,19 +30,15 @@ public class GameEndTest {
         board.setPieceTest(7,7,new King(PieceColor.WHITE));
 
         System.out.println(board);
+        System.out.println("black's isStaleMate : " + blackGameEnd.isStaleMate(board));
+        System.out.println("white's isStaleMate : " + whiteGameEnd.isStaleMate(board));
 
-        if (blackGameEnd.isStaleMate(board)) {
-            System.out.println("black's isStaleMate isTrue");
-        }
-        else{
-            System.out.println("black's isStaleMate isFalse");
-        }
-        if (whiteGameEnd.isStaleMate(board)) {
-            System.out.println("white's isStaleMate isTrue");
-        }
-        else{
-            System.out.println("white's isStaleMate isFalse");
-        }
+        board = new Board(true);
+        board.setPieceTest(7,4,new King(PieceColor.WHITE));
+        board.setPieceTest(7,1,new Rook(PieceColor.BLACK));
+        board.setPieceTest(6,2,new Queen(PieceColor.BLACK));
+        board.setPieceTest(0,0,new King(PieceColor.BLACK));
+        System.out.println(board);
 
     }
 
@@ -68,21 +53,11 @@ public class GameEndTest {
         board.setPieceTest(0,0,new Bishop(PieceColor.WHITE));
         board.setPieceTest(1,3,new Bishop(PieceColor.BLACK));
         System.out.println(board);
-        if (blackGameEnd.isInsufficientPieces(board)) {
-            System.out.println("isInsufficientPieces isTrue");
-        }
-        else{
-            System.out.println("isInsufficientPieces isFalse");
-        }
+        System.out.println("isInsufficientPieces : "+blackGameEnd.isInsufficientPieces(board));
 
         board = new Board();
         System.out.println(board);
-        if (blackGameEnd.isInsufficientPieces(board)) {
-            System.out.println("isInsufficientPieces isTrue");
-        }
-        else{
-            System.out.println("isInsufficientPieces isFalse");
-        }
+        System.out.println("isInsufficientPieces : "+blackGameEnd.isInsufficientPieces(board));
 
         board = new Board(true);
         board.setPieceTest(3,3,new King(PieceColor.WHITE));
@@ -90,12 +65,7 @@ public class GameEndTest {
         board.setPieceTest(0,0,new Bishop(PieceColor.WHITE));
         board.setPieceTest(1,3,new Bishop(PieceColor.WHITE));
         System.out.println(board);
-        if (blackGameEnd.isInsufficientPieces(board)) {
-            System.out.println("isInsufficientPieces isTrue");
-        }
-        else{
-            System.out.println("isInsufficientPieces isFalse");
-        }
+        System.out.println("isInsufficientPieces : "+blackGameEnd.isInsufficientPieces(board));
 
         board = new Board(true);
         board.setPieceTest(3,3,new King(PieceColor.WHITE));
@@ -103,13 +73,7 @@ public class GameEndTest {
         board.setPieceTest(0,0,new Knight(PieceColor.WHITE));
 
         System.out.println(board);
-        if (blackGameEnd.isInsufficientPieces(board)) {
-            System.out.println("isInsufficientPieces isTrue");
-        }
-        else{
-            System.out.println("isInsufficientPieces isFalse");
-        }
-
+        System.out.println("isInsufficientPieces : "+blackGameEnd.isInsufficientPieces(board));
     }
     //체크메이트 -> 한 열개정도
     @Test
@@ -126,35 +90,15 @@ public class GameEndTest {
 
         System.out.println(board);
 
-        if (blackGameEnd.isCheckMate(board)) {
-            System.out.println("black's isCheckMate isTrue");
-        }
-        else{
-            System.out.println("black's isCheckMate isFalse");
-        }
-        if (whiteGameEnd.isCheckMate(board)) {
-            System.out.println("white's isCheckMate isTrue");
-        }
-        else{
-            System.out.println("white's isCheckMate isFalse");
-        }
+        System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
+        System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
 
         board = new Board();
         System.out.println(board);
 
-        if (blackGameEnd.isCheckMate(board)) {
-            System.out.println("black's isCheckMate isTrue");
-        }
-        else{
-            System.out.println("black's isCheckMate isFalse");
-        }
-        if (whiteGameEnd.isCheckMate(board)) {
-            System.out.println("white's isCheckMate isTrue");
-        }
-        else{
-            System.out.println("white's isCheckMate isFalse");
-        }
+        System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
+        System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
         board = new Board(true);
 
@@ -209,22 +153,19 @@ public class GameEndTest {
         board.setPieceTest(7, 6, new Knight(PieceColor.WHITE));
         board.setPieceTest(7, 7, new Rook(PieceColor.WHITE));
 
-
         System.out.println(board);
+        System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
+        System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
-        if (blackGameEnd.isCheckMate(board)) {
-            System.out.println("black's isCheckMate isTrue");
-        }
-        else{
-            System.out.println("black's isCheckMate isFalse");
-        }
-        if (whiteGameEnd.isCheckMate(board)) {
-            System.out.println("white's isCheckMate isTrue");
-        }
-        else{
-            System.out.println("white's isCheckMate isFalse");
-        }
 
+        board = new Board(true);
+        board.setPieceTest(7,4,new King(PieceColor.WHITE));
+        board.setPieceTest(7,1,new Rook(PieceColor.BLACK));
+        board.setPieceTest(6,2,new Queen(PieceColor.BLACK));
+        board.setPieceTest(0,0,new King(PieceColor.BLACK));
+        System.out.println(board);
+        System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
+        System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
 
 

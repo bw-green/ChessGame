@@ -20,6 +20,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
         this.pieceColor = pieceColor;
         Symbol = (this.pieceColor == PieceColor.WHITE) ? "K" : "k";
         //System.out.println(Symbol);
+        newBoard.soutBlock = true;
     }
 
     public void findKing(Board board){
@@ -37,9 +38,9 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     }
 
     public boolean isCheck(Board board) { //isBlack이 true면 블랙이 check 상태인지 false면 화이트가 check인지 리턴
-
+        initBoard(board);
         findKing(board);
-        board.soutBlock=true;
+
         if(King == null){
             System.out.println("못찾음");
         }
@@ -47,21 +48,20 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
         for(int i = 0; i < BOARD_SIZE; i++){
             for(int j = 0; j < BOARD_SIZE; j++){
 
-                Cell now = board.getCell(i, j);
+                Cell now = newBoard.getCell(i, j);
 
                 if(now.getPiece() == null)continue;
 
                 if(now.getPiece().getColor()!= pieceColor){
 
-                    if(now.getPiece().isValidMove(board,now,King)){
-                        board.soutBlock=false;
+                    if(now.getPiece().isValidMove(newBoard,now,King)){
                         return true;
                     }
 
                 }
             }
         }
-        board.soutBlock=false;
+
         return false;
 
     }
@@ -69,7 +69,6 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     private void initBoard(Board board){
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-
 
                 if (board.getCell(i,j).getPiece() == null) {
                     newBoard.getCell(i,j).setPiece(null);
@@ -83,9 +82,10 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     }
 
     public boolean canMove(Board board) {
+
         initBoard(board);
         findKing(board);
-        newBoard.soutBlock = true;
+
         for(int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 Cell now = newBoard.getCell(row, col);
@@ -112,24 +112,40 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                                 piece2 = now.getPiece().deepCopy();
                             }
 
-
                             if(now.getPiece().isValidMove(newBoard,now,to)){
                                 newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
                                 if(!isCheck(newBoard)) {
-//                                    System.out.println("debug1");
-
                                     return true;
                                 }
                             }
+
+                            initBoard(board);
+
                         }
                     }
                 }
             }
         }
-
-//        System.out.println("debug2");
         return false;
     }
 
+    public boolean isOneMoveCheck(Board board, Cell startCell, Cell endCell) {
+        initBoard(board);
+        findKing(board);
+
+        Cell now = newBoard.getCell(startCell.getRow(), startCell.getCol());
+        Cell to = newBoard.getCell(endCell.getRow(), endCell.getCol());
+
+        if(now.getPiece().isValidMove(newBoard,now,to)){
+            newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
+            //System.out.println("newboard.sout : " + newBoard.soutBlock);
+
+            return isCheck(newBoard);
+
+        }
+
+        return false;
+
+    }
 
 }
