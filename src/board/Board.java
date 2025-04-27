@@ -292,9 +292,9 @@ public class Board {
         if(end.getPiece() instanceof Pawn){
             if(((Pawn) end.getPiece()).enPassant){
                 getCell(start.getRow(), end.getCol()).setPiece(null);
-//                System.out.println("앙파상이 제대로 실행됨.");
-                System.out.println(this);
-//                System.out.println("지우기 수행");
+//              System.out.println("앙파상이 제대로 실행됨.")
+//              System.out.println(this);
+//              System.out.println("지우기 수행");
             }
         }
         enPassantChecking();
