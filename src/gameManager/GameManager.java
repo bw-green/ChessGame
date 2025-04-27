@@ -90,11 +90,12 @@ public class GameManager {
 
             MoveResult moveSuccess = board.movePiece(start[0], start[1], end[0], end[1]);
             if(moveSuccess == MoveResult.SUCCESS){
+                //게임 승패 먼저 판정
                 GameEnd gameEnd = new GameEnd(playerTurn);
                 if(gameEnd.isCheckMate(board)){
                     System.out.println(PrintTemplate.BOLDLINE);
-                    if(playerTurn == PieceColor.WHITE) System.out.println(PrintTemplate.END_WHITE_CHECKMATE);
-                    else System.out.println(PrintTemplate.END_BLACK_CHECKMATE);
+                    if(playerTurn == PieceColor.WHITE) { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
+                    else { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
                     System.out.println(PrintTemplate.BOLDLINE + "\n");
                     isPlaying = false;
                     isMenuPrint = true;
@@ -112,11 +113,14 @@ public class GameManager {
                     isMenuPrint = true;
                 }
 
-                board.turnChange();
-                playerTurn = board.getCurrentTurn();
-                isSaved = false;
-                isGamePrint = true;
-            }else{
+                //턴 전환
+                if(!isPlaying){
+                    board.turnChange();
+                    playerTurn = board.getCurrentTurn();
+                    isSaved = false;
+                    isGamePrint = true;
+                }
+            }else{ //이동 실패, Invalid input 출력
                 isGamePrint = false;
             }
 
