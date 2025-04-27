@@ -431,7 +431,7 @@ public class Board {
             return MoveErrorType.OWN_PIECE_AT_DESTINATION;
         }
 
-        soutBlock=true;
+
         // 5. 이동 규칙 검사
         if (movingPiece instanceof King) {
             int rowDiff = Math.abs(startRow - endRow);
@@ -440,24 +440,25 @@ public class Board {
             if (rowDiff == 0 && colDiff == 2) {
                 // 캐슬링 시도 중이면, 실제로 캐슬링 가능성 검증
                 if (!SpecialRule.castling(this, start, end)) {
+
                     return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
                 }
                 // SpecialRule.castling() 호출해서 통과하면 문제 없음 (그냥 넘어감)
             } else {
                 // 일반 이동이면 킹 이동 규칙 검사
                 if (!movingPiece.isValidMove(this, start, end)) {
-                    soutBlock=false;
+
                     return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
                 }
             }
         } else {
             // King이 아닌 경우 (Pawn 포함) 그냥 이동 규칙 검사
             if (!movingPiece.isValidMove(this, start, end)) {
-                soutBlock=false;
+                ;
                 return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
             }
         }
-        soutBlock=false;
+
         return null; // 의미 오류 없음
     }
 
