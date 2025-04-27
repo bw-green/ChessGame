@@ -91,35 +91,19 @@ public class GameManager {
             MoveResult moveSuccess = board.movePiece(start[0], start[1], end[0], end[1]);
             if(moveSuccess == MoveResult.SUCCESS){
                 //게임 승패 먼저 판정
-                GameEnd gameEnd = new GameEnd(playerTurn);
-                if(gameEnd.isCheckMate(board)){
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    if(playerTurn == PieceColor.WHITE) { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
-                    else { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
-                    System.out.println(PrintTemplate.BOLDLINE + "\n");
-                    isPlaying = false;
-                    isMenuPrint = true;
-                }else if(gameEnd.isStaleMate(board)){
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    System.out.println(PrintTemplate.END_STALEMATE);
-                    System.out.println(PrintTemplate.BOLDLINE + "\n");
-                    isPlaying = false;
-                    isMenuPrint = true;
-                }else if(gameEnd.isInsufficientPieces(board)){
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    System.out.println(PrintTemplate.END_INSUFFICIENT);
-                    System.out.println(PrintTemplate.BOLDLINE + "\n");
-                    isPlaying = false;
-                    isMenuPrint = true;
-                }
-
+                isGameEnd(PieceColor.BLACK);
+                isGameEnd(PieceColor.WHITE);
                 //턴 전환
-                if(!isPlaying){
+                if(isPlaying){
                     board.turnChange();
                     playerTurn = board.getCurrentTurn();
                     isSaved = false;
                     isGamePrint = true;
                 }
+                else{ //디버깅 용 기능, 구현물 제출 시 에는 주석처리 또는 제거해야힘.
+                    printGame();
+                }
+
             }else{ //이동 실패, Invalid input 출력
                 isGamePrint = false;
             }
@@ -129,6 +113,30 @@ public class GameManager {
 
 
         return -1;
+    }
+
+    private void isGameEnd(PieceColor pieceColor){
+        GameEnd gameEnd = new GameEnd(pieceColor);
+        if(gameEnd.isCheckMate(board)){
+            System.out.println(PrintTemplate.BOLDLINE);
+            if(pieceColor == PieceColor.WHITE) { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
+            else { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
+            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isPlaying = false;
+            isMenuPrint = true;
+        }else if(gameEnd.isStaleMate(board)){
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(PrintTemplate.END_STALEMATE);
+            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isPlaying = false;
+            isMenuPrint = true;
+        }else if(gameEnd.isInsufficientPieces(board)){
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(PrintTemplate.END_INSUFFICIENT);
+            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isPlaying = false;
+            isMenuPrint = true;
+        }
     }
 
     private void printGame(){
