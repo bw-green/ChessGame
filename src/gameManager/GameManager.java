@@ -89,7 +89,7 @@ public class GameManager {
             if(moveSuccess == MoveResult.SUCCESS){
                 //게임 승패 먼저 판정
                 isGameEnd(PieceColor.BLACK);
-                isGameEnd(PieceColor.WHITE);
+                if(isPlaying) { isGameEnd(PieceColor.WHITE); }
                 //턴 전환
                 if(isPlaying){
                     board.turnChange();
@@ -288,7 +288,7 @@ public class GameManager {
                 isGamePrint = false;
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(FileError.FAILED_LOAD);
+                System.out.println(FileError.FAILED_LOAD_ER);
                 isMenuPrint = false;
                 isGamePrint = false;
             }
