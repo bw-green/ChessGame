@@ -30,21 +30,13 @@ public class BoardTest {
     @DisplayName("보드 움직임 확인용")
     public void testLadderResult() {
         Board board = new Board();
-
-        System.out.println(board.toString());
-        System.out.printf("isPathClear : ");
-        System.out.println(board.isPathClear(board.getCell(0,0),board.getCell(6,7)));
-
-
-
-        board = new Board();
         board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));
-        board.setPieceTest(3,1,new Knight(PieceColor.BLACK));
+        board.turnChange();
+        board.movePiece(1,1,3,1);
+        board.turnChange();
         System.out.println(board);
         board.movePiece(3,2,2,1);
         System.out.println(board);
 
-
     }
-
 }
