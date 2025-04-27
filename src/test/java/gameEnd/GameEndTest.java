@@ -39,7 +39,8 @@ public class GameEndTest {
         board.setPieceTest(6,2,new Queen(PieceColor.BLACK));
         board.setPieceTest(0,0,new King(PieceColor.BLACK));
         System.out.println(board);
-
+        System.out.println("black's isStaleMate : " + blackGameEnd.isStaleMate(board));
+        System.out.println("white's isStaleMate : " + whiteGameEnd.isStaleMate(board));
     }
 
     //기물부족
@@ -167,7 +168,45 @@ public class GameEndTest {
         System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
         System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
+        board = new Board();
+        board.movePiece(6 ,5, 5, 5);
+        board.turnChange();
+        board.movePiece(1, 4 ,3, 4);
+        board.turnChange();
+        board.movePiece(6, 6 ,4, 6);
+        board.turnChange();
+        board.movePiece(0, 3 ,4, 7);
+        board.turnChange();
+        System.out.println(board);
+        System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
+        System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
+        board = new Board();
+        board.movePiece(6,4,5,4);
+        board.turnChange();
+        board.movePiece(1,0,3,0);
+        board.turnChange();
+        board.movePiece(7,3,3,7);
+        board.turnChange();
+        board.movePiece(0,0,2,0);
+        board.turnChange();
+        board.movePiece(3,7,3,0);
+        board.turnChange();
+        board.movePiece(1,7,3,7);
+        board.turnChange();
+        board.movePiece(6,7,4,7);
+        board.turnChange();
+        board.movePiece(2,0,2,7);
+        board.turnChange();
+        board.movePiece(3,0,1,2);
+        board.turnChange();
+        board.movePiece(1,5,2,5);
+        board.turnChange();
+        board.movePiece(1,2,1,3);
+        board.turnChange();
+        System.out.println(board);
+        System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
+        System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
     }
     //되는거 안되는거 다 해야함

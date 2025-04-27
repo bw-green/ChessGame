@@ -42,8 +42,8 @@ public class TestMain {
         // Test 6: movePiece 통합 테스트 (각 기물별)
         // Pawn
         Board bPawn = new Board();
-        tests.add(new TestCase("6.1", "movePiece(Pawn)", "6,4->5,4", "SUCCESS"));
-        tests.get(tests.size() - 1).actual = bPawn.movePiece(6, 4, 5, 4).name();
+        tests.add(new TestCase("6.1", "movePiece(Pawn)", "6,5->5,5", "SUCCESS"));
+        tests.get(tests.size() - 1).actual = bPawn.movePiece(6, 5, 5, 5).name();
         tests.add(new TestCase("6.2", "movePiece(Pawn)", "6,4->4,4", "SUCCESS"));
         tests.get(tests.size() - 1).actual = bPawn.movePiece(6, 4, 4, 4).name();
         tests.add(new TestCase("6.3", "movePiece(Pawn)", "6,4->3,4", "FAIL"));

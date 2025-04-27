@@ -21,6 +21,9 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
         Symbol = (this.pieceColor == PieceColor.WHITE) ? "K" : "k";
         //System.out.println(Symbol);
         newBoard.soutBlock = true;
+        if (this.pieceColor == PieceColor.BLACK){
+            newBoard.turnChange();
+        }
     }
 
     public void findKing(Board board){
@@ -100,19 +103,14 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                                 continue;
                             }
 
-                            Piece piece1 = null; // 나중에 deepcopy로 바꿔야함
-                            Piece piece2 = null;
-
-                            if(to.getPiece() != null){
-                                piece1 = to.getPiece().deepCopy();
-                            }
-
-                            if (now.getPiece() != null) {
-                                piece2 = now.getPiece().deepCopy();
-                            }
-
                             if(now.getPiece().isValidMove(newBoard,now,to)){
+
                                 newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
+
+//                                if(now.getRow() == 0 && now.getCol() == 3){
+//                                    System.out.println("Board Debug" + to.getRow() + " " + to.getCol());
+//                                    System.out.println(newBoard);
+//                                }
                                 if(!isCheck(newBoard)) {
                                     return true;
                                 }

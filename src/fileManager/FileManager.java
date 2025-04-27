@@ -17,10 +17,11 @@ public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
     private final String deFault = "NO DATA";
+    private final String LSFdeFault = "Last saved file";
 
     private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
     private static final ArrayList<Integer> counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
-    private String lastSavedFile = deFault;
+    private String lastSavedFile = LSFdeFault;
     private int lastSaveFileNum;
     private static int count = 0;
     //moveHistroy, counter, count는 공유되야해서 static으로 선언
@@ -244,7 +245,7 @@ public class FileManager {
                 lastSavedFile = filename.get(secondIndex);
                 lastSaveFileNum = secondIndex;
             } else {
-                lastSavedFile = deFault;
+                lastSavedFile = LSFdeFault;
                 lastSaveFileNum = -1;
             }
         }   //last saved file update (end)
@@ -266,7 +267,7 @@ public class FileManager {
             counter.set(i, 0);
         }
         count = 0;
-        lastSavedFile = deFault;
+        lastSavedFile = LSFdeFault;
         lastSaveFileNum = -1;
     }
 
