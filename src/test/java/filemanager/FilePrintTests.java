@@ -5,9 +5,7 @@ import fileManager.FileManager;
 import fileManager.FilePrint;
 import org.junit.jupiter.api.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,7 +65,7 @@ class FilePrintTests {
         filePrint.saveFilePrint(0, null); // 유효하지 않은 슬롯 및 null 보드
         String output = outContent.toString();
 
-        assertTrue(output.contains("The save is not completed"));
+        assertTrue(output.contains("Failed to save"));
     }
 
     @Test // 4. deleteFilePrint 성공 메시지 출력 확인
@@ -86,7 +84,7 @@ class FilePrintTests {
         filePrint.deleteFilePrint(3);
         String output = outContent.toString();
 
-        assertTrue(output.contains("Deleting savefile is not completed"));
+        assertTrue(output.contains("Failed to delete"));
     }
 
     @Test // 6. loadFilePrint 성공 메시지 출력 확인
@@ -108,6 +106,33 @@ class FilePrintTests {
         filePrint.loadFilePrint(5, board);
         String output = outContent.toString();
 
-        assertTrue(output.contains("Loading savefile is not completed"));
+        assertTrue(output.contains("is empty"));
+    }
+
+    @Test // 8. loadFilePrint: 파일 없을 때 Empty 메시지 출력 확인
+    void testLoadFilePrintEmptyFileMessage() {
+        Board newBoard = new Board(true);
+        filePrint.loadFilePrint(1, newBoard); // savefile1.txt는 삭제된 상태
+
+        String output = outContent.toString();
+        assertTrue(output.contains("is empty")); // <- 너가 FileMessage에 등록한 메시지 기반
+    }
+
+    @Test // 9. loadFilePrint: 파일 에러 시 실패 메시지 출력 확인
+    void testLoadFilePrintErrorFileMessage() throws IOException, InterruptedException {
+        File file = new File(SAVE_DIR + "/savefile2.txt");
+        file.getParentFile().mkdirs();
+        try (var writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write("SaveNameExample\n\n"); // 저장 이름 + 공백 줄
+            writer.write("INVALID_TURN\n"); // 잘못된 턴 정보
+            writer.write(". . . . . . . .\n".repeat(8)); // 보드 줄
+        }
+        Thread.sleep(50); // flush 안정성 확보
+
+        Board newBoard = new Board(true);
+        filePrint.loadFilePrint(2, newBoard);
+
+        String output = outContent.toString();
+        assertTrue(output.contains("Failed to load")); // 이건 후원자님 검토 완료
     }
 }

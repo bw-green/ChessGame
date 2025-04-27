@@ -57,8 +57,8 @@ public class FileManager {
         if (!dir.exists()) {
             boolean success = dir.mkdirs();
             if (!success) {
-                System.err.println(FileError.FAILED_MAKDIR + SAVE_DIR); //임시 출력본
-                throw new IllegalStateException(String.valueOf(FileError.FAILED_MAKDIR_ERROR));
+                //System.err.println(FileError.FAILED_MAKDIR + SAVE_DIR); //임시 출력본
+                throw new IllegalStateException();
             }
         }
     }
@@ -133,14 +133,14 @@ public class FileManager {
 
             return true;
         } catch (IOException e) {
-            System.out.println(FileError.DEBUG_ERROR_OVERWRITE); //디버깅용
+            //System.out.println(FileError.DEBUG_ERROR_OVERWRITE); //디버깅용
             return false;
         }
     }
 
     // 세이브 파일 불러오기
     public int loadSavedFile(int slot, Board targetBoard) {
-        if (slot < 1 || slot > MAX_SAVES ) return 0;
+        if (slot < 1 || slot > MAX_SAVES ) return -1;
 
         String filePath = getFilePath(slot);
 
@@ -149,13 +149,13 @@ public class FileManager {
             reader.readLine(); // 공백 줄
             String getLine = reader.readLine(); // 턴 정보 읽기
 
-            if (getLine == null) return -1;
+            if (getLine == null) return 0;
 
             //턴 정보 읽기(WHITE ? BLACK)
             if (getLine.equalsIgnoreCase("BLACK")) {
                 targetBoard.turnChange();
             } else if (!getLine.equalsIgnoreCase("WHITE")) {
-                throw new IllegalArgumentException("Invalid save file: " + getLine);
+                throw new IllegalArgumentException();
             }
 
             //보드 정보 읽기(8*8)
@@ -181,7 +181,6 @@ public class FileManager {
                 String[] parts = specialLine.split(" ");
                 if (parts.length != 3) continue; // 잘못된 형식은 무시
 
-                String symbol = parts[0];
                 int row = Integer.parseInt(parts[1]);
                 int col = Integer.parseInt(parts[2]);
 
@@ -202,8 +201,11 @@ public class FileManager {
             }
 
             return 1;
+        } catch (FileNotFoundException e) {
+            // 파일이 아예 없음
+            return 0;
         } catch (IOException | IllegalArgumentException e) {
-            System.out.println(FileError.DEBUG_ERROR_LOAD); //디버깅용
+            //System.out.println(FileError.DEBUG_ERROR_LOAD);
             return -1;
         }
     }
@@ -286,7 +288,7 @@ public class FileManager {
                     filename.set(i - 1, saveName);
                 }
             } catch (IOException e) {
-                System.out.println(FileError.DEBUG_ERROR_LOAD_FN); //디버깅용
+                //System.out.println(FileError.DEBUG_ERROR_LOAD_FN); //디버깅용
                 //e.printStackTrace(); //디버깅용 후에 주석처리
                 //손상된 파일이나 존재하지 않는 파일이나 똑같이 리스트에는 안들어옵니다.
             }
