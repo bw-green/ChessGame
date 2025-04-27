@@ -1,10 +1,7 @@
 package board;
 
 import check.Checker;
-import data.MoveErrorType;
-import data.MoveResult;
-import data.PieceColor;
-import data.Unspecified;
+import data.*;
 import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
@@ -166,7 +163,9 @@ public class Board {
 
         Piece movingPiece = start.getPiece();
         if (movingPiece == null){
+            System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(MoveErrorType.NO_PIECE_AT_START);
+            System.out.println(PrintTemplate.BOLDLINE);
             return MoveResult.FAIL;
         }
 
@@ -177,7 +176,9 @@ public class Board {
                 currentTurn
         );
         if (error != null){
+            System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(error);
+            System.out.println(PrintTemplate.BOLDLINE);
 //            System.out.println("에러에 걸림");
             return MoveResult.FAIL;
         }
@@ -187,7 +188,9 @@ public class Board {
 
         Checker check = new Checker(currentTurn);
         if (check.isOneMoveCheck(this,start,end)) {
+            System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(MoveErrorType.KING_IS_ATTACK);
+            System.out.println(PrintTemplate.BOLDLINE);
             return MoveResult.FAIL;
         } // 체크되는 칸으로는 이동 불가
 
@@ -368,7 +371,7 @@ public class Board {
                     Cell to = getCell(targetRow, targetCol);
 
                     if (attacker.isValidMove(this, from, to)) {
-//                        System.out.println(attacker.getSymbol());
+//                        (attacker.getSymbol());
                         return true;
                     }
                 }
