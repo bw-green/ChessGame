@@ -202,7 +202,7 @@ public class GameManager {
                 slot = MenuInput.number;
             }
             board = new Board();
-            boolean isLoad = fileManager.loadSavedFile(slot, board);
+            boolean isLoad = (fileManager.loadSavedFile(slot, board)==1);
             if (isLoad) {
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;
