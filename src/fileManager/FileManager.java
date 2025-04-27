@@ -142,7 +142,7 @@ public class FileManager {
     // 세이브 파일 불러오기
     public int loadSavedFile(int slot, Board targetBoard) {
         if (slot < 1 || slot > MAX_SAVES ) return -1;
-
+        if(filename.get(slot-1).equals(deFault)) return 0;
         String filePath = getFilePath(slot);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -150,7 +150,7 @@ public class FileManager {
             reader.readLine(); // 공백 줄
             String getLine = reader.readLine(); // 턴 정보 읽기
 
-            if (getLine == null) return 0;
+            if (getLine == null) return -1;
 
             //턴 정보 읽기(WHITE ? BLACK)
             if (getLine.equalsIgnoreCase("BLACK")) {
