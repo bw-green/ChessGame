@@ -61,8 +61,7 @@ public class GameManager {
             if(cmdCode >= HELPCODE && cmdCode <= SAVEFILECODE){
                 runCommand(cmdCode);
             }else if(cmdCode == ERRORCODE){
-                if(isPlaying) isGamePrint = false;
-                else isMenuPrint = false;
+                if(!isPlaying) isMenuPrint = false;
             }
         }
     }
@@ -103,9 +102,6 @@ public class GameManager {
                 else{ //TODO: 디버깅 용 기능, 구현물 제출 시 에는 주석처리 또는 제거해야힘.
                     printGame();
                 }
-
-            }else{ //이동 실패, Invalid input 출력
-                isGamePrint = false;
             }
 
 
