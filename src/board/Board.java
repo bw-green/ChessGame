@@ -175,7 +175,7 @@ public class Board {
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
                 if (!SpecialRule.castling(this, start, end)) {
-                    System.out.println(Unspecified.CASTLING_FAILED);
+//                    System.out.println(Unspecified.CASTLING_FAILED);
 //                    System.out.println("캐슬링 시도중에서 걸림");
                     return MoveResult.FAIL;
                 }
@@ -229,7 +229,8 @@ public class Board {
         enPassantChecking();
 
         if (endRow == 0 || endRow == 7) {
-            SpecialRule.promotion(end);
+            if(!soutBlock)
+                SpecialRule.promotion(end);
         }
         return MoveResult.SUCCESS;
     }
@@ -293,7 +294,7 @@ public class Board {
             if(((Pawn) end.getPiece()).enPassant){
                 getCell(start.getRow(), end.getCol()).setPiece(null);
 //                System.out.println("앙파상이 제대로 실행됨.");
-                System.out.println(this);
+//                System.out.println(this);
 //                System.out.println("지우기 수행");
             }
         }

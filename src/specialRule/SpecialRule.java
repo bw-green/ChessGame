@@ -44,6 +44,7 @@ public class SpecialRule {
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println("EnPassant Success");
                 System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println();
             }
             return true;
         }
@@ -61,7 +62,13 @@ public class SpecialRule {
         if ("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol()) && end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
         {
             while(true) {
-                System.out.print("Enter the PIECE to promote to (e.g., \"Q\", \"R\", \"N\", \"B\").\n ");
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println("Enter the PIECE to promote to (e.g., \"Q\", \"R\", \"N\", \"B\").");
+                System.out.println(PrintTemplate.BOLDLINE);
+                if (pawn.getColor() == PieceColor.WHITE)
+                    System.out.print("WHITE >");
+                else
+                    System.out.print("BLACK >");
                 String line = scanner.nextLine();
                 char promoteName;
                 if(line.isEmpty()) {
@@ -83,7 +90,6 @@ public class SpecialRule {
 
                 if (newPiece != null) {
                     end.setPiece(newPiece);
-                    System.out.println("Promote success");
                     break;
                 } else if (promoteName == 'p' || promoteName == 'P') {
                     System.out.println(PrintTemplate.BOLDLINE);
@@ -170,6 +176,8 @@ public class SpecialRule {
         if(!board.soutBlock){
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println("Castling Success");
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println();
         }
         return true;
     }
