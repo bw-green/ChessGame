@@ -14,7 +14,8 @@ public enum InvalidCoordinate {
     INVALID_MOVE("Invalid move for this piece."),
     PROMO_NOT_KING("King(K, k) cannot be selected for promotion."),
     PROMO_NOT_PAWN("Pawn(P, p) cannot be selected for promotion."),
-    PROMO_INVALID_PIECE("Only Q, R, B or N allowed.");
+    PROMO_INVALID_PIECE("Only Q, R, B or N allowed."),
+    HAS_SPACE("Space inside coordinate. Try again.");
 
     private final String message;
 
