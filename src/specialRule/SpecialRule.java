@@ -42,7 +42,7 @@ public class SpecialRule {
 //            System.out.println(board.soutBlock);
             if(!board.soutBlock) {
                 System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println("EnPassant Success");
+                System.out.println("En Passant Success.");
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println();
             }
@@ -175,7 +175,7 @@ public class SpecialRule {
 //        System.out.println(board.soutBlock);
         if(!board.soutBlock){
             System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println("Castling Success");
+            System.out.println("Castling Success.");
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println();
         }
