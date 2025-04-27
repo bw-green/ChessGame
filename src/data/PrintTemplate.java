@@ -17,7 +17,7 @@ public enum PrintTemplate {
     MENU_LAST_SAVE("|the last save file and the list of save files"),
 
     //게임 지시문
-    GAME_BASE_INSTRUCT("Enter the STARTING and ENDING positions of the piece (e.g., \"e2 e4\")"),
+    GAME_BASE_INSTRUCT("Enter the starting and ending positions of the piece (e.g., \"e2 e4\")"),
 
     //세이브 관련 경고문
     GAME_NOT_SAVED("| The last saved file is not current board |"),
