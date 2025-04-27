@@ -100,7 +100,7 @@ public class GameManager {
                     isSaved = false;
                     isGamePrint = true;
                 }
-                else{ //디버깅 용 기능, 구현물 제출 시 에는 주석처리 또는 제거해야힘.
+                else{ //TODO: 디버깅 용 기능, 구현물 제출 시 에는 주석처리 또는 제거해야힘.
                     printGame();
                 }
 
