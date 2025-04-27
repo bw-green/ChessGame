@@ -60,15 +60,14 @@ public class MenuInput {
             try{
                 return checkOrderInput();
             } catch (Exception e) {
-                if(e instanceof InputMismatchException){
-                    System.out.println(PrintTemplate.BOLDLINE + "\n" +
-                            CommandError.WRONG_COMMAND+ "\n" +
-                            PrintTemplate.BOLDLINE);
-
-                }
-                else{
+                if(e instanceof NumberFormatException){
                     System.out.println(PrintTemplate.BOLDLINE+ "\n" +
                             CommandError.WRONG_NUMBER+ "\n" +
+                            PrintTemplate.BOLDLINE);
+                }
+                else{
+                    System.out.println(PrintTemplate.BOLDLINE + "\n" +
+                            CommandError.WRONG_COMMAND+ "\n" +
                             PrintTemplate.BOLDLINE);
                 }
                 return ERROR;
@@ -212,8 +211,11 @@ public class MenuInput {
             if (num >= 1 && num <= 5) {
                 return num;
             }
-            else {
+            if(num>=0 && num <=9){
                 throw new NumberFormatException(" 1부터 5사이가 아님");
+            }
+            else {
+                throw new InputMismatchException();
             }
         } else {
             throw new InputMismatchException();
