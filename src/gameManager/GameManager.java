@@ -1,5 +1,6 @@
 package gameManager;
 
+import check.Checker;
 import check.GameEnd;
 import data.*;
 
@@ -93,6 +94,19 @@ public class GameManager {
                 if(isPlaying){
                     board.turnChange();
                     playerTurn = board.getCurrentTurn();
+                    Checker checker = new Checker(playerTurn);
+                    boolean isCheck = checker.isCheck(board);
+                    if(isCheck){
+                        if(playerTurn == PieceColor.BLACK){
+                            System.out.println(PrintTemplate.BOLDLINE);
+                            System.out.println(PrintTemplate.CHECK_BLACK);
+                            System.out.println(PrintTemplate.BOLDLINE);
+                        }else{
+                            System.out.println(PrintTemplate.BOLDLINE);
+                            System.out.println(PrintTemplate.CHECK_WHITE);
+                            System.out.println(PrintTemplate.BOLDLINE);
+                        }
+                    }
                     isSaved = false;
                     isGamePrint = true;
                 }
