@@ -90,6 +90,28 @@ public class GameManager {
 
             MoveResult moveSuccess = board.movePiece(start[0], start[1], end[0], end[1]);
             if(moveSuccess == MoveResult.SUCCESS){
+                GameEnd gameEnd = new GameEnd(playerTurn);
+                if(gameEnd.isCheckMate(board)){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    if(playerTurn == PieceColor.WHITE) System.out.println(PrintTemplate.END_WHITE_CHECKMATE);
+                    else System.out.println(PrintTemplate.END_BLACK_CHECKMATE);
+                    System.out.println(PrintTemplate.BOLDLINE + "\n");
+                    isPlaying = false;
+                    isMenuPrint = true;
+                }else if(gameEnd.isStaleMate(board)){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.END_STALEMATE);
+                    System.out.println(PrintTemplate.BOLDLINE + "\n");
+                    isPlaying = false;
+                    isMenuPrint = true;
+                }else if(gameEnd.isInsufficientPieces(board)){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.END_INSUFFICIENT);
+                    System.out.println(PrintTemplate.BOLDLINE + "\n");
+                    isPlaying = false;
+                    isMenuPrint = true;
+                }
+
                 board.turnChange();
                 playerTurn = board.getCurrentTurn();
                 isSaved = false;
@@ -98,27 +120,7 @@ public class GameManager {
                 isGamePrint = false;
             }
 
-            GameEnd gameEnd = new GameEnd(playerTurn);
-            if(gameEnd.isCheckMate(board)){
-                System.out.println(PrintTemplate.BOLDLINE);
-                if(playerTurn == PieceColor.WHITE) System.out.println(PrintTemplate.END_WHITE_CHECKMATE);
-                else System.out.println(PrintTemplate.END_BLACK_CHECKMATE);
-                System.out.println(PrintTemplate.BOLDLINE + "\n");
-                isPlaying = false;
-                isMenuPrint = true;
-            }else if(gameEnd.isStaleMate(board)){
-                System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(PrintTemplate.END_STALEMATE);
-                System.out.println(PrintTemplate.BOLDLINE + "\n");
-                isPlaying = false;
-                isMenuPrint = true;
-            }else if(gameEnd.isInsufficientPieces(board)){
-                System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(PrintTemplate.END_INSUFFICIENT);
-                System.out.println(PrintTemplate.BOLDLINE + "\n");
-                isPlaying = false;
-                isMenuPrint = true;
-            }
+
         }else{ return input; }
 
 
