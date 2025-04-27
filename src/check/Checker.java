@@ -21,6 +21,9 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
         Symbol = (this.pieceColor == PieceColor.WHITE) ? "K" : "k";
         //System.out.println(Symbol);
         newBoard.soutBlock = true;
+        if (this.pieceColor == PieceColor.BLACK){
+            newBoard.turnChange();
+        }
     }
 
     public void findKing(Board board){
@@ -42,7 +45,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
         findKing(board);
 
         if(King == null){
-            System.out.println("못찾음");
+//            System.out.println("못찾음");  이거 못찾았다로 끝내도 되는건가요?
         }
 
         for(int i = 0; i < BOARD_SIZE; i++){
@@ -82,10 +85,9 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     }
 
     public boolean canMove(Board board) {
-
+//        System.out.println("진입");
         initBoard(board);
         findKing(board);
-
         for(int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 Cell now = newBoard.getCell(row, col);
@@ -101,20 +103,14 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
                                 continue;
                             }
 
-                            Piece piece1 = null; // 나중에 deepcopy로 바꿔야함
-                            Piece piece2 = null;
-
-                            if(to.getPiece() != null){
-                                piece1 = to.getPiece().deepCopy();
-                            }
-
-                            if (now.getPiece() != null) {
-                                piece2 = now.getPiece().deepCopy();
-                            }
-
                             if(now.getPiece().isValidMove(newBoard,now,to)){
+
                                 newBoard.movePieceTest(now.getRow(),now.getCol(),to.getRow(),to.getCol());
-                                //System.out.println("newboard.sout : " + newBoard.soutBlock);
+
+//                                if(now.getRow() == 0 && now.getCol() == 3){
+//                                    System.out.println("Board Debug" + to.getRow() + " " + to.getCol());
+//                                    System.out.println(newBoard);
+//                                }
                                 if(!isCheck(newBoard)) {
                                     return true;
                                 }
@@ -133,7 +129,7 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     public boolean isOneMoveCheck(Board board, Cell startCell, Cell endCell) {
         initBoard(board);
         findKing(board);
-
+//        System.out.println("진입2");
         Cell now = newBoard.getCell(startCell.getRow(), startCell.getCol());
         Cell to = newBoard.getCell(endCell.getRow(), endCell.getCol());
 

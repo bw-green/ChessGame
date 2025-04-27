@@ -87,7 +87,7 @@ class FileManagerEdgeCaseTests {
             int slot = (i % 5) + 1;
             assertTrue(fileManager.overWriteSavedFile(slot, board));
             Board loadTarget = new Board(true);
-            assertTrue(fileManager.loadSavedFile(slot, loadTarget));
+            assertTrue((fileManager.loadSavedFile(slot, loadTarget)==1));
         }
     }
 

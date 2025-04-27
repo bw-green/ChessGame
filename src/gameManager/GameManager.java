@@ -46,31 +46,18 @@ public class GameManager {
 
     }
 
-    public static void main(){
-        GameManager gameManager = new GameManager();
-    }
-
-
-    private int runProgram(){
+    private void runProgram(){
         while(isRunning){
-            int cmdCode = 0;
+            int cmdCode;
             if(isPlaying){
                 cmdCode = runGame();
             }else{
                 cmdCode = runMenu();
             }
-            if(cmdCode == COORDINATECODE) {
-                //좌표입력시 받을 int return 값, 아직 값 미확정
-            }else if(cmdCode >= HELPCODE && cmdCode <= SAVEFILECODE){
+            if(cmdCode >= HELPCODE && cmdCode <= SAVEFILECODE){
                 runCommand(cmdCode);
             }
         }
-
-        return 0;
-    }
-
-    public void testCmd(int cmdCode){
-        runCommand(cmdCode);
     }
 
     private int runGame(){
@@ -94,12 +81,8 @@ public class GameManager {
                 board.turnChange();
                 playerTurn = board.getCurrentTurn();
                 isSaved = false;
-            }else{
-
             }
-        }else{
-            return input;
-        }
+        }else{ return input; }
 
 
         return 0;
@@ -171,27 +154,23 @@ public class GameManager {
                 playerTurn = PieceColor.WHITE;
                 isPlaying = true;
                 board = new Board();
-            }else{
-                System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(CommandError.START_BLOCK);
-                System.out.println(PrintTemplate.BOLDLINE);
             }
+            //isPlaying = true의 경우는 gameInput에서 처리 됨
         }
 
         if(cmdCode == QUITCODE){
             if(isPlaying){
                 showSaveAndList();
 
-                System.out.print(Command.YES_OR_NO_EXIT);
+                System.out.print(Command.YES_OR_NO_QUIT);
                 boolean input = MenuInput.yesOrNoInput();
                 if(input){
-                    menu.printWithTemplate(Command.EXIT.toString());
+                    menu.printWithTemplate(Command.QUIT.toString());
                     isPlaying = false;
                 }
             }
         }
 
-        // TODO : Numbering issue with playing Game + zazal han error
         if(cmdCode == SAVECODE){
             int slot;
             if(!isPlaying){
@@ -215,7 +194,7 @@ public class GameManager {
             int slot;
             if(isPlaying){
                 showSaveAndList();
-                System.out.print(Command.YES_OR_NO_EXIT);
+                System.out.print(Command.YES_OR_NO_LOAD);
                 boolean input = MenuInput.yesOrNoInput();
                 if(!input){ return; }
                 slot = GameInput.number;
@@ -223,7 +202,7 @@ public class GameManager {
                 slot = MenuInput.number;
             }
             board = new Board();
-            boolean isLoad = fileManager.loadSavedFile(slot, board);
+            boolean isLoad = (fileManager.loadSavedFile(slot, board)==1);
             if (isLoad) {
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;

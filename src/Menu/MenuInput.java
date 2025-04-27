@@ -1,5 +1,6 @@
 package Menu;
 
+import Input.UserInput;
 import data.CommandError;
 import data.GameInputReturn;
 import data.PrintTemplate;
@@ -9,7 +10,6 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class MenuInput {
-    static int NOT_MINE = -1; //유신님 코드 불러야함
     static int ERROR = GameInputReturn.ERROR.getCode();
     static int HELP = GameInputReturn.HELP.getCode();
 
@@ -54,30 +54,32 @@ public class MenuInput {
 
     private static int checkInput() {
         if(input.isEmpty()){
-            return NOT_MINE;
+            return UserInput.handleInput(input);
         }
         if(input.charAt(0)=='/'){
             try{
                 return checkOrderInput();
             } catch (Exception e) {
                 if(e instanceof InputMismatchException){
-                    System.out.println(PrintTemplate.BOLDLINE.toString() + "\n" +
-                            CommandError.WRONG_COMMAND.toString() + "\n" +
-                            PrintTemplate.BOLDLINE.toString());
+                    System.out.println(PrintTemplate.BOLDLINE + "\n" +
+                            CommandError.WRONG_COMMAND+ "\n" +
+                            PrintTemplate.BOLDLINE);
 
                 }
                 else{
-                    System.out.println(PrintTemplate.BOLDLINE.toString() + "\n" +
-                            CommandError.WRONG_NUMBER.toString() + "\n" +
-                            PrintTemplate.BOLDLINE.toString());
+                    System.out.println(PrintTemplate.BOLDLINE+ "\n" +
+                            CommandError.WRONG_NUMBER+ "\n" +
+                            PrintTemplate.BOLDLINE);
                 }
                 return ERROR;
             }
 
         }
-        // 유신님 인풋으로 보내기
-        // 메뉴에서 좌표 입력 없을 때 에러 날리는 Mockup 있어야 됨
-        return NOT_MINE;
+
+        System.out.println(PrintTemplate.BOLDLINE+ "\n" +
+                CommandError.WRONG_COMMAND + "\n" +
+                PrintTemplate.BOLDLINE);
+        return ERROR;
 
     }
     private static int checkOrderInput(){

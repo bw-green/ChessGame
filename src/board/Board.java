@@ -1,10 +1,7 @@
 package board;
 
 import check.Checker;
-import data.MoveErrorType;
-import data.MoveResult;
-import data.PieceColor;
-import data.Unspecified;
+import data.*;
 import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
@@ -295,7 +292,7 @@ public class Board {
         if(end.getPiece() instanceof Pawn){
             if(((Pawn) end.getPiece()).enPassant){
                 getCell(start.getRow(), end.getCol()).setPiece(null);
-                System.out.println("앙파상이 제대로 실행됨.");
+//                System.out.println("앙파상이 제대로 실행됨.");
                 System.out.println(this);
 //                System.out.println("지우기 수행");
             }
@@ -455,7 +452,7 @@ public class Board {
         if (destPiece != null && destPiece.getColor() == currentTurn) {
             return MoveErrorType.OWN_PIECE_AT_DESTINATION;
         }
-
+        soutBlock=true;
         // 5. 이동 규칙 위반
         if (movingPiece instanceof King) {
             int rowDiff = Math.abs(start.getRow() - end.getRow());
@@ -466,15 +463,18 @@ public class Board {
                 // 여기서는 오류를 리턴하지 않고 넘어감
             } else {
                 if (!movingPiece.isValidMove(this, start, end)) {
+                    soutBlock=false;
                     return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
                 }
             }
         } else {
             if (!movingPiece.isValidMove(this, start, end)) {
 //                System.out.println("갑자기 여기서 안됨");
+                soutBlock=false;
                 return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
             }
         }
+        soutBlock=false;
         return null; // 의미 오류 없음
     }
 

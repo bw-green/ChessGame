@@ -32,7 +32,7 @@ class FileManagerLoadTests {
         fileManager.overWriteSavedFile(1, originalBoard);
 
         Board loadedBoard = new Board(true);
-        boolean result = fileManager.loadSavedFile(1, loadedBoard);
+        boolean result = (fileManager.loadSavedFile(1, loadedBoard)==1);
 
         assertTrue(result);
         assertNotNull(loadedBoard.getCell(0, 0).getPiece()); // Rook 위치 확인
@@ -41,7 +41,7 @@ class FileManagerLoadTests {
     @Test //2. 존재하지 않는 파일 불러오기
     void testLoadNonExistentFile() {
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(2, board); // 파일 생성 없이 불러오기
+        boolean result = (fileManager.loadSavedFile(2, board)==1); // 파일 생성 없이 불러오기
         assertFalse(result);
     }
 
@@ -52,7 +52,7 @@ class FileManagerLoadTests {
             writer.write("InvalidSave\n\nWHITE\nrow1 row2\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(3, board);
+        boolean result = (fileManager.loadSavedFile(3, board)==1);
         assertFalse(result);
     }
 
@@ -63,7 +63,7 @@ class FileManagerLoadTests {
             writer.write("BadTurn\n\nNOTATURN\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(4, board);
+        boolean result = (fileManager.loadSavedFile(4, board)==1);
         assertFalse(result);
     }
 
@@ -86,7 +86,7 @@ class FileManagerLoadTests {
             writer.write("BadSymbols\n\nWHITE\n@ # $ % ^ & * !\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(2, board);
+        boolean result = (fileManager.loadSavedFile(2, board)==1);
         assertFalse(result);
     }
 }
