@@ -16,7 +16,7 @@ import java.util.Random;
 public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
-    private final String deFault = "No Data";
+    private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
     private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
