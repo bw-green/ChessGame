@@ -99,8 +99,11 @@ public class GameManager {
                     isSaved = false;
                     isGamePrint = true;
                 }
-                else{ //TODO: 디버깅 용 기능, 구현물 제출 시 에는 주석처리 또는 제거해야힘.
-                    printGame();
+                else{ //게임이 종료 되었을 때 보드 출력
+                    String gameStr = board.toString();
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.print(gameStr);
+                    System.out.println(PrintTemplate.BOLDLINE +"\n");
                 }
             }
 
@@ -115,8 +118,8 @@ public class GameManager {
         GameEnd gameEnd = new GameEnd(pieceColor);
         if(gameEnd.isCheckMate(board)){
             System.out.println(PrintTemplate.BOLDLINE);
-            if(pieceColor == PieceColor.WHITE) { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
-            else { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
+            if(pieceColor == PieceColor.WHITE) { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
+            else { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
             System.out.println(PrintTemplate.BOLDLINE + "\n");
             isPlaying = false;
             isMenuPrint = true;
