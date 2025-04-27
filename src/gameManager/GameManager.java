@@ -216,6 +216,9 @@ public class GameManager {
                 isGamePrint = true;
                 board = new Board();
             }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.START_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
                 isGamePrint = false;
             }
         }
@@ -296,7 +299,10 @@ public class GameManager {
                 filePrint.deleteFilePrint(MenuInput.number);
                 isMenuPrint = false;
             }else{
+                System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.DELSAVE_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
+                isGamePrint = false;
             }
         }
 
