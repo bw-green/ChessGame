@@ -93,6 +93,7 @@ public class GameManager {
                 board.turnChange();
                 playerTurn = board.getCurrentTurn();
                 isSaved = false;
+                isGamePrint = true;
             }else{
                 isGamePrint = false;
             }
@@ -197,7 +198,6 @@ public class GameManager {
         if(cmdCode == QUITCODE){
             if(isPlaying){
                 showSaveAndList();
-
                 System.out.print(Command.YES_OR_NO_QUIT);
                 boolean input = MenuInput.yesOrNoInput();
                 if(input){
@@ -256,10 +256,12 @@ public class GameManager {
                 System.out.println(FileError.FAILED_LOAD.format(slot));
                 System.out.println(PrintTemplate.BOLDLINE);
                 isMenuPrint = false;
+                isGamePrint = false;
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileError.FAILED_LOAD);
                 isMenuPrint = false;
+                isGamePrint = false;
             }
         }
 
