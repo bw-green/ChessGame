@@ -344,37 +344,37 @@ public class Board {
         return sb.toString();
     }
 
-    public boolean isCellUnderAttack(int targetRow, int targetCol, PieceColor targetColor) {
-        // 0415 update - 특정 좌표가 targetColor의 상대편이 공격중인지 체크함(여기로 이동해도 되는가? 처럼 사용)
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
-                Piece attacker = cells[r][c].getPiece();
-
-                // Null or 아군이면 스킵
-                if (attacker == null || attacker.getColor() == targetColor) continue;
-
-                // 1. Pawn은 특별 처리: 공격 방향만 체크해야 함
-                if (attacker instanceof Pawn pawn) {
-                    int direction = (pawn.getColor() == PieceColor.WHITE) ? -1 : 1;
-                    // 대각선 좌우 두 방향
-                    if ((r + direction == targetRow) &&
-                            (c - 1 == targetCol || c + 1 == targetCol)) {
-                        return true;
-                    }
-                }
-                // 2. 나머지 기물은 일반 canMove() 검사
-                else {
-                    Cell from = getCell(r, c);
-                    Cell to = getCell(targetRow, targetCol);
-
-                    if (attacker.isValidMove(this, from, to)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+//    public boolean isCellUnderAttack(int targetRow, int targetCol, PieceColor targetColor) {
+//        // 0415 update - 특정 좌표가 targetColor의 상대편이 공격중인지 체크함(여기로 이동해도 되는가? 처럼 사용)
+//        for (int r = 0; r < 8; r++) {
+//            for (int c = 0; c < 8; c++) {
+//                Piece attacker = cells[r][c].getPiece();
+//
+//                // Null or 아군이면 스킵
+//                if (attacker == null || attacker.getColor() == targetColor) continue;
+//
+//                // 1. Pawn은 특별 처리: 공격 방향만 체크해야 함
+//                if (attacker instanceof Pawn pawn) {
+//                    int direction = (pawn.getColor() == PieceColor.WHITE) ? -1 : 1;
+//                    // 대각선 좌우 두 방향
+//                    if ((r + direction == targetRow) &&
+//                            (c - 1 == targetCol || c + 1 == targetCol)) {
+//                        return true;
+//                    }
+//                }
+//                // 2. 나머지 기물은 일반 canMove() 검사
+//                else {
+//                    Cell from = getCell(r, c);
+//                    Cell to = getCell(targetRow, targetCol);
+//
+//                    if (attacker.isValidMove(this, from, to)) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * 체스 기물 이동 명령에 대해 의미적 오류를 판단하는 메서드입니다.
