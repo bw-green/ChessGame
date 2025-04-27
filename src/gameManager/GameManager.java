@@ -25,9 +25,6 @@ public class GameManager {
     private final int SAVEFILECODE = GameInputReturn.SAVE_FILE.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
-
-
-
     public boolean isPlaying = false;
     public boolean isRunning = true;
     public boolean isSaved = false;
@@ -204,8 +201,9 @@ public class GameManager {
                 isPlaying = true;
                 isGamePrint = true;
                 board = new Board();
+            }else{
+                isGamePrint = false;
             }
-            //isPlaying = true의 경우는 gameInput에서 처리 됨
         }
 
         if(cmdCode == QUITCODE){
@@ -245,18 +243,19 @@ public class GameManager {
 
         if(cmdCode == LOADCODE) {
             int slot;
-            if(isPlaying){
-                showSaveAndList();
-                System.out.print(Command.YES_OR_NO_LOAD);
-                boolean input = MenuInput.yesOrNoInput();
-                if(!input){ return; }
-                slot = GameInput.number;
-            }else{
-                slot = MenuInput.number;
-            }
+            if(isPlaying){ slot = GameInput.number; }
+            else{ slot = MenuInput.number; }
+
             board = new Board();
             int isLoad = (fileManager.loadSavedFile(slot, board));
+
             if (isLoad == 1) {
+                if(isPlaying){
+                    showSaveAndList();
+                    System.out.print(Command.YES_OR_NO_LOAD);
+                    boolean input = MenuInput.yesOrNoInput();
+                    if(!input){ return; }
+                }
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;
                 isGamePrint = true;
