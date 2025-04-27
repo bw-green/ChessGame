@@ -99,10 +99,9 @@ public class MenuInput {
             }
         }
         else if(parts[1].startsWith("savefile")){//인자있음
-            String now = parts[1].substring("savefile".length());
-            if(checking(now)!=0){
-                number= checking(now);
-                return SAVE_FILE;  // 파일매니저에게 넘겨주기
+            parts[1] =  blank(parts[1]);
+            if(parts[1].equals("savefile")){
+                return SAVE_FILE;
             }
             else{
                 throw new InputMismatchException("savefile 실패");

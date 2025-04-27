@@ -1,10 +1,10 @@
 package data;
 
 public enum FileError {
-    FAILED_SAVE("| The save is not completed |"),
-    FAILED_LOAD_ER("| Loading savefile is not completed |"),
+    FAILED_SAVE("| Failed to save the game. |"),
+    FAILED_LOAD_ER("| Failed to load the savefile. |"),
     FAILED_LOAD("| The save %d is empty |"),
-    FAILED_DELETE("| Deleting savefile is not completed |"),
+    FAILED_DELETE("| Failed to delete the save file |"),
     FAILED_MAKDIR("| Failed to make a directory. |"),
     FAILED_MAKDIR_ERROR("| Unable to create save directory. The program will terminate. |"),
 
