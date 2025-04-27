@@ -3,10 +3,6 @@ package Menu;
 import fileManager.FilePrint;
 import data.PrintTemplate;
 
-//import data.Command;
-//import Menu.MenuInput;
-//import data.GameInputReturn;
-//import fileManager.FileManager;
 
 
 public class Menu {
@@ -16,8 +12,8 @@ public class Menu {
     }
 
     public void printDefaultMenu(){
-        System.out.println(PrintTemplate.BOLDLINE);
-        //filemanager로 savefile 출력]
+        System.out.println(PrintTemplate.MENULINE);
+        //filemanager로 savefile 출력
         filePrint.showFileList();
         System.out.println(PrintTemplate.MENU_FIRST_INSTRUCT);
         System.out.println(PrintTemplate.BOLDLINE);

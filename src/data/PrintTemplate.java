@@ -10,6 +10,7 @@ public enum PrintTemplate {
     //구분선
     BOLDLINE("=================================================="),
     INTERLINE("--------------------------------------------------"),
+    MENULINE("===================<MAIN  MENU>==================="),
 
     //메뉴 지시문
     MENU_FIRST_INSTRUCT("|type “/help” to learn how to use this program."),
