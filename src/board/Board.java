@@ -1,7 +1,10 @@
 package board;
 
 import check.Checker;
-import data.*;
+import data.MoveErrorType;
+import data.MoveResult;
+import data.PieceColor;
+import data.Unspecified;
 import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
@@ -167,36 +170,7 @@ public class Board {
             return MoveResult.FAIL;
         }
 
-        // 1. 이동 가능성 자체 확인
-        if (movingPiece instanceof King) {
-            int colDiff = Math.abs(start.getCol() - end.getCol());
-            int rowDiff = Math.abs(start.getRow() - end.getRow());
-
-            if (colDiff == 2 && rowDiff == 0) {
-                // 캐슬링 시도 중
-                if (!SpecialRule.castling(this, start, end)) {
-                    System.out.println(Unspecified.CASTLING_FAILED);
-//                    System.out.println("캐슬링 시도중에서 걸림");
-                    return MoveResult.FAIL;
-                }
-            } else {
-                // 일반 이동이면 isValidMove 검사
-                if (!movingPiece.isValidMove(this, start, end)) {
-                    System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
-//                    System.out.println("킹의 일반 이동에서 걸림");
-                    return MoveResult.FAIL;
-                }
-            }
-        } else {
-            // 킹이 아닌 경우
-            if (!movingPiece.isValidMove(this, start, end)) {
-                System.out.println(MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE);
-//                System.out.println("일반 기물인데 이동 불가능");
-                return MoveResult.FAIL;
-            }
-        }
-
-        // 2. 의미 오류 검사 추가 (6가지 의미 오류)
+        // 1. 이동 가능성 확인을 포함한 의미 오류 검사 추가 (6가지 의미 오류)
         MoveErrorType error = validateMoveMeaning(
                 Board.coordinateToNotation(startRow, startCol),
                 Board.coordinateToNotation(endRow, endCol),
@@ -208,7 +182,7 @@ public class Board {
             return MoveResult.FAIL;
         }
 
-        // 3. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사(isCellunderAttack 함수 제거함)
+        // 2. 이동하려는 기물이 킹일 경우, 이동 후 위치가 체크 상태인지 검사(isCellunderAttack 함수 제거함)
 
 
         Checker check = new Checker(currentTurn);
@@ -217,7 +191,7 @@ public class Board {
             return MoveResult.FAIL;
         } // 체크되는 칸으로는 이동 불가
 
-        // 4. 이동 수행
+        // 3. 이동 수행
         end.setPiece(movingPiece);
         start.setPiece(null);
         if(end.getPiece() instanceof Pawn){
@@ -452,24 +426,29 @@ public class Board {
         if (destPiece != null && destPiece.getColor() == currentTurn) {
             return MoveErrorType.OWN_PIECE_AT_DESTINATION;
         }
+
         soutBlock=true;
-        // 5. 이동 규칙 위반
+        // 5. 이동 규칙 검사
         if (movingPiece instanceof King) {
-            int rowDiff = Math.abs(start.getRow() - end.getRow());
-            int colDiff = Math.abs(start.getCol() - end.getCol());
+            int rowDiff = Math.abs(startRow - endRow);
+            int colDiff = Math.abs(startCol - endCol);
 
             if (rowDiff == 0 && colDiff == 2) {
-                // 캐슬링 시도 중 → 이동 규칙 위반으로 판단하지 않는다
-                // 여기서는 오류를 리턴하지 않고 넘어감
+                // 캐슬링 시도 중이면, 실제로 캐슬링 가능성 검증
+                if (!SpecialRule.castling(this, start, end)) {
+                    return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+                }
+                // SpecialRule.castling() 호출해서 통과하면 문제 없음 (그냥 넘어감)
             } else {
+                // 일반 이동이면 킹 이동 규칙 검사
                 if (!movingPiece.isValidMove(this, start, end)) {
                     soutBlock=false;
                     return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
                 }
             }
         } else {
+            // King이 아닌 경우 (Pawn 포함) 그냥 이동 규칙 검사
             if (!movingPiece.isValidMove(this, start, end)) {
-//                System.out.println("갑자기 여기서 안됨");
                 soutBlock=false;
                 return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
             }
