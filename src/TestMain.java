@@ -229,68 +229,68 @@ public class TestMain {
 
         b7 = new Board(true);
         b7.getCell(6, 4).setPiece(new Pawn(PieceColor.WHITE));
-        tests.add(new TestCase("7.1", "movePieceTest(Pawn)", "6,4->5,4", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(6, 4, 5, 4));
+        tests.add(new TestCase("7.1", "movePieceTest(Pawn)", "6,4->5,4", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(6, 4, 5, 4));
 
         b7 = new Board(true);
         b7.getCell(6, 4).setPiece(new Pawn(PieceColor.WHITE));
-        tests.add(new TestCase("7.2", "movePieceTest(Pawn)", "6,4->4,4", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(6, 4, 4, 4));
+        tests.add(new TestCase("7.2", "movePieceTest(Pawn)", "6,4->4,4", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(6, 4, 4, 4));
 
         b7 = new Board(true);
         b7.getCell(6, 4).setPiece(new Pawn(PieceColor.WHITE));
-        tests.add(new TestCase("7.3", "movePieceTest(Pawn)", "6,4->3,4", "false"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(6, 4, 3, 4));
+        tests.add(new TestCase("7.3", "movePieceTest(Pawn)", "6,4->3,4", "FAIL"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(6, 4, 3, 4));
 
         b7 = new Board(true);
         b7.getCell(7, 1).setPiece(new Knight(PieceColor.WHITE));
-        tests.add(new TestCase("7.4", "movePieceTest(Knight)", "7,1->5,2", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 1, 5, 2));
+        tests.add(new TestCase("7.4", "movePieceTest(Knight)", "7,1->5,2", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 1, 5, 2));
 
         b7 = new Board(true);
         b7.getCell(7, 1).setPiece(new Knight(PieceColor.WHITE));
-        tests.add(new TestCase("7.5", "movePieceTest(Knight)", "7,1->5,1", "false"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 1, 5, 1));
+        tests.add(new TestCase("7.5", "movePieceTest(Knight)", "7,1->5,1", "FAIL"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 1, 5, 1));
 
         b7 = new Board(true);
         b7.getCell(7, 3).setPiece(new Queen(PieceColor.WHITE));
-        tests.add(new TestCase("7.6", "movePieceTest(Queen)", "7,3->3,7", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 3, 3, 7));
+        tests.add(new TestCase("7.6", "movePieceTest(Queen)", "7,3->3,7", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 3, 3, 7));
 
         b7 = new Board(true);
         b7.getCell(7, 3).setPiece(new Queen(PieceColor.WHITE));
-        tests.add(new TestCase("7.7", "movePieceTest(Queen)", "7,3->5,4", "false"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 3, 5, 4));
+        tests.add(new TestCase("7.7", "movePieceTest(Queen)", "7,3->5,4", "FAIL"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 3, 5, 4));
 
         b7 = new Board(true);
         b7.getCell(7, 4).setPiece(new King(PieceColor.WHITE));
-        tests.add(new TestCase("7.8", "movePieceTest(King)", "7,4->6,4", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 4, 6, 4));
+        tests.add(new TestCase("7.8", "movePieceTest(King)", "7,4->6,4", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 4, 6, 4));
 
         b7 = new Board(true);
         b7.getCell(7, 4).setPiece(new King(PieceColor.WHITE));
-        tests.add(new TestCase("7.9", "movePieceTest(King)", "7,4->5,4", "false"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 4, 5, 4));
+        tests.add(new TestCase("7.9", "movePieceTest(King)", "7,4->5,4", "FAIL"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 4, 5, 4));
 
         b7 = new Board(true);
         b7.getCell(7, 0).setPiece(new Rook(PieceColor.WHITE));
-        tests.add(new TestCase("7.10", "movePieceTest(Rook)", "7,0->4,0", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 0, 4, 0));
+        tests.add(new TestCase("7.10", "movePieceTest(Rook)", "7,0->4,0", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 0, 4, 0));
 
         b7 = new Board(true);
         b7.getCell(7, 0).setPiece(new Rook(PieceColor.WHITE));
-        tests.add(new TestCase("7.11", "movePieceTest(Rook)", "7,0->6,1", "false"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 0, 6, 1));
+        tests.add(new TestCase("7.11", "movePieceTest(Rook)", "7,0->6,1", "FAIL"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 0, 6, 1));
 
         b7 = new Board(true);
         b7.getCell(7, 2).setPiece(new Bishop(PieceColor.WHITE));
-        tests.add(new TestCase("7.12", "movePieceTest(Bishop)", "7,2->3,6", "true"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 2, 3, 6));
+        tests.add(new TestCase("7.12", "movePieceTest(Bishop)", "7,2->3,6", "Moved Successfully"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 2, 3, 6));
 
         b7 = new Board(true);
         b7.getCell(7, 2).setPiece(new Bishop(PieceColor.WHITE));
-        tests.add(new TestCase("7.13", "movePieceTest(Bishop)", "7,2->5,2", "false"));
-        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePieceTest(7, 2, 5, 2));
+        tests.add(new TestCase("7.13", "movePieceTest(Bishop)", "7,2->5,2", "FAIL"));
+        tests.get(tests.size() - 1).actual = String.valueOf(b7.movePiece(7, 2, 5, 2));
     }
 
     private static void addEnPassantTests(List<TestCase> tests) {
