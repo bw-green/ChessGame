@@ -154,6 +154,10 @@ public class SpecialRule {
         if (checker.isCheck(board)){
             kingEnd.setPiece(null);
             kingStart.setPiece(king);
+            if(!board.soutBlock) {
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(Unspecified.CASTLING_FAILED);
+            }
             return false;
         } //도착 지점 체킹 확인
 
@@ -168,6 +172,10 @@ public class SpecialRule {
             rookCell.setPiece(movingPiece);
             kingStart.setPiece(king);
             kingEnd.setPiece(null); //전부 원상 복구
+            if(!board.soutBlock) {
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(Unspecified.CASTLING_FAILED);
+            }
             return false;
         }
         kingStart.setPiece(king);
