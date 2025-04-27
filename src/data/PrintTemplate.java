@@ -23,7 +23,11 @@ public enum PrintTemplate {
     GAME_NOT_SAVED("| The last saved file is not current board |"),
     GAME_SAVED("| The current board matches the latest save file. |"),
 
-    //게임 종료 문
+    //체크 경고문
+    CHECK_BLACK("Check : Black"),
+    CHECK_WHITE("Check : White"),
+
+    //게임 종료문
     END_WHITE_CHECKMATE("Checkmate! WHITE wins. The game has ended.\n" +
             "Returning to the main menu."),
     END_BLACK_CHECKMATE("Checkmate! BLACK wins. The game has ended.\n" +
