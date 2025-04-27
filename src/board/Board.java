@@ -236,7 +236,7 @@ public class Board {
             start.setPiece(movingPiece);
             end.setPiece(targetPieceBackup);
 
-            if (isInCheck) return MoveResult.FAIL; // 체크되는 칸으로는 이동 불가
+            if (isInCheck) return MoveResult.FAIL; // 체크되는 칸으로  는 이동 불가
         }
 
         // 4. 이동 수행
