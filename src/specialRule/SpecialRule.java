@@ -39,8 +39,12 @@ public class SpecialRule {
 //            }//미리두고 체크 확인
 //            end.setPiece(null);
 //            start.setPiece(movingPiece);//원상복귀
-            System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println("EnPassant Success");
+//            System.out.println(board.soutBlock);
+            if(!board.soutBlock) {
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println("EnPassant Success");
+                System.out.println(PrintTemplate.BOLDLINE);
+            }
             return true;
         }
         return false;
@@ -162,8 +166,11 @@ public class SpecialRule {
         }
         kingStart.setPiece(king);
         kingEnd.setPiece(null); //킹은 보드쪽에서 이동되므로 원상 복구
-        System.out.println(PrintTemplate.BOLDLINE);
-        System.out.println("Castling Success");
+//        System.out.println(board.soutBlock);
+        if(!board.soutBlock){
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println("Castling Success");
+        }
         return true;
     }
 }

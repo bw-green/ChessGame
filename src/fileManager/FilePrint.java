@@ -42,11 +42,12 @@ public class FilePrint {
 
     public void loadFilePrint(int slot, Board board) {
         System.out.println(PrintTemplate.BOLDLINE);
-        if(fileManager.loadSavedFile(slot, board)) {
+        if(fileManager.loadSavedFile(slot, board)==1) {
             System.out.println(FileMessage.SAVE_LOADED.format(slot));
             System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
         }
-        else System.out.println(FileError.FAILED_LOAD);
+        else if(fileManager.loadSavedFile(slot, board)== -1) System.out.println(FileError.FAILED_LOAD_ER);
+        else System.out.println(FileError.FAILED_LOAD.format(slot));
         System.out.println(PrintTemplate.BOLDLINE);
     }
 

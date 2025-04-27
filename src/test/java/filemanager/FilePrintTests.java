@@ -67,7 +67,7 @@ class FilePrintTests {
         filePrint.saveFilePrint(0, null); // 유효하지 않은 슬롯 및 null 보드
         String output = outContent.toString();
 
-        assertTrue(output.contains("Failed to save"));
+        assertTrue(output.contains("The save is not completed"));
     }
 
     @Test // 4. deleteFilePrint 성공 메시지 출력 확인
@@ -86,7 +86,7 @@ class FilePrintTests {
         filePrint.deleteFilePrint(3);
         String output = outContent.toString();
 
-        assertTrue(output.contains("Failed to delete"));
+        assertTrue(output.contains("Deleting savefile is not completed"));
     }
 
     @Test // 6. loadFilePrint 성공 메시지 출력 확인
@@ -108,6 +108,6 @@ class FilePrintTests {
         filePrint.loadFilePrint(5, board);
         String output = outContent.toString();
 
-        assertTrue(output.contains("Failed to load"));
+        assertTrue(output.contains("Loading savefile is not completed"));
     }
 }

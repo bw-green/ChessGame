@@ -35,7 +35,7 @@ class FileManagerEdgeCaseAdvancedTests {
 
 
     // -----------------------------
-    // 📁 파일 관련 엣지 케이스
+    // 파일 관련 엣지 케이스
     // -----------------------------
 
     @Test // 1. 세이브 디렉토리 삭제 후 저장 시도
@@ -68,7 +68,7 @@ class FileManagerEdgeCaseAdvancedTests {
         }
 
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(2, board);
+        boolean result = (fileManager.loadSavedFile(2, board)==1);
         assertFalse(result);
     }
 
@@ -80,7 +80,7 @@ class FileManagerEdgeCaseAdvancedTests {
         }
 
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(3, board);
+        boolean result = (fileManager.loadSavedFile(3, board)==1);
         assertFalse(result); // 실제 파일명은 savefile3.txt가 아님
     }
 
@@ -91,13 +91,13 @@ class FileManagerEdgeCaseAdvancedTests {
             writer.write("InvalidSymbols\n\nWHITE\n@ # $ % ^ & * !\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(4, board);
+        boolean result = (fileManager.loadSavedFile(4, board)==1);
         assertFalse(result);
     }
 
 
     // -----------------------------
-    // ♻️ 내부 상태 변수 관련 엣지
+    // 내부 상태 변수 관련 엣지
     // -----------------------------
 
     @Test // 5. filename은 존재하나 실제 파일은 없음
@@ -107,7 +107,7 @@ class FileManagerEdgeCaseAdvancedTests {
         new File(SAVE_DIR + "/savefile4.txt").delete();
 
         Board loadTarget = new Board(true);
-        boolean result = fileManager.loadSavedFile(4, loadTarget);
+        boolean result = (fileManager.loadSavedFile(4, loadTarget)==1);
         assertFalse(result);
     }
 
@@ -123,7 +123,7 @@ class FileManagerEdgeCaseAdvancedTests {
 
 
     // -----------------------------
-    // 🎲 랜덤 저장 이름 관련 엣지
+    // 랜덤 저장 이름 관련 엣지
     // -----------------------------
 
     @Test // 7. 저장 이름이 중복되지 않는지 다시 검증
@@ -140,7 +140,7 @@ class FileManagerEdgeCaseAdvancedTests {
 
 
     // -----------------------------
-    // ♟ 체스 보드 관련 엣지 케이스
+    // 체스 보드 관련 엣지 케이스
     // -----------------------------
 
     @Test // 8. 킹이 존재하지 않는 보드 저장 및 불러오기
@@ -150,7 +150,7 @@ class FileManagerEdgeCaseAdvancedTests {
         fileManager.overWriteSavedFile(1, board);
 
         Board loaded = new Board(true);
-        boolean result = fileManager.loadSavedFile(1, loaded);
+        boolean result = (fileManager.loadSavedFile(1, loaded)==1);
         assertTrue(result);
     }
 
@@ -174,7 +174,7 @@ class FileManagerEdgeCaseAdvancedTests {
             writer.write("TooShort\n\nWHITE\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n"); // Only 3 lines
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(5, board);
+        boolean result = (fileManager.loadSavedFile(5, board)==1);
         assertFalse(result);
     }
 
@@ -185,13 +185,13 @@ class FileManagerEdgeCaseAdvancedTests {
             writer.write("BadRowCount\n\nWHITE\n. . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(1, board);
+        boolean result = (fileManager.loadSavedFile(1, board)==1);
         assertFalse(result);
     }
 
 
     // -----------------------------
-    // 🧪 테스트 시뮬레이션 전용 엣지
+    // 테스트 시뮬레이션 전용 엣지
     // -----------------------------
 
     @Test // 12. 셀 일부만 null인 보드 저장 후 불러오기
@@ -213,7 +213,7 @@ class FileManagerEdgeCaseAdvancedTests {
             writer.write("MixSymb0l\n\nWHITE\nP p Q q R r B b\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n. . . . . . . .\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(4, board);
+        boolean result = (fileManager.loadSavedFile(4, board)==1);
         assertTrue(result);
     }
 
@@ -224,7 +224,7 @@ class FileManagerEdgeCaseAdvancedTests {
             writer.write("LineBreak\r\n\r\nWHITE\r\n. . . . . . . .\r\n. . . . . . . .\r\n. . . . . . . .\r\n. . . . . . . .\r\n. . . . . . . .\r\n. . . . . . . .\r\n. . . . . . . .\r\n. . . . . . . .\r\n");
         }
         Board board = new Board(true);
-        boolean result = fileManager.loadSavedFile(5, board);
+        boolean result = (fileManager.loadSavedFile(5, board)==1);
         assertTrue(result);
     }
 }
