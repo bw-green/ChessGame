@@ -188,6 +188,7 @@ public class GameManager {
             if(!isPlaying){
                 playerTurn = PieceColor.WHITE;
                 isPlaying = true;
+                isGamePrint = true;
                 board = new Board();
             }
             //isPlaying = true의 경우는 gameInput에서 처리 됨
@@ -245,6 +246,7 @@ public class GameManager {
             if (isLoad == 1) {
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;
+                isGamePrint = true;
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileMessage.SAVE_LOADED.format(slot));
                 System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
