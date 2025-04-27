@@ -1,6 +1,5 @@
 package data;
 
-import java.rmi.UnexpectedException;
 
 public enum PrintTemplate {
 
@@ -17,11 +16,21 @@ public enum PrintTemplate {
     MENU_LAST_SAVE("|the last save file and the list of save files"),
 
     //게임 지시문
-    GAME_BASE_INSTRUCT("Enter the starting and ending positions of the piece (e.g., \"e2 e4\")"),
+    GAME_BASE_INSTRUCT("Enter the STARTING and ENDING positions of the piece (e.g., \"e2 e4\")"),
 
     //세이브 관련 경고문
     GAME_NOT_SAVED("| The last saved file is not current board |"),
-    GAME_SAVED("| The current board matches the latest save file. |");
+    GAME_SAVED("| The current board matches the latest save file. |"),
+
+    //게임 종료 문
+    END_WHITE_CHECKMATE("Checkmate! WHITE wins. The game has ended.\n" +
+            "Returning to the main menu."),
+    END_BLACK_CHECKMATE("Checkmate! BLACK wins. The game has ended.\n" +
+            "Returning to the main menu."),
+    END_STALEMATE("Stalemate! No legal moves available.\n" +
+            "The game ends in a draw. Returning to the main menu."),
+    END_INSUFFICIENT("Insufficient material to checkmate.\n" +
+            "The game ends in a draw. Returning to the main menu.");
 
     private final String printTmp;
     PrintTemplate(String printTmp){
