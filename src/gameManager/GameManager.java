@@ -213,6 +213,7 @@ public class GameManager {
             if(!isPlaying){
                 playerTurn = PieceColor.WHITE;
                 isPlaying = true;
+                isSaved = false;
                 isGamePrint = true;
                 board = new Board();
             }else{
@@ -276,6 +277,7 @@ public class GameManager {
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;
                 isGamePrint = true;
+                isSaved = true;
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileMessage.SAVE_LOADED.format(slot));
                 System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
