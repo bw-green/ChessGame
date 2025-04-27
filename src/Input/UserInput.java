@@ -29,7 +29,11 @@ public class UserInput {
 
         String[] tokens = input.trim().split("\\s+");
         if (tokens.length != 2) {
-            printError(InvalidCoordinate.INCORRECT_COUNT);
+            if(tokens.length == 1) {
+                printError(InvalidCoordinate.INCORRECT_COUNT);
+                return GameInputReturn.ERROR.getCode();
+            }
+            printError(InvalidCoordinate.HAS_SPACE);
             return GameInputReturn.ERROR.getCode();
         }
 
