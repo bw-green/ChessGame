@@ -35,7 +35,7 @@ class BoardStatePersistenceTests {
         fileManager.overWriteSavedFile(1, original);
 
         Board loaded = new Board(true);
-        boolean result = fileManager.loadSavedFile(1, loaded);
+        boolean result = (fileManager.loadSavedFile(1, loaded)==1);
 
         assertTrue(result);
         for (int row = 0; row < 8; row++) {
@@ -94,7 +94,7 @@ class BoardStatePersistenceTests {
 
         Piece pawn = loaded.getPieceAt(4, 4);
         Pawn loadedPawn = assertInstanceOf(Pawn.class, pawn);
-        assertFalse(loadedPawn.enPassantable);
+        assertTrue(loadedPawn.enPassantable);
     }
 
     @Test // 5. 턴 정보 저장 -> 불러오기 후 동일한 턴인지

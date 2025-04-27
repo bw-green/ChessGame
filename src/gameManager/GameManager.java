@@ -1,5 +1,6 @@
 package gameManager;
 
+import check.GameEnd;
 import data.*;
 
 import Menu.Menu;
@@ -30,6 +31,9 @@ public class GameManager {
     public boolean isPlaying = false;
     public boolean isRunning = true;
     public boolean isSaved = false;
+
+    private boolean isMenuPrint = true;
+    private boolean isGamePrint = true;
     private PieceColor playerTurn;
 
     private FileManager fileManager;
@@ -56,13 +60,20 @@ public class GameManager {
             }
             if(cmdCode >= HELPCODE && cmdCode <= SAVEFILECODE){
                 runCommand(cmdCode);
+            }else if(cmdCode == ERRORCODE){
+                if(!isPlaying) isMenuPrint = false;
             }
         }
     }
 
     private int runGame(){
-        printGame();
+        if(isGamePrint){ printGame(); }
+
+        if(playerTurn == PieceColor.WHITE) { System.out.print(PrintTemplate.WHITE_PROMPT); }
+        else if(playerTurn == PieceColor.BLACK) { System.out.print(PrintTemplate.BLACK_PROMPT); }
+
         int input = GameInput.gameInput();
+
         if(input == COORDINATECODE){
             String fromNotation = UserInput.getFromNotation();
             String toNotation = UserInput.getToNotation();
@@ -78,14 +89,50 @@ public class GameManager {
 
             MoveResult moveSuccess = board.movePiece(start[0], start[1], end[0], end[1]);
             if(moveSuccess == MoveResult.SUCCESS){
-                board.turnChange();
-                playerTurn = board.getCurrentTurn();
-                isSaved = false;
+                //게임 승패 먼저 판정
+                isGameEnd(PieceColor.BLACK);
+                isGameEnd(PieceColor.WHITE);
+                //턴 전환
+                if(isPlaying){
+                    board.turnChange();
+                    playerTurn = board.getCurrentTurn();
+                    isSaved = false;
+                    isGamePrint = true;
+                }
+                else{ //TODO: 디버깅 용 기능, 구현물 제출 시 에는 주석처리 또는 제거해야힘.
+                    printGame();
+                }
             }
+
+
         }else{ return input; }
 
 
-        return 0;
+        return -1;
+    }
+
+    private void isGameEnd(PieceColor pieceColor){
+        GameEnd gameEnd = new GameEnd(pieceColor);
+        if(gameEnd.isCheckMate(board)){
+            System.out.println(PrintTemplate.BOLDLINE);
+            if(pieceColor == PieceColor.WHITE) { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
+            else { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
+            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isPlaying = false;
+            isMenuPrint = true;
+        }else if(gameEnd.isStaleMate(board)){
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(PrintTemplate.END_STALEMATE);
+            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isPlaying = false;
+            isMenuPrint = true;
+        }else if(gameEnd.isInsufficientPieces(board)){
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(PrintTemplate.END_INSUFFICIENT);
+            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isPlaying = false;
+            isMenuPrint = true;
+        }
     }
 
     private void printGame(){
@@ -95,16 +142,14 @@ public class GameManager {
         System.out.println(PrintTemplate.INTERLINE);
         System.out.println(PrintTemplate.GAME_BASE_INSTRUCT);
         System.out.println(PrintTemplate.BOLDLINE);
-
-        //플레이어 턴에 따른 프롬프트 구문
-        if(playerTurn == PieceColor.WHITE)
-            System.out.print(PrintTemplate.WHITE_PROMPT);
-        else if(playerTurn == PieceColor.BLACK)
-            System.out.print(PrintTemplate.BLACK_PROMPT);
     }
 
     private int runMenu(){
-        menu.printDefaultMenu();
+        if(isMenuPrint){
+            menu.printDefaultMenu();
+        }
+        System.out.print(PrintTemplate.MENU_PROMPT);
+        isMenuPrint = true;
         return MenuInput.menuInput();
     }
 
@@ -129,7 +174,8 @@ public class GameManager {
         if(cmdCode == HELPCODE){
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(Command.HELP);
-            System.out.println(PrintTemplate.BOLDLINE + "\n");
+            System.out.println(PrintTemplate.BOLDLINE);
+            isMenuPrint = false;
         }
 
 
@@ -153,6 +199,7 @@ public class GameManager {
             if(!isPlaying){
                 playerTurn = PieceColor.WHITE;
                 isPlaying = true;
+                isGamePrint = true;
                 board = new Board();
             }
             //isPlaying = true의 경우는 gameInput에서 처리 됨
@@ -161,7 +208,6 @@ public class GameManager {
         if(cmdCode == QUITCODE){
             if(isPlaying){
                 showSaveAndList();
-
                 System.out.print(Command.YES_OR_NO_QUIT);
                 boolean input = MenuInput.yesOrNoInput();
                 if(input){
@@ -169,6 +215,8 @@ public class GameManager {
                     isPlaying = false;
                 }
             }
+            isMenuPrint = true;
+
         }
 
         if(cmdCode == SAVECODE){
@@ -182,12 +230,14 @@ public class GameManager {
                 System.out.println(PrintTemplate.BOLDLINE);
                 filePrint.showFileList();
                 System.out.println(FileMessage.SAVE_CREATED.format(slot));
-                System.out.println(PrintTemplate.BOLDLINE + "\n");
+                System.out.println(PrintTemplate.BOLDLINE);
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileError.FAILED_SAVE);
-                System.out.println(PrintTemplate.BOLDLINE + "\n");
+                System.out.println(PrintTemplate.BOLDLINE);
             }
+            isMenuPrint = false;
+
         }
 
         if(cmdCode == LOADCODE) {
@@ -202,23 +252,33 @@ public class GameManager {
                 slot = MenuInput.number;
             }
             board = new Board();
-            boolean isLoad = fileManager.loadSavedFile(slot, board);
-            if (isLoad) {
+            int isLoad = (fileManager.loadSavedFile(slot, board));
+            if (isLoad == 1) {
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;
+                isGamePrint = true;
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileMessage.SAVE_LOADED.format(slot));
+                System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
                 System.out.println(PrintTemplate.BOLDLINE + "\n");
+            }else if(isLoad == 0){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(FileError.FAILED_LOAD.format(slot));
+                System.out.println(PrintTemplate.BOLDLINE);
+                isMenuPrint = false;
+                isGamePrint = false;
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileError.FAILED_LOAD);
-                System.out.println(PrintTemplate.BOLDLINE+ "\n");
+                isMenuPrint = false;
+                isGamePrint = false;
             }
         }
 
         if (cmdCode == DELSAVECODE) {
             if(!isPlaying){
                 filePrint.deleteFilePrint(MenuInput.number);
+                isMenuPrint = false;
             }else{
                 System.out.println(CommandError.DELSAVE_BLOCK);
             }
@@ -226,7 +286,7 @@ public class GameManager {
 
         if (cmdCode == SAVEFILECODE) {
             filePrint.saveListPrint();
-
+            isMenuPrint = false;
         }
 
     }

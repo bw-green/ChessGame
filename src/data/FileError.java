@@ -1,11 +1,12 @@
 package data;
 
 public enum FileError {
-    FAILED_SAVE("Failed to save the game."),
-    FAILED_LOAD("Failed to load the savefile."),
-    FAILED_DELETE("Failed to delete the savefile."),
-    FAILED_MAKDIR("Failed to make a directory."),
-    FAILED_MAKDIR_ERROR("Unable to create save directory. The program will terminate."),
+    FAILED_SAVE("| Failed to save the game. |"),
+    FAILED_LOAD_ER("| Failed to load the savefile. |"),
+    FAILED_LOAD("| The save %d is empty |"),
+    FAILED_DELETE("| Failed to delete the save file |"),
+    FAILED_MAKDIR("| Failed to make a directory. |"),
+    FAILED_MAKDIR_ERROR("| Unable to create save directory. The program will terminate. |"),
 
     ///아래부터는 에러 캐치시 디버깅용 출력문들입니다.
     DEBUG_ERROR_OVERWRITE("Error writing to the save file."),
@@ -22,5 +23,9 @@ public enum FileError {
     @Override
     public String toString() {
         return message;
+    }
+
+    public String format(Object... args) {
+        return String.format(this.message, args);
     }
 }
