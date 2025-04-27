@@ -42,7 +42,7 @@ public enum Command {
 
     EXIT("| Exit command received. Closing the game. |"), //내용 없지만 명시 위해 놔둠
 
-    QUIT("Successfully quited program."), //내용 없지만 명시 위해 놔둠
+    QUIT("Successfully quited game."),
     SAVE("|The save %d has been created.|"),
     LOAD("| The save %d has loaded |\n" +
             "|save %d.|< %s >"),
