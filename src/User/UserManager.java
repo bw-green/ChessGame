@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserManager {
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
     private final FileManager fileManager;
 
     public UserManager(FileManager fileManager) {

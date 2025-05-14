@@ -4,7 +4,7 @@ import User.User;
 import board.Board;
 import board.PieceFactory;
 import data.PieceColor;
-import data.FileError;
+//import data.FileError;
 import piece.Piece;
 import piece.King;
 import piece.Rook;
