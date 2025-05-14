@@ -1,5 +1,6 @@
 package fileManager;
 
+import User.User;
 import board.Board;
 import board.PieceFactory;
 import data.PieceColor;
@@ -16,6 +17,7 @@ import java.util.Random;
 public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
+    private static final String USER_DIR = SAVE_DIR + "/users";
     private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
@@ -60,6 +62,19 @@ public class FileManager {
             if (!success) {
                 //System.err.println(FileError.FAILED_MAKDIR + SAVE_DIR); //임시 출력본
                 throw new IllegalStateException();
+            }
+        }
+    }
+
+    // 유저 저장 디렉토리 확인 및 생성
+    private void ensureUserDirectory() {
+        File dir = new File(USER_DIR);
+        if (!dir.exists()) {
+            boolean success = dir.mkdirs();
+            if (!success) {
+                // 로그 출력이나 에러 코드 사용 가능
+                // System.err.println(FileError.FAILED_MAKDIR + USER_DIR);
+                throw new IllegalStateException("Failed to create user directory: " + USER_DIR);
             }
         }
     }
@@ -260,6 +275,72 @@ public class FileManager {
             return false;
         }
     }
+
+    // 저장
+    public void saveUserList(List<User> users) {
+
+        if (!new File(SAVE_DIR).exists()) {
+            ensureSaveDirectory();
+        }
+        if (!new File(USER_DIR).exists()) {
+            ensureUserDirectory();
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_DIR + "/userlist.txt"))) {
+            for (User user : users) {
+                writer.write(user.getId() + "," + user.getPw());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            // System.err.println(FileError.FAILED_TO_SAVE_USER);
+            throw new RuntimeException(e);
+        }
+    }
+
+    // 불러오기
+    public List<User> loadUserList() {
+        ensureUserDirectory(); // 디렉토리 존재 확인
+
+        File file = new File(USER_DIR + "/userlist.txt");
+        List<User> users = new ArrayList<>();
+
+        // 파일이 존재하지 않으면 빈 리스트 반환
+        if (!file.exists()) return users;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // 공백 제거 및 무의미한 줄 처리
+                line = line.trim();
+                if (line.isEmpty()) continue;
+
+                String[] tokens = line.split(",", 2); // "," 기준으로 최대 2개 분리
+                if (tokens.length != 2) {
+                    // 잘못된 형식의 줄은 무시 (혹은 로그 출력 가능)
+                    // System.err.println("잘못된 사용자 데이터 형식: " + line);
+                    continue;
+                }
+
+                String id = tokens[0].trim();
+                String pw = tokens[1].trim();
+
+                if (!id.isEmpty() && !pw.isEmpty()) {
+                    users.add(new User(id, pw));
+                }
+            }
+        } catch (IOException e) {
+            // 에러 출력 (원하시면 FileError.FAILED_TO_LOAD_USER 활용 가능)
+            //System.err.println("사용자 파일 로딩 실패: " + e.getMessage());
+        }
+
+        return users;
+    }
+
+
+
+
+
+
 
     public void resetTestState() { //Test 제작을 위한 함수 절대 임의로 호출하지 말것!!
         for (int i = 0; i < MAX_SAVES; i++) {
