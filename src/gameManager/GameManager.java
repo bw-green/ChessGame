@@ -1,5 +1,6 @@
 package gameManager;
 
+import board.Chat;
 import check.Checker;
 import check.GameEnd;
 import data.*;
@@ -215,7 +216,7 @@ public class GameManager {
                 isPlaying = true;
                 isSaved = false;
                 isGamePrint = true;
-                board = new Board();
+                board = new Chat();
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);
