@@ -2,15 +2,15 @@ package board;
 
 import check.Checker;
 import data.*;
-import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
 
 //////////////////////////////////////////////
 public class Board {
-    private Cell[][] cells; // 8x8 board.Cell 배열
-    private PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
+    protected Cell[][] cells; // 8x8 board.Cell 배열
+    protected PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
     public boolean soutBlock = false;
+    public boolean castleToggle=false,enpassantToggle=false,promotionToggle=false;
 
     /**
      * 생성자
@@ -202,14 +202,18 @@ public class Board {
                 getCell(start.getRow(), end.getCol()).setPiece(null);
 //                System.out.println("지우기 수행");
             }
+            ((Pawn) end.getPiece()).enPassantable=false;
         }
         enPassantChecking();
 
         if (endRow == 0 || endRow == 7) {
             if(!soutBlock)
-                SpecialRule.promotion(end);
+                promotionGood(end, movingPiece);
         }
         return MoveResult.SUCCESS;
+    }
+    public void promotionGood(Cell end, Piece p) {
+        SpecialRule.promotion(end);
     }
 
     public void movePieceTest(int startRow, int startCol, int endRow, int endCol) {
@@ -231,11 +235,14 @@ public class Board {
 
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
-                if (!SpecialRule.castling(this, start, end)) {
+                if(castleToggle){
+                    if (!SpecialRule.castling(this, start, end)) {
 //                    System.out.println(Unspecified.CASTLING_FAILED);
 //                    System.out.println("캐슬링 시도중에서 걸림");
-                    return;
+                        return;
+                    }
                 }
+
             } else {
                 // 일반 이동이면 isValidMove 검사
                 if (!movingPiece.isValidMove(this, start, end)) {
@@ -285,6 +292,7 @@ public class Board {
             for(int j = 0; j<8; j++) {
                 Piece enpassantTest = getCell(i, j).getPiece();
                 if (enpassantTest instanceof Pawn pawn) {
+//                    pawn.enPassantable = false;
                     if (pawn.enPassantable && pawn.enPassantCounter == 0) {
 //                        System.out.println("앙파상카운터 1로 증가");
                         pawn.enPassantCounter = 1; //한턴은 앙파상을 유지시켜야하므로
@@ -439,10 +447,16 @@ public class Board {
 
             if (rowDiff == 0 && colDiff == 2) {
                 // 캐슬링 시도 중이면, 실제로 캐슬링 가능성 검증
-                if (!SpecialRule.castling(this, start, end)) {
+                if(false){
+                    if (!SpecialRule.castling(this, start, end)) {
 
+                        return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+                    }
+                }
+                else{
                     return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
                 }
+
                 // SpecialRule.castling() 호출해서 통과하면 문제 없음 (그냥 넘어감)
             } else {
                 // 일반 이동이면 킹 이동 규칙 검사
