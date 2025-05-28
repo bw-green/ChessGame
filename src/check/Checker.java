@@ -14,8 +14,8 @@ public class Checker {    // 백 확인하는거 한개 흑확인하는거 한�
     private final String Symbol;
     static int BOARD_SIZE=8;
     public Cell King;
-    Board newBoard = new Board(true);
-
+    Board newBoard = new Board(false, false, false,false);
+    //체커 현재 많이 아픔
     public Checker(PieceColor pieceColor) {
         this.pieceColor = pieceColor;
         Symbol = (this.pieceColor == PieceColor.WHITE) ? "K" : "k";

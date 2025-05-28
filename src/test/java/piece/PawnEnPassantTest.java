@@ -225,6 +225,8 @@ public class PawnEnPassantTest {
         System.out.println("white : "+ whiteChecker.canMove(board));
         System.out.println("black : "+ blackChecker.canMove(board));
         System.out.println(board);
+        String bishopnew = "\u1D40";
+        System.out.println(bishopnew);
     }
 
 }
