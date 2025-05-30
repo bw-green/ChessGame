@@ -225,45 +225,8 @@ public class PawnEnPassantTest {
         System.out.println("white : "+ whiteChecker.canMove(board));
         System.out.println("black : "+ blackChecker.canMove(board));
         System.out.println(board);
-    }
-
-    void templete2(String start, String end) {
-        System.out.println(PrintTemplate.INTERLINE);
-        System.out.println("Enter the starting and ending positions of the piece (e.g., \"e2 e4\")");
-        System.out.println(PrintTemplate.BOLDLINE);
-        System.out.println("WHITE >e7 e8");
-        System.out.println(PrintTemplate.BOLDLINE);
-        int[][] coordinates = helpTest(start, end);
-        System.setIn(new ByteArrayInputStream("Q".getBytes()));
-        System.out.println("WHITE >Q");
-        System.out.println(PrintTemplate.BOLDLINE);
-        MoveResult move = board.movePiece(coordinates[0][0], coordinates[0][1], coordinates[1][0], coordinates[1][1]);
-        if(move == MoveResult.SUCCESS) {
-            System.out.println(board);
-            board.turnChange();
-            System.out.println(PrintTemplate.INTERLINE);
-            System.out.println("Enter the starting and ending positions of the piece (e.g., \"e2 e4\")");
-            System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println("BLACK >");
-        }else
-            System.out.println("테스트 실패");
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "e7, e8"
-    })
-    @DisplayName("백 : 왼쪽 파일 2칸 떨어져있는 앙파상 기물을 캡쳐가 가능한가? (앙파상 기물 뒤로 이동시도)")
-    void CanEnPassantTest15(String start, String end) throws Exception {
-        board = new Board(true);
-        board.setPieceTest(1,4,new Pawn(PieceColor.WHITE));
-        board.setPieceTest(2,0,new Queen(PieceColor.BLACK));
-        board.setPieceTest(2,1,new King(PieceColor.BLACK));
-        board.setPieceTest(7,4,new King(PieceColor.WHITE));
-        board.setPieceTest(7,3,new Queen(PieceColor.WHITE));
-        System.out.println(PrintTemplate.BOLDLINE);
-        System.out.print(board);
-        templete2(start, end);
+        String bishopnew = "\u1D40";
+        System.out.println(bishopnew);
     }
 
 }

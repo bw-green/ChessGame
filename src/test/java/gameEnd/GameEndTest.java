@@ -15,7 +15,7 @@ public class GameEndTest {
     @DisplayName("스테일 메이트")
     public void checkStaleMate() {
 
-        Board board = new Board(true);
+        Board board = new Board(true, true, true, true);
         board.setPieceTest(0,0,new King(PieceColor.BLACK));
         board.setPieceTest(2,7,new King(PieceColor.WHITE));
         board.setPieceTest(2,1,new Queen(PieceColor.WHITE));
@@ -181,7 +181,7 @@ public class GameEndTest {
         System.out.println("black's isCheckMate : " + blackGameEnd.isCheckMate(board));
         System.out.println("white's isCheckMate : " + whiteGameEnd.isCheckMate(board));
 
-        board = new Board();
+        board = new Board(true, true, true ,true);
         board.movePiece(6,4,5,4);
         board.turnChange();
         board.movePiece(1,0,3,0);
