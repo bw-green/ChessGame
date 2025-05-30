@@ -293,6 +293,7 @@ public class GameManager {
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileError.FAILED_LOAD_ER);
+                System.out.println(PrintTemplate.BOLDLINE);
                 isMenuPrint = false;
                 isGamePrint = false;
             }
