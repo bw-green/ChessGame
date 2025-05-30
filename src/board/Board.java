@@ -11,12 +11,6 @@ public class Board {
     PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
     public boolean soutBlock = false;
     public boolean canEnpassant, canCastling, canPromotion;
-    public Board(){
-        this(false, true,true, true);
-    }
-    public Board(boolean a){
-        this(false, true,true, a);
-    }  // 이거 test에서 나는 충돌 막는 장치(금요일까지 리팩터링예정)
     /**
      * 생성자
      * 8x8 Cell을 생성하고, 초기 기물 배치를 수행.
@@ -241,10 +235,12 @@ public class Board {
 
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
-                if (!SpecialRule.castling(this, start, end)) {
+                if (canCastling) {
+                    if (!SpecialRule.castling(this, start, end)) {
 //                    System.out.println(Unspecified.CASTLING_FAILED);
 //                    System.out.println("캐슬링 시도중에서 걸림");
-                    return;
+                        return;
+                    }
                 }
             } else {
                 // 일반 이동이면 isValidMove 검사

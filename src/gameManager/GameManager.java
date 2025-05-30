@@ -39,7 +39,7 @@ public class GameManager {
     private final Menu menu;
     private Board board;
 
-    boolean canEnpassant=false, canCastling=false, canPromotion=false ; //임시
+    boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
 
     public GameManager() {
         fileManager = FileManager.getInstance();
@@ -266,7 +266,7 @@ public class GameManager {
             if(isPlaying){ slot = GameInput.number; }
             else{ slot = MenuInput.number; }
 
-            board = new Board(true,true,true);
+            board = new Board(canEnpassant,canCastling,canPromotion);
             int isLoad = (fileManager.loadSavedFile(slot, board));
 
             if (isLoad == 1) {
