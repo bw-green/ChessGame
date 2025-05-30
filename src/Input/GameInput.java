@@ -14,11 +14,11 @@ public class GameInput {
     static int HELP = GameInputReturn.HELP.getCode();
 
     static int EXIT = GameInputReturn.EXIT.getCode();
-//    static int START = GameInputReturn.START.getCode();
+    static int START = GameInputReturn.START.getCode();
     static int QUIT = GameInputReturn.QUIT.getCode();
     static int SAVE = GameInputReturn.SAVE.getCode();
     static int LOAD = GameInputReturn.LOAD.getCode();
-//    static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
+    static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
     static int SAVE_FILE = GameInputReturn.SAVE_FILE.getCode();
 
 
@@ -45,15 +45,17 @@ public class GameInput {
             try{
                 return checkOrderInput();
             } catch (Exception e) {
-                if(e instanceof InputMismatchException){
-                    System.out.println(PrintTemplate.BOLDLINE + "\n"
-                            + CommandError.WRONG_COMMAND + "\n"
-                            + PrintTemplate.BOLDLINE);
-                }
-                else{
+                if(e instanceof NumberFormatException){
                     System.out.println( PrintTemplate.BOLDLINE + "\n"
                             + CommandError.WRONG_NUMBER + "\n"
                             + PrintTemplate.BOLDLINE);
+
+                }
+                else{
+                    System.out.println(PrintTemplate.BOLDLINE + "\n"
+                            + CommandError.WRONG_COMMAND + "\n"
+                            + PrintTemplate.BOLDLINE);
+
                 }
                 return ERROR;
             }
@@ -105,10 +107,7 @@ public class GameInput {
             String now = parts[1].substring("delsave".length());
             if(checking(now)!=0){
                 number= checking(now);
-                System.out.println(PrintTemplate.BOLDLINE + "\n"
-                        + CommandError.DELSAVE_BLOCK + "\n"
-                        + PrintTemplate.BOLDLINE);
-                return ERROR;
+                return DEL_SAVE;
             }
             else{
                 throw new InputMismatchException("delsave 실패");
@@ -129,10 +128,7 @@ public class GameInput {
         else if(parts[1].startsWith("start")){
             parts[1]=blank(parts[1]) ;
             if(parts[1].equals("start")){
-                System.out.println(PrintTemplate.BOLDLINE + "\n"
-                        + CommandError.START_BLOCK + "\n"
-                        + PrintTemplate.BOLDLINE);
-                return ERROR;
+                return START;
             }
             else{
                 throw new InputMismatchException("start 실패");
@@ -199,8 +195,11 @@ public class GameInput {
             if (num >= 1 && num <= 5) {
                 return num;
             }
-            else {
+            if(num>=0 && num <=9){
                 throw new NumberFormatException(" 1부터 5사이가 아님");
+            }
+            else {
+                throw new InputMismatchException();
             }
         } else {
             throw new InputMismatchException();

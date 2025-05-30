@@ -31,7 +31,7 @@ public class RookTest {
 
     @BeforeEach
     void setUp() {
-        testBoard = new Board(false);  // 초기화 안된 빈 보드
+        testBoard = new Board(true, true, true, false);  // 초기화 안된 빈 보드
     }
 
     // 1. Rook 기본 이동 테스트: 각 수직/수평 방향으로 3칸 이동 가능한지 확인

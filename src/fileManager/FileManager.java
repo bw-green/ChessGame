@@ -16,11 +16,12 @@ import java.util.Random;
 public class FileManager {
     private static final int MAX_SAVES = 5;
     private static final String SAVE_DIR = "saves";
-    private final String deFault = "NO DATA";
+    private final String deFault = "No Data"; //기획서 일치
+    private final String LSFdeFault = "Last saved file";
 
     private final ArrayList<String> filename = new ArrayList<>(Collections.nCopies(MAX_SAVES, "NO DATA"));
     private static final ArrayList<Integer> counter = new ArrayList<>(Collections.nCopies(MAX_SAVES, 0));
-    private String lastSavedFile = deFault;
+    private String lastSavedFile = LSFdeFault;
     private int lastSaveFileNum;
     private static int count = 0;
     //moveHistroy, counter, count는 공유되야해서 static으로 선언
@@ -141,7 +142,7 @@ public class FileManager {
     // 세이브 파일 불러오기
     public int loadSavedFile(int slot, Board targetBoard) {
         if (slot < 1 || slot > MAX_SAVES ) return -1;
-
+        if(filename.get(slot-1).equals(deFault)) return 0;
         String filePath = getFilePath(slot);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -149,7 +150,7 @@ public class FileManager {
             reader.readLine(); // 공백 줄
             String getLine = reader.readLine(); // 턴 정보 읽기
 
-            if (getLine == null) return 0;
+            if (getLine == null) return -1;
 
             //턴 정보 읽기(WHITE ? BLACK)
             if (getLine.equalsIgnoreCase("BLACK")) {
@@ -244,7 +245,7 @@ public class FileManager {
                 lastSavedFile = filename.get(secondIndex);
                 lastSaveFileNum = secondIndex;
             } else {
-                lastSavedFile = deFault;
+                lastSavedFile = LSFdeFault;
                 lastSaveFileNum = -1;
             }
         }   //last saved file update (end)
@@ -266,7 +267,7 @@ public class FileManager {
             counter.set(i, 0);
         }
         count = 0;
-        lastSavedFile = deFault;
+        lastSavedFile = LSFdeFault;
         lastSaveFileNum = -1;
     }
 
