@@ -26,7 +26,7 @@ class FileManagerSaveTests {
 
     @Test //1. 빈 슬롯에 저장
     void testSaveToEmptySlot() {
-        Board board = new Board();
+        Board board = new Board(true);
         boolean result = fileManager.overWriteSavedFile(1, board);
         assertTrue(result);
 

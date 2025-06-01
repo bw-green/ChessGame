@@ -23,7 +23,7 @@ public class PawnEnPassantTest {
 
     @BeforeEach
     void setUpBeforeClass() throws Exception {
-        board = new Board();
+        board = new Board(true);
         board.initializeBoard();
     }
 
@@ -201,7 +201,7 @@ public class PawnEnPassantTest {
     })
     @DisplayName("다른 기물을 잡으려 할때는?")
     void CanEnPassantTest12(String start, String end) throws Exception {
-        board = new Board();
+        board = new Board(true);
         board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));
 //        board.setPieceTest(3,1,new Knight(PieceColor.BLACK));
         System.out.println(board);
@@ -215,7 +215,7 @@ public class PawnEnPassantTest {
     })
     @DisplayName("다른 기물을 잡으려 할때는?")
     void CanEnPassantTest13(String start, String end) throws Exception {
-        board = new Board();
+        board = new Board(true);
         Checker whiteChecker = new Checker(PieceColor.WHITE);
         Checker blackChecker = new Checker(PieceColor.BLACK);
         board.setPieceTest(3,2,new Pawn(PieceColor.WHITE));

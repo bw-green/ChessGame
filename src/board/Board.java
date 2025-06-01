@@ -10,13 +10,13 @@ public class Board {
     protected Cell[][] cells; // 8x8 board.Cell 배열
     protected PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
     public boolean soutBlock = false;
-    public boolean castleToggle=false,enpassantToggle=false,promotionToggle=false;
+    protected boolean castleToggle=false,enpassantToggle=false,promotionToggle=false;
 
     /**
      * 생성자
      * 8x8 Cell을 생성하고, 초기 기물 배치를 수행.
      */
-    public Board() {
+    public Board(boolean canEnpassant, boolean canCastling, boolean canPromotion, boolean initialize) {
         cells = new Cell[8][8];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -33,6 +33,16 @@ public class Board {
             }
         }
     }
+
+    public Board(){ // test board 임시 -> 각 cell은 null을 가짐
+        cells = new Cell[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                cells[row][col] = new Cell(row, col);
+            }
+        }
+    }
+
 
     /**
      * 체스판의 초기 기물 배치를 설정합니다.
@@ -194,7 +204,13 @@ public class Board {
             return MoveResult.FAIL;
         } // 체크되는 칸으로는 이동 불가
 
+        if(movingPiece instanceof Pawn2 && startCol == endCol&& getPieceAt(endRow, endCol) != null){
+            Knockback(start,end);
+            return MoveResult.SUCCESS;
+        }
+
         // 3. 이동 수행
+
         end.setPiece(movingPiece);
         start.setPiece(null);
         if(end.getPiece() instanceof Pawn){
@@ -208,14 +224,39 @@ public class Board {
 
         if (endRow == 0 || endRow == 7) {
             if(!soutBlock)
-                promotionGood(end, movingPiece);
+                doPromotion(end);
         }
         return MoveResult.SUCCESS;
     }
-    public void promotionGood(Cell end, Piece p) {
-        SpecialRule.promotion(end);
+    public void Knockback(Cell start, Cell end){
+        if(start.getRow()>end.getRow()){
+            getCell(start.getRow()+1, start.getCol()).setPiece(start.getPiece());
+            getCell(end.getRow()-1, start.getCol()).setPiece(end.getPiece());
+            Piece endPiece = getPieceAt(end.getRow()-1, start.getCol());
+            if(endPiece instanceof Pawn2){
+                Pawn2 endPawn =(Pawn2)endPiece;
+                endPawn.isMoved=true;
+            }
+        }
+        else{
+            getCell(start.getRow()-1, start.getCol()).setPiece(start.getPiece());
+            getCell(end.getRow()+1, start.getCol()).setPiece(end.getPiece());
+            Piece endPiece = getPieceAt(end.getRow()+1, start.getCol());
+            if(endPiece instanceof Pawn2){
+                Pawn2 endPawn =(Pawn2)endPiece;
+                endPawn.isMoved=true;
+            }
+        }
+
+
+        start.setPiece(null);
+        end.setPiece(null);
+
     }
 
+    public void doPromotion(Cell end) {
+        SpecialRule.promotion(end);
+    }
     public void movePieceTest(int startRow, int startCol, int endRow, int endCol) {
 
         Cell start = getCell(startRow, startCol);
@@ -258,6 +299,10 @@ public class Board {
 //                System.out.println("일반 기물인데 이동 불가능");
                 return;
             }
+        }
+        if(movingPiece instanceof Pawn2 && startCol == endCol&& getPieceAt(endRow, endCol) != null){
+            Knockback(start,end);
+            return;
         }
 
         // 2. 의미 오류 검사 추가 (6가지 의미 오류)

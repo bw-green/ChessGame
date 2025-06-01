@@ -1,6 +1,7 @@
 package gameManager;
 
 import board.Chat;
+import board.Chaturanga;
 import check.Checker;
 import check.GameEnd;
 import data.*;
@@ -217,6 +218,9 @@ public class GameManager {
                 isSaved = false;
                 isGamePrint = true;
                 board = new Chat();
+                if(board instanceof Chat){
+
+                }
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);
@@ -242,7 +246,7 @@ public class GameManager {
         if(cmdCode == SAVECODE){
             int slot;
             if(!isPlaying){
-                board = new Board();
+                board = new Board(true);
                 slot = MenuInput.number;
             }else { slot = GameInput.number; }
             isSaved = fileManager.overWriteSavedFile(slot, board);
@@ -265,7 +269,7 @@ public class GameManager {
             if(isPlaying){ slot = GameInput.number; }
             else{ slot = MenuInput.number; }
 
-            board = new Board();
+            board = new Board(true);
             int isLoad = (fileManager.loadSavedFile(slot, board));
 
             if (isLoad == 1) {

@@ -28,7 +28,7 @@ class FileManagerLoadTests {
 
     @Test //1. 정상 파일 불러오기
     void testLoadValidSaveFile() {
-        Board originalBoard = new Board();
+        Board originalBoard = new Board(true);
         fileManager.overWriteSavedFile(1, originalBoard);
 
         Board loadedBoard = new Board(true);
@@ -69,7 +69,7 @@ class FileManagerLoadTests {
 
     @Test //5. BLACK 턴 저장 후 불러오기 → 턴 상태 유지 확인
     void testLoadBlackTurnTriggersTurnChange() {
-        Board board = new Board();
+        Board board = new Board(true);
         board.turnChange(); // 강제로 BLACK으로 만듦
         fileManager.overWriteSavedFile(5, board);
 
