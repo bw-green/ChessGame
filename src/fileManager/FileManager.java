@@ -14,10 +14,12 @@ import java.io.*;
 import java.util.*;
 import java.util.Random;
 
+import static gameManager.GameManager.global_ID;
+
 public class FileManager {
-    private static final int MAX_SAVES = 5;
+    private static final int MAX_SAVES = 3;
     private static final String SAVE_DIR = "saves";
-    private static final String USER_DIR = SAVE_DIR + "/users";
+    private static final String USER_DIR = SAVE_DIR + "/User_" + global_ID;
     private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
@@ -66,8 +68,8 @@ public class FileManager {
         }
     }
 
-    // 유저 저장 디렉토리 확인 및 생성
-    private void ensureUserDirectory() {
+    // 유저별 폴더 있는지 확인
+    private void ensureDirectoryByID() {
         File dir = new File(USER_DIR);
         if (!dir.exists()) {
             boolean success = dir.mkdirs();
@@ -79,7 +81,7 @@ public class FileManager {
         }
     }
 
-    // 세이브 파일 덮어쓰기 (최대 5개 관리, 텍스트 형식)
+    // 세이브 파일 덮어쓰기 (최대 3개 관리, 텍스트 형식)
     public boolean overWriteSavedFile(int slot, Board board) {
         if (slot < 1 || slot > MAX_SAVES) return false;
         slot--;
@@ -88,26 +90,36 @@ public class FileManager {
             ensureSaveDirectory();
         }
 
+        if (!new File(USER_DIR).exists()) {
+            ensureDirectoryByID();
+        }
+
         String saveName = generateRandomSaveName();
-        String filePath = getFilePath(slot + 1); //savefile 1~5생성을 위해 +1
+        String filePath = getFilePath(slot + 1); //savefile 1~3생성을 위해 +1
 
         if (board == null) return false;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(saveName);
-            writer.newLine(); // 두 번째 줄 공백
+            writer.write(global_ID); //1. ID
             writer.newLine();
-            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "WHITE" : "BLACK"); // 세 번째 줄 턴 정보
+            writer.write(saveName); //2. 세이브파일이름
             writer.newLine();
-
-            // 여기서 보드 상태 직접 저장 (네 번째 줄부터)
-            for (int row = 0; row < 8; row++) {
-                for (int col = 0; col < 8; col++) {
-                    var piece = board.getCell(row, col).getPiece();
-                    writer.write((piece == null ? "." : piece.getSymbol()) + " ");
-                }
-                writer.newLine();
-            }
+            //writer.write(board.getGameType); //3. 게임유형
+            writer.newLine();
+            //writer.write(board.getGameType); //4. 캐슬링
+            writer.newLine();
+            //writer.write(board.getGameType); //5. 프로모션
+            writer.newLine();
+            //writer.write(board.getGameType); //6. 앙파상
+            writer.newLine();
+            //writer.write(board.getGameType); //7. 쓰리체크W
+            writer.newLine();
+            //writer.write(board.getGameType); //8. 쓰리체크B
+            writer.newLine();
+            writer.write("board:"); //9. 보드 구분 쓰기
+            writer.newLine();
+            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "WHITE" : "BLACK"); // 10. 턴 정보
+            writer.newLine();
 
             // 여기서 특수 룰 상태 저장 시작
             for (int row = 0; row < 8; row++) {
@@ -138,7 +150,24 @@ public class FileManager {
                             writer.newLine();
                         }
                     }
+
+                    // Pawn (Never Moved)
+                    else if (piece instanceof Pawn pawn) {
+                        if (!pawn.firstMove) {
+                            writer.write(pawn.getSymbol() + "f " + row + " " + col); //f을 붙여줘서 일반 Pawn과 구분
+                            writer.newLine();
+                        }
+                    }
                 }
+            }
+
+            // 여기서 보드 상태 직접 저장
+            for (int row = 0; row < 8; row++) {
+                for (int col = 0; col < 8; col++) {
+                    var piece = board.getCell(row, col).getPiece();
+                    writer.write((piece == null ? "." : piece.getSymbol()) + " ");
+                }
+                writer.newLine();
             }
 
 
@@ -155,75 +184,23 @@ public class FileManager {
     }
 
     // 세이브 파일 불러오기
-    public int loadSavedFile(int slot, Board targetBoard) {
-        if (slot < 1 || slot > MAX_SAVES ) return -1;
-        if(filename.get(slot-1).equals(deFault)) return 0;
+    public Board loadSavedFile(int slot) {
+        if (slot < 1 || slot > MAX_SAVES ) return null;
+        if(filename.get(slot-1).equals(deFault)) return null;
         String filePath = getFilePath(slot);
 
+        List<String> checkList = new ArrayList<>();
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            reader.readLine(); // 저장 이름
-            reader.readLine(); // 공백 줄
-            String getLine = reader.readLine(); // 턴 정보 읽기
-
-            if (getLine == null) return -1;
-
-            //턴 정보 읽기(WHITE ? BLACK)
-            if (getLine.equalsIgnoreCase("BLACK")) {
-                targetBoard.turnChange();
-            } else if (!getLine.equalsIgnoreCase("WHITE")) {
-                throw new IllegalArgumentException();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                checkList.add(line);
             }
-
-            //보드 정보 읽기(8*8)
-            for (int row = 0; row < 8; row++) {
-                String line = reader.readLine();
-                if (line == null) return -1;
-                String[] tokens = line.trim().split(" ");
-                if (tokens.length != 8) return -1;
-
-                for (int col = 0; col < 8; col++) {
-                    String symbol = tokens[col];
-                    Piece piece = symbol.equals(".") ? null : PieceFactory.createPieceFromSymbol(symbol);
-                    targetBoard.getCell(row, col).setPiece(piece);
-                }
-            }
-
-            // 특수 룰 정보 읽기
-            String specialLine;
-            while ((specialLine = reader.readLine()) != null) {
-                specialLine = specialLine.trim();
-                if (specialLine.isEmpty()) continue;
-
-                String[] parts = specialLine.split(" ");
-                if (parts.length != 3) continue; // 잘못된 형식은 무시
-
-                int row = Integer.parseInt(parts[1]);
-                int col = Integer.parseInt(parts[2]);
-
-                Piece piece = targetBoard.getCell(row, col).getPiece();
-                if (piece == null) continue; // 기물이 없으면 무시
-
-                // 특수 상태 복원
-                if (piece instanceof Pawn pawn) {
-                    pawn.enPassantable = true;
-                    pawn.enPassantCounter = 1;
-                }
-                else if (piece instanceof King king) {
-                    king.firstMove = true;
-                }
-                else if (piece instanceof Rook rook) {
-                    rook.firstMove = true;
-                }
-            }
-
-            return 1;
-        } catch (FileNotFoundException e) {
-            // 파일이 아예 없음
-            return 0;
-        } catch (IOException | IllegalArgumentException e) {
-            //System.out.println(FileError.DEBUG_ERROR_LOAD);
-            return -1;
+        } catch (IOException e) {
+            e.printStackTrace(); // 또는 로깅/예외 처리
         }
+        SaveIntegrityCheck check = new SaveIntegrityCheck(checkList);
+        return check.validate();
     }
 
 
@@ -276,33 +253,48 @@ public class FileManager {
         }
     }
 
+    public boolean isEmptySlot(int slot) {
+        if (filename.get(slot - 1).equals(deFault)) return true; // 기본값이면 비어있음으로 간주
+
+        String filePath = getFilePath(slot);
+        File file = new File(filePath);
+
+        if (!file.exists()) return true; // 파일이 없으면 비어있음
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            return reader.readLine() == null; // 첫 줄이 없으면 비어있는 파일
+        } catch (IOException e) {
+            // 읽기 실패는 비어있는 것으로 간주하거나 false 반환 가능
+            return true;
+        }
+    }
+
     // 저장
-    public void saveUserList(List<User> users) {
+    public boolean saveUserList(Map<String, User> users) {
 
         if (!new File(SAVE_DIR).exists()) {
             ensureSaveDirectory();
         }
-        if (!new File(USER_DIR).exists()) {
-            ensureUserDirectory();
-        }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_DIR + "/userlist.txt"))) {
-            for (User user : users) {
-                writer.write(user.getId() + "," + user.getPw());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_DIR + "/userlist.txt"))) {
+            for (Map.Entry<String, User> entry : users.entrySet()) {
+                User user = entry.getValue();
+                writer.write(user.getId() + "," + user.getPw() + ",");
                 writer.newLine();
             }
+            return true;
         } catch (IOException e) {
             // System.err.println(FileError.FAILED_TO_SAVE_USER);
-            throw new RuntimeException(e);
+            return false;
         }
     }
 
     // 불러오기
-    public List<User> loadUserList() {
-        ensureUserDirectory(); // 디렉토리 존재 확인
+    public Map<String,User> loadUserList() {
+        ensureSaveDirectory(); // 디렉토리 존재 확인
 
-        File file = new File(USER_DIR + "/userlist.txt");
-        List<User> users = new ArrayList<>();
+        File file = new File(SAVE_DIR + "/userlist.txt");
+        Map<String, User> users = new HashMap<>();
 
         // 파일이 존재하지 않으면 빈 리스트 반환
         if (!file.exists()) return users;
@@ -310,27 +302,25 @@ public class FileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                // 공백 제거 및 무의미한 줄 처리
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
                 String[] tokens = line.split(",", 2); // "," 기준으로 최대 2개 분리
-                if (tokens.length != 2) {
-                    // 잘못된 형식의 줄은 무시 (혹은 로그 출력 가능)
-                    // System.err.println("잘못된 사용자 데이터 형식: " + line);
-                    continue;
-                }
+                if (tokens.length != 2) continue;
 
                 String id = tokens[0].trim();
                 String pw = tokens[1].trim();
 
+                // 마지막 쉼표 제거 (파일에 "id, pw," 형식일 경우)
+                if (pw.endsWith(",")) pw = pw.substring(0, pw.length() - 1);
+
                 if (!id.isEmpty() && !pw.isEmpty()) {
-                    users.add(new User(id, pw));
+                    users.put(id, new User(id, pw));
                 }
             }
         } catch (IOException e) {
-            // 에러 출력 (원하시면 FileError.FAILED_TO_LOAD_USER 활용 가능)
-            //System.err.println("사용자 파일 로딩 실패: " + e.getMessage());
+            // 에러 출력 또는 FileError 사용
+            // System.err.println("사용자 파일 로딩 실패: " + e.getMessage());
         }
 
         return users;
@@ -396,5 +386,5 @@ public class FileManager {
     }
 
     //중복 문자열 함수 처리
-    private String getFilePath(int slot) {return SAVE_DIR + "/savefile" + slot + ".txt";}
+    private String getFilePath(int slot) {return USER_DIR + "/savefile" + slot + ".txt";}
 }

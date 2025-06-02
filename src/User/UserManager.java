@@ -2,12 +2,11 @@ package User;
 
 
 import fileManager.FileManager;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserManager {
-    private List<User> users = new ArrayList<>();
+    private Map<String,User> users = new HashMap<>();
     private final FileManager fileManager;
 
     public UserManager(FileManager fileManager) {
@@ -15,44 +14,15 @@ public class UserManager {
         this.users = fileManager.loadUserList(); // 초기 로딩
     }
 
-    public boolean addUser(User user) {
-        if (isDuplicate(user.getId())) return false;
-        users.add(user);
-        fileManager.saveUserList(users);
-        return true;
+    private boolean isDuplicate(String id) { return users.containsKey(id); }
+
+    public boolean loginUser(String id, String pw) {
+        return users.get(id) != null && users.get(id).matchPw(pw);
     }
 
-    private boolean isDuplicate(String id) {
-        return users.stream().anyMatch(u -> u.getId().equals(id));
-    }
-
-    private User findUserById(String id) {
-        return users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public boolean login(String id, String password) {
-        User user = findUserById(id);
-        return user != null && user.getPw().equals(password);
-    }
-
-    public boolean removeUser(String id) {
-        boolean removed = users.removeIf(u -> u.getId().equals(id));
-        if (removed) fileManager.saveUserList(users);
-        return removed;
-    }
-
-    public void reloadUsers() {
-        this.users = fileManager.loadUserList();
-    }
-
-    public void saveUsers() {
-        fileManager.saveUserList(users);
-    }
-
-    public List<User> getUsers() {
-        return users;
+    public boolean registerUser(String id, String pw) {
+        if (users.containsKey(id)) return false;
+        users.put(id, new User(id, pw));
+        return fileManager.saveUserList(users);
     }
 }

@@ -26,6 +26,9 @@ public class GameManager {
     private final int SAVEFILECODE = GameInputReturn.SAVE_FILE.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
+    public static String global_ID = null;
+
+
     public boolean isPlaying = false;
     public boolean isRunning = true;
     public boolean isSaved = false;
