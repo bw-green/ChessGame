@@ -42,6 +42,8 @@ public class GameManager {
     private final Menu menu;
     private Board board;
 
+    boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
+
     public GameManager() {
         fileManager = FileManager.getInstance();
         filePrint = new FilePrint(fileManager);
@@ -218,7 +220,7 @@ public class GameManager {
                 isPlaying = true;
                 isSaved = false;
                 isGamePrint = true;
-                board = new Board();
+                board = new Board(canEnpassant , canCastling, canPromotion);
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);
@@ -244,7 +246,7 @@ public class GameManager {
         if(cmdCode == SAVECODE){
             int slot;
             if(!isPlaying){
-                board = new Board();
+                board = new Board(canEnpassant, canCastling, canPromotion); //여긴 사실 이거 쓰면 안됨요
                 slot = MenuInput.number;
             }else { slot = GameInput.number; }
             isSaved = fileManager.overWriteSavedFile(slot, board);
@@ -267,8 +269,8 @@ public class GameManager {
             if(isPlaying){ slot = GameInput.number; }
             else{ slot = MenuInput.number; }
 
-            int
-            board = fileManager.loadSavedFile(slot);
+            board = new Board(canEnpassant,canCastling,canPromotion);
+            int isLoad = (fileManager.loadSavedFile(slot, board));
 
             if (isLoad == 1) {
                 if(isPlaying){

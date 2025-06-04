@@ -12,7 +12,7 @@ public class CastlingTest {
 
     @BeforeEach
     void setUpBeforeClass() throws Exception {
-        board = new Board();
+        board = new Board(true, true, true, true);
         board.initializeBoard();
     }
 

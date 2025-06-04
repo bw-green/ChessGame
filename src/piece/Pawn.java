@@ -63,7 +63,10 @@ public class Pawn extends Piece {
             if(enPassantPiece instanceof Pawn)
                 if(((Pawn) enPassantPiece).enPassantable){ // null이 아니고, enPassatable이 true라면,
 //                  System.out.println("앙파상 체킹 조건 충족");
-                    return enPassant=SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
+                    if(board.canEnpassant){
+                        return enPassant=SpecialRule.enPassant(board,startCell,endCell, enPassantCell);
+                    }
+
             }
         }
 
