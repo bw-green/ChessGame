@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 public class MenuInput {
     static int ERROR = GameInputReturn.ERROR.getCode();
     static int HELP = GameInputReturn.HELP.getCode();
-
     static int EXIT = GameInputReturn.EXIT.getCode();
     static int START = GameInputReturn.START.getCode();
     static int QUIT = GameInputReturn.QUIT.getCode();
@@ -20,7 +19,11 @@ public class MenuInput {
     static int LOAD = GameInputReturn.LOAD.getCode();
     static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
     static int SAVE_FILE = GameInputReturn.SAVE_FILE.getCode();
-
+    static int REGISTER = GameInputReturn.REGISTER.getCode();
+    static int LOGIN =  GameInputReturn.LOGIN.getCode();
+    static int LOGOUT =  GameInputReturn.LOGOUT.getCode();
+    static int TOGGLE =   GameInputReturn.TOGGLE.getCode();
+    static int OPTION =    GameInputReturn.OPTION.getCode();
 
     public static int number = 0;
     public static String input;

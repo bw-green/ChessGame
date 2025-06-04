@@ -24,6 +24,11 @@ public class GameManager {
     private final int LOADCODE = GameInputReturn.LOAD.getCode();
     private final int DELSAVECODE = GameInputReturn.DEL_SAVE.getCode();
     private final int SAVEFILECODE = GameInputReturn.SAVE_FILE.getCode();
+    private final int REGISTERCODE = GameInputReturn.REGISTER.getCode();
+    private final int LOGINCODE =  GameInputReturn.LOGIN.getCode();
+    private final int LOGOUTCODE =  GameInputReturn.LOGOUT.getCode();
+    private final int TOGGLECODE =   GameInputReturn.TOGGLE.getCode();
+    private final int OPTIONCODE =    GameInputReturn.OPTION.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
     public static String global_ID = null;
@@ -309,7 +314,7 @@ public class GameManager {
                 isMenuPrint = false;
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(CommandError.DELSAVE_BLOCK);
+                System.out.println(CommandError.CMD_BLOCK);
                 System.out.println(PrintTemplate.BOLDLINE);
                 isGamePrint = false;
             }

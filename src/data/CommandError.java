@@ -4,7 +4,14 @@ public enum CommandError {
 
     WRONG_NUMBER("Wrong number!"),
     WRONG_COMMAND("Wrong command!"),
-    DELSAVE_BLOCK("The command is blocked."),
+    CMD_BLOCK("The command is blocked."),
+
+    ACC_INVALID_INPUT("Invalid input:Input must be between 2 and 10 characters."),
+    ID_EXISTING("|User %s is already been registered|"),
+    ID_INVALID("|User %s cannot be found|"),
+    PW_UNMATCH("|Password does not match|"),
+    LOGIN_FAIL("|Login failed: a user is already connected to the system.|"),
+    LOGOUT_FAIL("|Logout failed: no active session.|"),
 
     //Error.EMPTY_SLOT.formatMessage([1~5 중 해당하는 수]);
     EMPTY_SLOT("the save %d is empty."),
@@ -25,6 +32,14 @@ public enum CommandError {
                 throw new NumberFormatException("slot index out of bounds");
         }
         return message;
+    }
+
+    public String formatMessage(String arg){
+        if(this == ID_EXISTING || this == ID_INVALID){
+            return String.format(message, arg);
+        }else{
+            throw new NumberFormatException("UnMatched Command Error");
+        }
     }
 
     //formatMessage를 int 인자를 받는 메서드로 오버로드하기 위한 원형

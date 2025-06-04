@@ -12,8 +12,10 @@ public enum PrintTemplate {
     INTERLINE("--------------------------------------------------"),
     MENULINE("===================<MAIN  MENU>==================="),
 
+    CURRENT_USER(":: Current user: "),
+
     //메뉴 지시문
-    MENU_FIRST_INSTRUCT("|type “/help” to learn how to use this program."),
+    MENU_FIRST_INSTRUCT("|type “/help 1” to learn how to use this program."),
     MENU_LAST_SAVE("|the last save file and the list of save files"),
 
     //게임 지시문
@@ -35,7 +37,12 @@ public enum PrintTemplate {
     END_STALEMATE("Stalemate! No legal moves available.\n" +
             "The game ends in a draw. Returning to the main menu."),
     END_INSUFFICIENT("Insufficient material to checkmate.\n" +
-            "The game ends in a draw. Returning to the main menu.");
+            "The game ends in a draw. Returning to the main menu."),
+    THREE_CHECK_BLACK("BLACK has achieved three checks! BLACK wins. The game has ended.\n" +
+            "Returning to the main menu.\n"),
+    THREE_CHECK_WHITE("WHITE has achieved three checks! BLACK wins. The game has ended.\n" +
+            "Returning to the main menu.\n");
+
 
     private final String printTmp;
     PrintTemplate(String printTmp){
