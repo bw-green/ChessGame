@@ -210,6 +210,15 @@ public class MenuInput {
                 throw new InputMismatchException("quit 실패");
             }
         }
+        else if(parts[1].startsWith("exit")){
+            parts[1]=  blank(parts[1]) ;
+            if(parts[1].equals("exit")){
+                return QUIT;
+            }
+            else{
+                throw new InputMismatchException("exit 실패");
+            }
+        }
         else if(parts[1].startsWith("register")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("register")){

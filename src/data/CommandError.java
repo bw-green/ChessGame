@@ -4,8 +4,11 @@ public enum CommandError {
 
     WRONG_NUMBER("Wrong number!"),
     WRONG_COMMAND("Wrong command!"),
+
+    //start, delsave, login, logout, register, toggle
     CMD_BLOCK("The command is blocked."),
 
+    // 계정 관련 명령어 : GameManager 에서만 사용 예정
     ACC_INVALID_INPUT("Invalid input:Input must be between 2 and 10 characters."),
     ID_EXISTING("|User %s is already been registered|"),
     ID_INVALID("|User %s cannot be found|"),

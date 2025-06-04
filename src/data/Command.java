@@ -5,10 +5,17 @@ public enum Command {
     /*
     * Command 사용 시
     * Command.HELP, Command.NO_DATA 이런 식으로 쓰면 됩니다.
-    * SAVEFILE, SAVE, DELSAVE, LOAD는 반드시 formatStr로 인자 넘겨주셔야 됩니다.
     *
-    */
+    * - formatStr 반드시 사용해야 하는 문구
+    * SAVEFILE, SAVE, DELSAVE, LOAD
+    * REGISTER_SUCCESS, LOGIN_SUCCESS, LOGOUT
+    * TOGGLE_ON, TOGGLE_OFF, OPTION
+    *
+    * start, delsave, login, logout, register, toggle -> 게임 중에는 실행되지 않는 명령어, CommandError.CMD_BLOCK 사용
+     */
 
+
+    // help
     HELP1("/help <1~4>  | /help 1 : show the guide for commands\n" +
             "                       /help <2~4> : show the guide for Chess Variant.\n" +
             "                        each number points to [Three Check/Chaturanga/Pawn Game].\n" +
@@ -54,6 +61,8 @@ public enum Command {
             "special movement rules such as “Knockback” and\n" +
             "a random pawn placement at the start of the game have also been added.\n"),
 
+
+    //savefile : 지울 예정
     SAVEFILE("-----------------<last save file>---------------—\n" +
             "|save %d.|%s\n" +
             " -------------------------------------------------\n" +
@@ -64,6 +73,7 @@ public enum Command {
             "|the last save file and the list of save files"),
     NO_DATA("No Data"),
 
+    // 계정 관련 명령어 출력 문구
     INPUT_ID(" ID :"),
     INPUT_PW(" PassWord :"),
     ACC_INPUT_TERMINATE("|Input process terminated.|"),
@@ -74,6 +84,7 @@ public enum Command {
     LOGIN_SUCCESS("|User %s has been logged in|"),
     LOGOUT("|User %s has been logged out.|"),
 
+    // 특수 규칙 관련 명령어 출력 문구
     TOGGLE_ON("%s activated"),
     TOGGLE_OFF("%s deactivated"),
     OPTION("setting                     toggle\n" +
@@ -82,24 +93,34 @@ public enum Command {
             "enpassant                    %s\n" +
             "castling                     %s\n"),
 
+    //예/아니오 대답
+
     YES_OR_NO_EXIT(" Would you exit? (y/n) : "),
     YES_OR_NO_QUIT(" Would you quit? (y/n) : "),
     YES_OR_NO_LOAD(" Would you load? (y/n) : "),
 
+    // 저장 안되었을 때
+    YES_OR_NO_WHILE_NOT_SAVED("The last saved file is not current board. Would you continue? (y/n)"),
+    //exit
     EXIT("| Exit command received. Closing the game. |"), //내용 없지만 명시 위해 놔둠
 
+    //quit
     QUIT("Successfully quited game."),
 
+    //save
     SAVE("|The save %d has been created.|"),
 
+    //load
     LOAD("| The save %d has loaded |\n" +
             "|save %d.|< %s >"),
 
+    //delsave
     DELSAVE("| The save %d has deleted |"),
-    START(""),  //내용 없지만 명시 위해 놔둠
 
-    // 저장 안되었을 때
-    YES_OR_NO_WHILE_NOT_SAVED("The last saved file is not current board. Would you continue? (y/n)");
+    //start 없어도 되는데 지울지 말지 고민중
+    START(""); //내용 없지만 명시 위해 놔둠
+
+
 
     private final String cmdMessage;
 
@@ -115,18 +136,23 @@ public enum Command {
 
     public String formatStr(Object... args){
         return switch (this) {
+            //int 인자 1개
             case SAVE, DELSAVE -> {
                 if (args.length == 1 && args[0] instanceof Integer arg && arg >= 1 && arg <= 5) {
                     yield String.format(this.toString(), arg);
                 }
                 throw new IllegalArgumentException(this + " requires a number between 1 and 5.");
             }
+
+            //String 인자 1개
             case REGISTER_SUCCESS, LOGIN_SUCCESS, LOGOUT-> {
                 if (args.length == 1 && args[0] instanceof String) {
                     yield String.format(this.toString(), args[0]);
                 }
                 throw new IllegalArgumentException(this + " requires a number between 1 and 5.");
             }
+
+            //int 인자 2개, string 1개
             case LOAD -> {
                 if (args.length == 3 &&
                         args[0] instanceof Integer &&
@@ -136,6 +162,8 @@ public enum Command {
                 }
                 throw new IllegalArgumentException("LOAD requires (int, int, String).");
             }
+
+            //toggle 인자 int 1개, boolean 1개
             case TOGGLE_ON, TOGGLE_OFF ->{
                 if (args.length == 1 && args[0] instanceof  Integer arg && arg >= 0 && arg <= 2) {
                     String str = switch (arg) {
@@ -148,6 +176,8 @@ public enum Command {
                 }
                 throw new IllegalArgumentException("OPTION requires 3 string arguments.");
             }
+
+            //option의 인자는 무조건 boolean 인자 3개
             case OPTION -> {
                 if (args.length == 3 &&
                         args[0] instanceof Boolean &&
