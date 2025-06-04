@@ -27,6 +27,10 @@ public class MenuInput {
 
     public static int number = 0;
     public static String input;
+    public static int toggleNum = -1;
+    public static boolean toggleOn = true;
+    public static String idStr;
+    public static String pwStr;
 
     public static boolean yesOrNoInput(){
         while(true){
@@ -47,6 +51,47 @@ public class MenuInput {
             System.out.println(CommandError.WRONG_COMMAND);
         }
 
+    }
+
+    public static boolean accountInput(boolean idInput){
+        while(true){
+            Scanner sc = new Scanner(System.in);
+            input = sc.nextLine();
+
+            if(input.isEmpty()){
+                System.out.println(CommandError.ACC_INVALID_INPUT);
+                continue;
+            }
+
+            input = blank(input);
+
+            // escape
+            if(input.length() == 1 && input.charAt(0) == '0'){
+                return false;
+            }
+
+            //check string length
+            if(input.length() <= 1 || input.length() >= 11){
+                System.out.println(CommandError.ACC_INVALID_INPUT);
+                continue;
+            }
+
+            // check blank between string
+            String[] temp = input.split(" ");
+            if(temp.length >= 2){
+                System.out.println(CommandError.ACC_INVALID_INPUT);
+                continue;
+            }
+
+            //skipped each character is alphabet or number
+            if(idInput){
+                idStr = blank(input);
+            }else{
+                pwStr = blank(input);
+            }
+
+            return true;
+        }
     }
 
     public static int menuInput() {
@@ -92,12 +137,13 @@ public class MenuInput {
         }
         String[] parts = input.split("/");
         if(parts[1].startsWith("help")){
-            parts[1]=  blank(parts[1]) ;
-            if(parts[1].equals("help")){
+            String now = parts[1].substring("help".length());
+            if(checking(now, HELP)!=0){
+                number= checking(now, HELP);
                 return HELP;
             }
             else{
-                throw new InputMismatchException("help 실패");
+                throw new InputMismatchException("save 실패");
             }
         }
         else if(parts[1].startsWith("savefile")){//인자있음
@@ -112,8 +158,8 @@ public class MenuInput {
         }
         else if(parts[1].startsWith("save")){
             String now = parts[1].substring("save".length());
-            if(checking(now)!=0){
-                number= checking(now);
+            if(checking(now, SAVE)!=0){
+                number= checking(now, SAVE);
                 return SAVE;// 파일매니저로 보내기
             }
             else{
@@ -124,8 +170,8 @@ public class MenuInput {
 
         else if(parts[1].startsWith("delsave")){
             String now = parts[1].substring("delsave".length());
-            if(checking(now)!=0){
-                number= checking(now);
+            if(checking(now, DEL_SAVE)!=0){
+                number= checking(now, DEL_SAVE);
                 return DEL_SAVE;
             }
             else{
@@ -136,8 +182,8 @@ public class MenuInput {
         }//인자있음
         else if(parts[1].startsWith("load")){
             String now = parts[1].substring("load".length());
-            if(checking(now)!=0){
-                number= checking(now);
+            if(checking(now, LOAD)!=0){
+                number= checking(now, LOAD);
                 return LOAD; // 파일매니저로보내기
             }
             else{
@@ -145,12 +191,13 @@ public class MenuInput {
             }
         }//인자있음
         else if(parts[1].startsWith("start")){
-            parts[1]=blank(parts[1]) ;
-            if(parts[1].equals("start")){
-                return START;
+            String now = parts[1].substring("start".length());
+            if(checking(now, START)!=0){
+                number= checking(now, START);
+                return START; // 파일매니저로보내기
             }
             else{
-                throw new InputMismatchException("start 실패");
+                throw new InputMismatchException("load 실패");
             }
 
         }
@@ -163,13 +210,49 @@ public class MenuInput {
                 throw new InputMismatchException("quit 실패");
             }
         }
-        else if(parts[1].startsWith("exit")){
+        else if(parts[1].startsWith("register")){
             parts[1]=  blank(parts[1]) ;
-            if(parts[1].equals("exit")){
-                return EXIT;
+            if(parts[1].equals("register")){
+                return REGISTER;
             }
             else{
-                throw new InputMismatchException("exit 실패");
+                throw new InputMismatchException("register 실패");
+            }
+        }
+        else if(parts[1].startsWith("login")){
+            parts[1]=  blank(parts[1]) ;
+            if(parts[1].equals("login")){
+                return LOGIN;
+            }
+            else{
+                throw new InputMismatchException("login 실패");
+            }
+        }
+        else if(parts[1].startsWith("logout")){
+            parts[1]=  blank(parts[1]) ;
+            if(parts[1].equals("logout")){
+                return LOGOUT;
+            }
+            else{
+                throw new InputMismatchException("logout 실패");
+            }
+        }
+        else if(parts[1].startsWith("OPTION")){
+            parts[1]=  blank(parts[1]) ;
+            if(parts[1].equals("option")){
+                return OPTION;
+            }
+            else{
+                throw new InputMismatchException("option 실패");
+            }
+        }
+        else if(parts[1].startsWith("toggle")){
+            String now = parts[1].substring("toggle".length());
+            if(checkStr(now)){
+                return TOGGLE;
+            }
+            else{
+                throw new InputMismatchException("toggle 실패");
             }
         }
 
@@ -185,7 +268,7 @@ public class MenuInput {
                 .collect(Collectors.joining());
     }
 
-    private static int checking(String now) {
+    private static int checking(String now, int cmdCode) {
         if (Character.isWhitespace(now.charAt(0)) && now.charAt(1) >= '0' && now.charAt(1) <= '9') {
             boolean number = true;
             for(int i=2; i<now.length(); i++){
@@ -205,13 +288,16 @@ public class MenuInput {
 
             now = blank(now);
             int num=0;
+            int max_num;
+            if(cmdCode == SAVE || cmdCode == LOAD || cmdCode == DEL_SAVE){ max_num = 3; }
+            else{ max_num = 4;}
             try{
                 num= Integer.parseInt(now);
             } catch (NumberFormatException e) {
                 throw new InputMismatchException();
             }
 
-            if (num >= 1 && num <= 5) {
+            if (num >= 1 && num <= max_num) {
                 return num;
             }
             if(num>=0 && num <=9){
@@ -223,5 +309,40 @@ public class MenuInput {
         } else {
             throw new InputMismatchException();
         }
+    }
+
+    private static boolean checkStr(String now){
+        if(Character.isWhitespace(now.charAt((0)))){
+            String[] parts = now.split(" ");
+
+            if(parts.length != 2) {
+                throw new InputMismatchException();
+            }
+            parts[0] = blank(parts[0]);
+            parts[1] = blank(parts[1]);
+            boolean isRuleValid = true;
+            boolean isOnValid = true;
+
+            // check special rule str
+            if(parts[0].startsWith("enpassant")){ toggleNum = 0; }
+            else if(parts[0].startsWith("castling")){ toggleNum = 1; }
+            else if(parts[0].startsWith("promotion")){ toggleNum = 2; }
+            else isRuleValid = false;
+
+            // check on/off str
+            if(parts[1].startsWith("on")){toggleOn = true; }
+            else if (parts[1].startsWith("off")){ toggleOn = false; }
+            else isOnValid = false;
+
+            if(isRuleValid && isOnValid){
+                return true;
+            }else{
+                toggleNum = -1;
+                toggleOn = true;
+                throw new InputMismatchException();
+            }
+        }
+
+        return false;
     }
 }

@@ -54,21 +54,6 @@ public enum Command {
             "special movement rules such as “Knockback” and\n" +
             "a random pawn placement at the start of the game have also been added.\n"),
 
-    HELP("/help | show the guide for commands\n" +
-            "/exit | exit the program. Unsaved progress can disappear.\n" +
-            "/start | start a new basic rule chess game.\n" +
-            "/quit | quit the current game and return to the main menu.\n" +
-            "        Unsaved progress can disappear.\n" +
-            "/save <1~5> | save your game progress to savefile <1~5> if it is empty.\n" +
-            "              Your savefile will be overwritten if it is not empty.\n" +
-            "/load <1~5> | load and continue your game progress from savefile no.<1~5>.\n" +
-            "/delsave <1~5> | !Caution!\n" +
-            "                 This command cannot be used during the game.\n" +
-            "                 delete your game progress in savefile<1~5>.\n" +
-            "/savefile | show your current savefile lists.\n"+
-            "-------------------------------------------------\n" +
-            "A collection of commands for quick execution."),
-
     SAVEFILE("-----------------<last save file>---------------—\n" +
             "|save %d.|%s\n" +
             " -------------------------------------------------\n" +
