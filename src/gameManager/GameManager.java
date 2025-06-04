@@ -215,7 +215,8 @@ public class GameManager {
                 isPlaying = true;
                 isSaved = false;
                 isGamePrint = true;
-                board = new Board();
+                //    board = new Board();
+                board = Board.createPawnGameBoard();  // Pawn Game을 위한 new Board를 생성해서 return 받음.
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);

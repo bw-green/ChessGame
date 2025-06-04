@@ -41,6 +41,8 @@ public class PieceFactory {
             case "n": return new Knight(PieceColor.BLACK);
             case "P": return new Pawn(PieceColor.WHITE);
             case "p": return new Pawn(PieceColor.BLACK);
+            case "Z": return new Pawn2(PieceColor.WHITE);
+            case "z": return new Pawn2(PieceColor.BLACK);
             default: throw new IllegalArgumentException("유효하지 않은 기물 기호: " + symbol);
         }
     }
