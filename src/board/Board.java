@@ -191,6 +191,11 @@ public class Board {
             return MoveResult.FAIL;
         } // 체크되는 칸으로는 이동 불가
 
+        if(movingPiece instanceof Pawn2 && startCol == endCol&& getPieceAt(endRow, endCol) != null){
+            Knockback(start,end);
+            return MoveResult.SUCCESS;
+        }
+
         // 3. 이동 수행
         end.setPiece(movingPiece);
         start.setPiece(null);
@@ -212,7 +217,32 @@ public class Board {
         return MoveResult.SUCCESS;
     }
 
-    private void doPromotion(Cell end) {
+    public void Knockback(Cell start, Cell end){
+//        if(start.getRow()>end.getRow()){
+//            getCell(start.getRow()+1, start.getCol()).setPiece(start.getPiece());
+//            getCell(end.getRow()-1, start.getCol()).setPiece(end.getPiece());
+//            Piece endPiece = getPieceAt(end.getRow()-1, start.getCol());
+//            if(endPiece instanceof Pawn2){
+//                Pawn2 endPawn =(Pawn2)endPiece;
+//                endPawn.isMoved=true;
+//            }
+//        }
+//        else{
+//            getCell(start.getRow()-1, start.getCol()).setPiece(start.getPiece());
+//            getCell(end.getRow()+1, start.getCol()).setPiece(end.getPiece());
+//            Piece endPiece = getPieceAt(end.getRow()+1, start.getCol());
+//            if(endPiece instanceof Pawn2){
+//                Pawn2 endPawn =(Pawn2)endPiece;
+//                endPawn.isMoved=true;
+//            }
+//        }
+//
+//
+//        start.setPiece(null);
+//        end.setPiece(null);
+
+    }
+    public void doPromotion(Cell end) {
         SpecialRule.promotion(end);
     }
 
@@ -266,6 +296,10 @@ public class Board {
                 currentTurn
         );
         if (error != null){
+            return;
+        }
+        if(movingPiece instanceof Pawn2 && startCol == endCol&& getPieceAt(endRow, endCol) != null){
+            Knockback(start,end);
             return;
         }
 
