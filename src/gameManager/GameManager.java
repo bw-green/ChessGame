@@ -267,8 +267,8 @@ public class GameManager {
             if(isPlaying){ slot = GameInput.number; }
             else{ slot = MenuInput.number; }
 
-            board = new Board();
-            int isLoad = (fileManager.loadSavedFile(slot, board));
+            int
+            board = fileManager.loadSavedFile(slot);
 
             if (isLoad == 1) {
                 if(isPlaying){
