@@ -9,6 +9,7 @@ public class Pawn extends Piece {
     public boolean enPassantable = false;
     public int enPassantCounter;
     public boolean enPassant = false;
+    public boolean firstMove = false;
     public Pawn(PieceColor color) {
         super(color);
     }
