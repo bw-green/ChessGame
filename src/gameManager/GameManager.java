@@ -27,6 +27,9 @@ public class GameManager {
     private final int SAVEFILECODE = GameInputReturn.SAVE_FILE.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
+    public static String global_ID = null;
+
+
     public boolean isPlaying = false;
     public boolean isRunning = true;
     public boolean isSaved = false;
@@ -269,9 +272,10 @@ public class GameManager {
             else{ slot = MenuInput.number; }
 
             board = new Board(canEnpassant,canCastling,canPromotion);
-            int isLoad = (fileManager.loadSavedFile(slot, board));
+            boolean isLoad = fileManager.isEmptySlot(slot);
+            if(!isLoad){board = fileManager.loadSavedFile(slot);} //isLoad가 true면 비어있는 slot
 
-            if (isLoad == 1) {
+            if (board != null) {
                 if(isPlaying){
                     showSaveAndList();
                     System.out.print(Command.YES_OR_NO_LOAD);
@@ -286,7 +290,7 @@ public class GameManager {
                 System.out.println(FileMessage.SAVE_LOADED.format(slot));
                 System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
                 System.out.println(PrintTemplate.BOLDLINE + "\n");
-            }else if(isLoad == 0){
+            }else if(isLoad){
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileError.FAILED_LOAD.format(slot));
                 System.out.println(PrintTemplate.BOLDLINE);
