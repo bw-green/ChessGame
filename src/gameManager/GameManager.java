@@ -7,6 +7,7 @@ import data.*;
 import Menu.Menu;
 import fileManager.*;
 import board.Board;
+import board.PawnGameBoard;
 
 import Input.GameInput;
 import Input.UserInput;
@@ -38,6 +39,8 @@ public class GameManager {
     private FilePrint filePrint;
     private final Menu menu;
     private Board board;
+
+    boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
 
     public GameManager() {
         fileManager = FileManager.getInstance();
@@ -215,7 +218,8 @@ public class GameManager {
                 isPlaying = true;
                 isSaved = false;
                 isGamePrint = true;
-                board = new Board();
+                board = new Board(canEnpassant , canCastling, canPromotion);
+//                board = new PawnGameBoard(true);
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);
@@ -241,7 +245,7 @@ public class GameManager {
         if(cmdCode == SAVECODE){
             int slot;
             if(!isPlaying){
-                board = new Board();
+                board = new Board(canEnpassant, canCastling, canPromotion); //여긴 사실 이거 쓰면 안됨요
                 slot = MenuInput.number;
             }else { slot = GameInput.number; }
             isSaved = fileManager.overWriteSavedFile(slot, board);
@@ -264,7 +268,7 @@ public class GameManager {
             if(isPlaying){ slot = GameInput.number; }
             else{ slot = MenuInput.number; }
 
-            board = new Board();
+            board = new Board(canEnpassant,canCastling,canPromotion);
             int isLoad = (fileManager.loadSavedFile(slot, board));
 
             if (isLoad == 1) {

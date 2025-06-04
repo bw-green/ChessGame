@@ -10,17 +10,18 @@ import java.util.List;
 /**
  * TestMain 클래스는 체스 보드 및 말 동작에 대한 테스트 케이스를 실행합니다.
  */
-public class TestMain {
-    public static void main(String[] args) {
-        System.out.println("=== [1] useDefault = true (일반 체스판) ===");
-        PawnGameBoard defaultBoard = new PawnGameBoard(true);
-        System.out.println(defaultBoard.toString());
+    public class TestMain {
+        public static void main(String[] args) {
+            System.out.println("=== [1] 기본 보드 ===");
+            Board defaultBoard = new Board(true,true,true,true);
+            System.out.println(defaultBoard);
 
-        System.out.println("=== [2] useDefault = false (폰 게임 보드) ===");
-        PawnGameBoard pawnGameBoard = new PawnGameBoard(false);
-        System.out.println(pawnGameBoard.toString());
+            System.out.println("=== [2] initialize = true (폰 게임 보드) ===");
+            PawnGameBoard pawnGameBoard = new PawnGameBoard(true);
+            System.out.println(pawnGameBoard);
+
+            System.out.println("=== [3] initialize = false (빈 보드) ===");
+            PawnGameBoard empty = new PawnGameBoard(false);
+            System.out.println(empty);
+        }
     }
-
-
-
-}
