@@ -55,8 +55,8 @@ public class Chaturanga extends Board{
     public void doPromotion(Cell end) {
         if(end.getPiece() instanceof Fawn) {
             end.setPiece(new Mantri(end.getPiece().getColor()));
+            System.out.println("Promotion to mantri");
         }
-        System.out.println("Promotion to mantri");
     }
 
 }
