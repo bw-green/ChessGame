@@ -15,6 +15,25 @@ public class Board {
      * 생성자
      * 8x8 Cell을 생성하고, 초기 기물 배치를 수행.
      */
+    public Board(){
+        cells = new Cell[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                cells[row][col] = new Cell(row, col);
+            }
+        }
+    }
+    public Board(boolean initial){
+        cells = new Cell[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                cells[row][col] = new Cell(row, col);
+            }
+        }
+    }
+
+
+
     public Board(boolean canEnpassant, boolean canCastling, boolean canPromotion, boolean initialize) {
         this.canEnpassant = canEnpassant;
         this.canCastling = canCastling;
