@@ -38,7 +38,7 @@ public class KnightTest {
 
     @BeforeEach
     void setUp() {
-        testBoard = new Board(false);
+        testBoard = new Board(true ,true ,true ,false);
     }
 
     // 1. 기본 이동 테스트: Knight가 모든 8가지 L자 이동을 수행할 수 있는지

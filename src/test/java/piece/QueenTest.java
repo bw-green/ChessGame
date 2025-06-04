@@ -36,7 +36,7 @@ public class QueenTest {
 
     @BeforeEach
     void setUp() {
-        testBoard = new Board(false);  // 초기화 안된 빈 보드
+        testBoard = new Board(true ,true ,true, false);  // 초기화 안된 빈 보드
     }
 
     // 1. Queen 기본 이동 (여러 칸 이동 가능)

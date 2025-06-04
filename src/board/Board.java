@@ -2,38 +2,35 @@ package board;
 
 import check.Checker;
 import data.*;
-import fileManager.FileManager;
 import piece.*;
 import specialRule.SpecialRule;
 
 //////////////////////////////////////////////
 public class Board {
-    private Cell[][] cells; // 8x8 board.Cell 배열
-    private PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
+    Cell[][] cells; // 8x8 board.Cell 배열
+    PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
     public boolean soutBlock = false;
-
+    public boolean canEnpassant, canCastling, canPromotion;
     /**
      * 생성자
      * 8x8 Cell을 생성하고, 초기 기물 배치를 수행.
      */
-    public Board() {
+    public Board(boolean canEnpassant, boolean canCastling, boolean canPromotion, boolean initialize) {
+        this.canEnpassant = canEnpassant;
+        this.canCastling = canCastling;
+        this.canPromotion = canPromotion;
         cells = new Cell[8][8];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 cells[row][col] = new Cell(row, col);
             }
         }
-        initializeBoard();
-    }
-    public Board(boolean notInitialize){ // test board 임시 -> 각 cell은 null을 가짐
-        cells = new Cell[8][8];
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                cells[row][col] = new Cell(row, col);
-            }
-        }
+        if(initialize){initializeBoard();}
     }
 
+    public Board(boolean canEnpassant,boolean canCastling,boolean canPromotion){
+        this(canEnpassant,canCastling,canPromotion, true);
+    } // noninit하던거 지움
     /**
      * 체스판의 초기 기물 배치를 설정합니다.
      * 흑색 기물은 상단(0,1행), 백색 기물은 하단(6,7행)에 배치.
@@ -194,6 +191,11 @@ public class Board {
             return MoveResult.FAIL;
         } // 체크되는 칸으로는 이동 불가
 
+        if(movingPiece instanceof Pawn2 && startCol == endCol&& getPieceAt(endRow, endCol) != null){
+            Knockback(start,end);
+            return MoveResult.SUCCESS;
+        }
+
         // 3. 이동 수행
         end.setPiece(movingPiece);
         start.setPiece(null);
@@ -202,14 +204,46 @@ public class Board {
                 getCell(start.getRow(), end.getCol()).setPiece(null);
 //                System.out.println("지우기 수행");
             }
+            if (!canEnpassant)
+                ((Pawn) end.getPiece()).enPassantable=false;
         }
         enPassantChecking();
-
-        if (endRow == 0 || endRow == 7) {
-            if(!soutBlock)
-                SpecialRule.promotion(end);
+        if (canPromotion){
+            if (endRow == 0 || endRow == 7) {
+                if(!soutBlock)
+                    doPromotion(end);
+            }
         }
         return MoveResult.SUCCESS;
+    }
+
+    public void Knockback(Cell start, Cell end){
+//        if(start.getRow()>end.getRow()){
+//            getCell(start.getRow()+1, start.getCol()).setPiece(start.getPiece());
+//            getCell(end.getRow()-1, start.getCol()).setPiece(end.getPiece());
+//            Piece endPiece = getPieceAt(end.getRow()-1, start.getCol());
+//            if(endPiece instanceof Pawn2){
+//                Pawn2 endPawn =(Pawn2)endPiece;
+//                endPawn.isMoved=true;
+//            }
+//        }
+//        else{
+//            getCell(start.getRow()-1, start.getCol()).setPiece(start.getPiece());
+//            getCell(end.getRow()+1, start.getCol()).setPiece(end.getPiece());
+//            Piece endPiece = getPieceAt(end.getRow()+1, start.getCol());
+//            if(endPiece instanceof Pawn2){
+//                Pawn2 endPawn =(Pawn2)endPiece;
+//                endPawn.isMoved=true;
+//            }
+//        }
+//
+//
+//        start.setPiece(null);
+//        end.setPiece(null);
+
+    }
+    public void doPromotion(Cell end) {
+        SpecialRule.promotion(end);
     }
 
     public void movePieceTest(int startRow, int startCol, int endRow, int endCol) {
@@ -231,10 +265,12 @@ public class Board {
 
             if (colDiff == 2 && rowDiff == 0) {
                 // 캐슬링 시도 중
-                if (!SpecialRule.castling(this, start, end)) {
+                if (canCastling) {
+                    if (!SpecialRule.castling(this, start, end)) {
 //                    System.out.println(Unspecified.CASTLING_FAILED);
 //                    System.out.println("캐슬링 시도중에서 걸림");
-                    return;
+                        return;
+                    }
                 }
             } else {
                 // 일반 이동이면 isValidMove 검사
@@ -260,6 +296,10 @@ public class Board {
                 currentTurn
         );
         if (error != null){
+            return;
+        }
+        if(movingPiece instanceof Pawn2 && startCol == endCol&& getPieceAt(endRow, endCol) != null){
+            Knockback(start,end);
             return;
         }
 
@@ -439,8 +479,12 @@ public class Board {
 
             if (rowDiff == 0 && colDiff == 2) {
                 // 캐슬링 시도 중이면, 실제로 캐슬링 가능성 검증
-                if (!SpecialRule.castling(this, start, end)) {
+                if (canCastling){
+                    if (!SpecialRule.castling(this, start, end)) {
 
+                        return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
+                    }
+                }else{
                     return MoveErrorType.INVALID_MOVE_FOR_THIS_PIECE;
                 }
                 // SpecialRule.castling() 호출해서 통과하면 문제 없음 (그냥 넘어감)
