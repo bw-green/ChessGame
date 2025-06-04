@@ -7,33 +7,25 @@ import piece.*;
 import specialRule.SpecialRule;
 
 //////////////////////////////////////////////
-public abstract class Board {
-    Cell[][] cells; // 8x8 board.Cell 배열
-    PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
-    public boolean canEnpassant, canCastling, canPromotion;
+public class Board {
+    private Cell[][] cells; // 8x8 board.Cell 배열
+    private PieceColor currentTurn = PieceColor.WHITE; // 초기 턴
     public boolean soutBlock = false;
+
     /**
      * 생성자
-     * 8x8 Cell을 생성하고, 초기 기물 배치를 수행.    
+     * 8x8 Cell을 생성하고, 초기 기물 배치를 수행.
      */
-    public Board(boolean canEnpassant, boolean canCastling, boolean canPromotion, boolean initialize) {
-        this.canEnpassant = canEnpassant;
-        this.canCastling = canCastling;
-        this.canPromotion = canPromotion;
+    public Board() {
         cells = new Cell[8][8];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 cells[row][col] = new Cell(row, col);
             }
         }
-        if(initialize){initializeBoard();}
+        initializeBoard();
     }
-
-    public Board(boolean canEnpassant,boolean canCastling,boolean canPromotion){
-        this(canEnpassant,canCastling,canPromotion, true);
-    } // noninit하던거 지움
-
-    public Board(){ // test board 임시 -> 각 cell은 null을 가짐
+    public Board(boolean notInitialize){ // test board 임시 -> 각 cell은 null을 가짐
         cells = new Cell[8][8];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -41,6 +33,7 @@ public abstract class Board {
             }
         }
     }
+
     /**
      * 체스판의 초기 기물 배치를 설정합니다.
      * 흑색 기물은 상단(0,1행), 백색 기물은 하단(6,7행)에 배치.
@@ -80,19 +73,7 @@ public abstract class Board {
         }
         // 나머지 칸은 비어 있음.
     }
-    // 폰 게임 전용 보드판 호출.
-    public void initializePawnGameBoard(){
-        cells[0][4].setPiece(PieceFactory.createPieceFromSymbol("k")); // Black King
-        cells[7][4].setPiece(PieceFactory.createPieceFromSymbol("K")); // White King
-        for (int col = 0; col < 8; col++) {
-            // Black Pawn: "p"
-            cells[1][col].setPiece(PieceFactory.createPieceFromSymbol("p"));
-        }
-        for (int col = 0; col < 8; col++) {
-            // White Pawn: "P"
-            cells[6][col].setPiece(PieceFactory.createPieceFromSymbol("P"));
-        }
-    }
+
 
     /**
      * 주어진 좌표의 board.Cell 객체를 반환합니다.
@@ -502,8 +483,5 @@ public abstract class Board {
         return currentTurn;
     }
 
-
-    public abstract void Knockback(Cell start, Cell end);
 }
-
 
