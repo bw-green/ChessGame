@@ -43,7 +43,7 @@ public class GameManager {
     private final Menu menu;
     private Board board;
 
-    boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
+    boolean canEnpassant=true, canCastling=false, canPromotion=true ; //임시
 
     public GameManager() {
         fileManager = FileManager.getInstance();

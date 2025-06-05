@@ -40,9 +40,8 @@ public class Cell {
         if (piece == null) {
             return ".";
         }
-
         String sym = piece.getSymbol();
-        // Pawn2에서 Z/z를 내보낸다면 여기서 한번 더 변환
+        // Pawn2에서 Z/z를 보냈다면 P/p로 변환
         if (sym.equals("Z")) return "P";
         if (sym.equals("z")) return "p";
         return sym;
