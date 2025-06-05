@@ -11,7 +11,6 @@ public class CommandTest {
     @DisplayName("Command Message Test")
     @Test
     void commandMessageTest(){
-        System.out.println(Command.HELP);
         System.out.println(Command.EXIT);
         System.out.println(Command.START);
         System.out.println(Command.QUIT);
