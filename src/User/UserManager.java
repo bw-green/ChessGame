@@ -14,7 +14,7 @@ public class UserManager {
         this.users = fileManager.loadUserList(); // 초기 로딩
     }
 
-    private boolean isDuplicate(String id) { return users.containsKey(id); }
+    public boolean isDuplicate(String id) { return users.containsKey(id); }
 
     public boolean loginUser(String id, String pw) {
         return users.get(id) != null && users.get(id).matchPw(pw);
