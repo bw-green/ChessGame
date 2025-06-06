@@ -2,11 +2,12 @@ package fileManager;
 
 import User.User;
 import board.Board;
-import board.PieceFactory;
+import board.Chaturanga;
+import board.ThreeCheckBoard;
 import data.PieceColor;
 //import data.FileError;
-import piece.Piece;
 import piece.King;
+import piece.Pawn2;
 import piece.Rook;
 import piece.Pawn;
 
@@ -14,12 +15,12 @@ import java.io.*;
 import java.util.*;
 import java.util.Random;
 
-import static gameManager.GameManager.global_ID;
+import static gameManager.GameManager.USER_ID;
 
 public class FileManager {
     private static final int MAX_SAVES = 3;
     private static final String SAVE_DIR = "saves";
-    private static final String USER_DIR = SAVE_DIR + "/User_" + global_ID;
+    private static final String USER_DIR = SAVE_DIR + "/User_" + USER_ID;
     private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
@@ -98,24 +99,41 @@ public class FileManager {
         String filePath = getFilePath(slot + 1); //savefile 1~3생성을 위해 +1
 
         if (board == null) return false;
+        int gameType = 1;
+
+        if(board instanceof ThreeCheckBoard) gameType = 2;
+        if(board instanceof Chaturanga) gameType = 3;
+        //if(board instanceof PawnGame) gameType = 4;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(global_ID); //1. ID
+            writer.write(USER_ID); //1. ID
             writer.newLine();
+
             writer.write(saveName); //2. 세이브파일이름
             writer.newLine();
-            //writer.write(board.getGameType); //3. 게임유형
+
+            writer.write(gameType); //3. 게임유형
             writer.newLine();
-            //writer.write(board.getGameType); //4. 캐슬링
+
+            writer.write(board.canCastling ? 1:0); //4. 캐슬링
             writer.newLine();
-            //writer.write(board.getGameType); //5. 프로모션
+
+            writer.write(board.canPromotion ? 1:0); //5. 프로모션
             writer.newLine();
-            //writer.write(board.getGameType); //6. 앙파상
+
+            writer.write(board.canEnpassant ? 1:0); //6. 앙파상
             writer.newLine();
-            //writer.write(board.getGameType); //7. 쓰리체크W
+
+            if(board instanceof ThreeCheckBoard threeCheckBoard)
+                writer.write(threeCheckBoard.ThreeCheckW); //7. 쓰리체크 W
+            else {writer.write("-1");} //7. 쓰리체크 W
             writer.newLine();
-            //writer.write(board.getGameType); //8. 쓰리체크B
+
+            if(board instanceof ThreeCheckBoard threeCheckBoard)
+                writer.write(threeCheckBoard.ThreeCheckB); //8. 쓰리체크 B
+            else {writer.write("-1");} //8. 쓰리체크 B
             writer.newLine();
+
             writer.write("board:"); //9. 보드 구분 쓰기
             writer.newLine();
             writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "WHITE" : "BLACK"); // 10. 턴 정보
@@ -127,10 +145,22 @@ public class FileManager {
                     var piece = board.getCell(row, col).getPiece();
                     if (piece == null) continue;
 
-                    // Pawn
+                    // Pawn 앙파상 체크
                     if (piece instanceof Pawn pawn) {
                         if (pawn.enPassantable && pawn.enPassantCounter == 1) {
                             writer.write(pawn.getSymbol() + " " + row + " " + col);
+                            writer.newLine();
+                        }
+                        if (!pawn.isMoved) {
+                            writer.write(pawn.getSymbol() + "f " + row + " " + col); //f을 붙여줘서 일반 Pawn과 구분
+                            writer.newLine();
+                        }
+                    }
+
+                    // Pawn2 첫 움직임 체크(폰게임 전문)
+                    else if (piece instanceof Pawn2 pawn2) {
+                        if (!pawn2.isMoved) {
+                            writer.write(pawn2.getSymbol() + " " + row + " " + col); //z로 저장됨.
                             writer.newLine();
                         }
                     }
@@ -151,13 +181,7 @@ public class FileManager {
                         }
                     }
 
-                    // Pawn (Never Moved)
-                    else if (piece instanceof Pawn pawn) {
-                        if (!pawn.firstMove) {
-                            writer.write(pawn.getSymbol() + "f " + row + " " + col); //f을 붙여줘서 일반 Pawn과 구분
-                            writer.newLine();
-                        }
-                    }
+
                 }
             }
 
