@@ -32,7 +32,7 @@ public class GameManager {
     private final int OPTIONCODE =    GameInputReturn.OPTION.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
-    public static String global_ID = null;
+    public static String USER_ID = null;
 
 
     public boolean isPlaying = false;
@@ -364,22 +364,36 @@ public class GameManager {
 
                 return;
             }
+            String idStr;
+            while(true){
+                if(MenuInput.accountInput(true)){
+                    idStr = MenuInput.idStr;
+                    if(!(userManager.isDuplicate(idStr)))
+                        break;
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    //System.out.println(CommandError.CMD_BLOCK); //register관련 errorMessage추가
+                    System.out.println(PrintTemplate.BOLDLINE);
+                }
+            }
 
-//            while(true){
-//                if(MenuInput.accountInput(true)){
-//                    String idStr = MenuInput.idStr;
-//                    if(userManager.isDuplicate(idStr);
-//                            break;
-//                }else{keepgoing with print errmsg}
-//                break;
-//            }
-////            while(true){
-////                if(MenuInput.accountInput(true)){
-////                    String pwStr = MenuInput.pwStr;
-////                    if(userManager.registerUser(idStr, pwStr)) {성공과 실패}
-////                break;
-////            }
-//            return;
+            while(true) {
+                if (MenuInput.accountInput(true)) {
+                    String pwStr = MenuInput.pwStr;
+                    if (userManager.registerUser(idStr, pwStr)) {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //register관련 성공 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+
+                        break;
+                    } else {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //register관련 실패 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }
+            }
+            return;
         }
 
         if (cmdCode == LOGINCODE){
@@ -397,13 +411,40 @@ public class GameManager {
 
                 return;
             }
-//            while(true){
-//                if(MenuInput.accountInput(true)){
-//                    String idStr = MenuInput.idStr;
-//                }
-//            }
-//            return;
-            // register 로직 파쿠리할 예정
+
+            String idStr;
+            while(true){
+                if(MenuInput.accountInput(true)){
+                    idStr = MenuInput.idStr;
+                    if(userManager.isDuplicate(idStr))
+                        break;
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    //System.out.println(CommandError.CMD_BLOCK); //login관련 errorMessage추가
+                    System.out.println(PrintTemplate.BOLDLINE);
+                }
+            }
+
+            while(true) {
+                if (MenuInput.accountInput(true)) {
+                    String pwStr = MenuInput.pwStr;
+                    if (userManager.loginUser(idStr, pwStr)) {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //login관련 성공 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+
+                        //로그인해야됨
+                        isLogin = true;
+                        USER_ID = idStr;
+                        break;
+                    } else {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //login관련 실패 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }
+            }
+            return;
         }
 
         if (cmdCode == LOGOUTCODE){
@@ -419,14 +460,13 @@ public class GameManager {
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.LOGOUT_FAIL);
                 System.out.println(PrintTemplate.BOLDLINE);
-
-                return;
+                USER_ID = "Guest"; //Guest 기본값으로 변경
+                isLogin = false;
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.LOGOUT_FAIL);
+                System.out.println(PrintTemplate.BOLDLINE);
             }
-
-            //user-id = null;
-            isLogin = false;
-            //혹시 모를 추가사항 존재할 수도 있음
-
             return;
         }
 
