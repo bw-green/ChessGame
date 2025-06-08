@@ -547,4 +547,3 @@ public class Board {
     }
 
 }
-

@@ -8,6 +8,7 @@ import Menu.Menu;
 import fileManager.*;
 import User.*;
 import board.Board;
+import board.PawnGameBoard;
 
 import Input.GameInput;
 import Input.UserInput;
@@ -52,6 +53,7 @@ public class GameManager {
     private Board board;
 
     public boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
+
 
     public GameManager() {
         fileManager = FileManager.getInstance();
@@ -245,6 +247,7 @@ public class GameManager {
                 isSaved = false;
                 isGamePrint = true;
                 board = new Board(canEnpassant , canCastling, canPromotion);
+//                board = new PawnGameBoard(true);
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);

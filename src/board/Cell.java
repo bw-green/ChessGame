@@ -37,6 +37,13 @@ public class Cell {
     @Override
     public String toString() {
         // 기물이 없으면 점("."), 있으면 기물 기호를 출력
-        return (piece == null) ? "." : piece.getSymbol();
+        if (piece == null) {
+            return ".";
+        }
+        String sym = piece.getSymbol();
+        // Pawn2에서 Z/z를 보냈다면 P/p로 변환
+        if (sym.equals("Z")) return "P";
+        if (sym.equals("z")) return "p";
+        return sym;
     }
 }
