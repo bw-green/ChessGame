@@ -1,3 +1,4 @@
+
 package board;
 
 import data.PieceColor;
