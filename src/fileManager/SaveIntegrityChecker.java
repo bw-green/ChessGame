@@ -2,6 +2,7 @@ package fileManager;
 
 import board.Board;
 import board.Chaturanga;
+import board.PawnGameBoard;
 import board.ThreeCheckBoard;
 import check.GameEnd;
 import data.PieceColor;
@@ -155,6 +156,7 @@ public class SaveIntegrityChecker {
      * false - 검사 실패 시
      */
     private boolean checkBoardLines(int start) {
+        boolean valid = true;
         // 1. board: 키워드 찾기
         int boardKeywordIndex = -1;
         for (int i = 0; i < lines.size(); i++) {
@@ -165,31 +167,31 @@ public class SaveIntegrityChecker {
         }
         if (boardKeywordIndex == -1) {
             errorList.add("\"board:\" keyword not found.");
-            return false;
+            valid = false;
         }
 
         // 2. turn indicator (white / black) 확인
         if (boardKeywordIndex + 1 >= lines.size()) {
             errorList.add("Missing turn indicator after \"board:\"");
-            return false;
+            valid = false;
         }
         String turnLine = lines.get(boardKeywordIndex + 1).trim();
         if (!(turnLine.equals("white") || turnLine.equals("black"))) {
             errorList.add("Line " + (boardKeywordIndex + 2) + ": Invalid turn indicator (must be white or black)");
-            return false;
+            valid = false;
         }
 
         // 3. 특수좌표 구간 검사 (8x8 보드 시작 전까지)
         if (start == -1) {
             errorList.add("8x8 board not found.");
-            return false;
+            valid = false;
         }
 
         for (int i = boardKeywordIndex + 2; i < start; i++) {
             String[] tokens = lines.get(i).trim().split("\\s+");
             if (tokens.length != 3) {
                 errorList.add("Line " + (i + 1) + ": Invalid special coordinate format (must have 3 elements)");
-                return false;
+                valid = false;
             }
             // 여기에서 추가적인 형식 검사 가능 (예: 기물/행/열 형식 등)
         }
@@ -197,7 +199,7 @@ public class SaveIntegrityChecker {
         // 4. 8x8 보드 줄 검사
         if (lines.size() < start + 8) {
             errorList.add("Insufficient number of board lines (need 8 lines).");
-            return false;
+            valid = false;
         }
 
         boardLines = new ArrayList<>();
@@ -205,12 +207,12 @@ public class SaveIntegrityChecker {
             String[] tokens = lines.get(i).trim().split("\\s+");
             if (tokens.length != 8) {
                 errorList.add("Line " + (i + 1) + ": Board line must contain 8 elements.");
-                return false;
+                valid = false;
             }
             boardLines.add(lines.get(i));
         }
 
-        return true;
+        return valid;
     }
 
     /**
@@ -304,6 +306,7 @@ public class SaveIntegrityChecker {
      * - 그 외 게임 유형 : K, Q, R, B, N, P, k, q, r, b, n, p
      */
     private boolean checkPieceSymbols() {
+        boolean valid = true;
         // 허용 기물 기호 집합 정의
         Set<Character> allowedSymbols;
 
@@ -325,7 +328,7 @@ public class SaveIntegrityChecker {
             // 설계서 기준: 한 줄에 8개 토큰이어야 함
             if (tokens.length != 8) {
                 errorList.add("Line " + (i + 1) + ": Board line must contain 8 elements.");
-                return false;
+                valid = false;
             }
 
             // 각 토큰 검사
@@ -336,18 +339,18 @@ public class SaveIntegrityChecker {
                 // 기물 기호는 길이 1의 문자이어야 함
                 if (token.length() != 1) {
                     errorList.add("Line " + (i + 1) + ": Invalid piece symbol format: '" + token + "'");
-                    return false;
+                    valid = false;
                 }
                 char c = token.charAt(0);
                 if (!allowedSymbols.contains(c)) {
                     errorList.add("Line " + (i + 1) + ": Invalid piece symbol: '" + c + "'");
-                    return false;
+                    valid = false;
                 }
             }
         }
 
         // 모든 검사 통과 → true 반환
-        return true;
+        return valid;
     }
 
 
@@ -388,7 +391,6 @@ public class SaveIntegrityChecker {
         return valid;
     }
 
-
     /**
      * checkRuleFlags
      * <p>
@@ -419,7 +421,6 @@ public class SaveIntegrityChecker {
 
         return valid;
     }
-
 
     /**
      * checkThreeCheckSettings
@@ -467,7 +468,6 @@ public class SaveIntegrityChecker {
 
         return valid;
     }
-
 
     /**
      * checkPieceCoordinates
@@ -570,7 +570,7 @@ public class SaveIntegrityChecker {
 
     /**
      * checkGameEnd
-     * <p>
+     *
      * - 이미 구현된 GameEnd 클래스를 활용하여 현재 보드가 체크메이트, 스테일메이트, 또는 불충분 기물 상태인지 검사합니다.
      * - Board 객체가 정상적으로 생성된 이후 호출되며, 다음 조건 중 하나라도 true이면 오류로 간주하고 false를 반환합니다:
      * - GameEnd.isCheckMate(board)
@@ -635,7 +635,6 @@ public class SaveIntegrityChecker {
         return valid;
     }
 
-
     public Board validateFile() {
         boolean success = true;
 
@@ -677,7 +676,7 @@ public class SaveIntegrityChecker {
                     board.setPieces(boardLines);
                     break;
                 case 4:
-                    board = new Board();
+                    board = new PawnGameBoard(true);
                     board.setPieces(boardLines);
                     break;
                 default:
