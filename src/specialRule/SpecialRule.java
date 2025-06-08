@@ -59,7 +59,7 @@ public class SpecialRule {
         Scanner scanner = new Scanner(System.in);
         Piece pawn = end.getPiece(); //폰 확정은 아니지만 일단 이름은 pawn
         int targetEndRow = (pawn.getColor() == PieceColor.WHITE) ? 0 : 7; // 판별할 끝을 정하기
-        if ("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol())||"Z".equals(pawn.getSymbol())||"z".equals(pawn.getSymbol()) && end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
+        if (("P".equals(pawn.getSymbol())||"p".equals(pawn.getSymbol())||"Z".equals(pawn.getSymbol())||"z".equals(pawn.getSymbol()) )&& end.getRow() == targetEndRow) //폰이면서, 끝랭크인지 확인
         {
             while(true) {
                 System.out.println(PrintTemplate.BOLDLINE);
