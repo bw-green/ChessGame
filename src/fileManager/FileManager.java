@@ -223,8 +223,8 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace(); // 또는 로깅/예외 처리
         }
-        SaveIntegrityCheck check = new SaveIntegrityCheck(checkList);
-        return check.validate();
+        SaveIntegrityChecker check = new SaveIntegrityChecker(checkList);
+        return check.validateFile();
     }
 
 
