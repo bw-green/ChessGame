@@ -5,6 +5,8 @@ import data.*;
 import piece.*;
 import specialRule.SpecialRule;
 
+import java.util.List;
+
 //////////////////////////////////////////////
 public class Board {
     Cell[][] cells; // 8x8 board.Cell 배열
@@ -90,6 +92,25 @@ public class Board {
         // 나머지 칸은 비어 있음.
     }
 
+    /**
+     * boardLines (세이브파일의 board:) 정보를 기반으로
+     * Board의 cells[][] 에 기물 배치를 설정합니다.
+     * "."은 빈 칸, 나머지 기호는 PieceFactory로 Piece 생성.
+     */
+    public void setPieces(List<String> boardLines) {
+        for (int row = 0; row < 8; row++) {
+            String line = boardLines.get(row);
+            String[] tokens = line.trim().split("\\s+"); // 공백으로 나눔
+            for (int col = 0; col < 8; col++) {
+                String symbol = tokens[col];
+                if (symbol.equals(".")) {
+                    cells[row][col].setPiece(null); // 빈 칸 처리
+                } else {
+                    cells[row][col].setPiece(PieceFactory.createPieceFromSymbol(symbol));
+                }
+            }
+        }
+    }
 
     /**
      * 주어진 좌표의 board.Cell 객체를 반환합니다.
