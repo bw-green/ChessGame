@@ -10,8 +10,12 @@ public enum GameInputReturn {
     LOAD(6),
     DEL_SAVE(7),
     SAVE_FILE(8),
-
-    COORDINATE_TRUE(9);
+    REGISTER(9),
+    LOGIN(10),
+    LOGOUT(11),
+    TOGGLE(12),
+    OPTION(13),
+    COORDINATE_TRUE(14);
 
     private final int code;
 

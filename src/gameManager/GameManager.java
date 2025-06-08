@@ -6,6 +6,7 @@ import data.*;
 
 import Menu.Menu;
 import fileManager.*;
+import User.*;
 import board.Board;
 import board.PawnGameBoard;
 
@@ -25,29 +26,39 @@ public class GameManager {
     private final int LOADCODE = GameInputReturn.LOAD.getCode();
     private final int DELSAVECODE = GameInputReturn.DEL_SAVE.getCode();
     private final int SAVEFILECODE = GameInputReturn.SAVE_FILE.getCode();
+    private final int REGISTERCODE = GameInputReturn.REGISTER.getCode();
+    private final int LOGINCODE =  GameInputReturn.LOGIN.getCode();
+    private final int LOGOUTCODE =  GameInputReturn.LOGOUT.getCode();
+    private final int TOGGLECODE =   GameInputReturn.TOGGLE.getCode();
+    private final int OPTIONCODE =    GameInputReturn.OPTION.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
-    public static String global_ID = null;
+    public static String USER_ID = null;
 
 
     public boolean isPlaying = false;
     public boolean isRunning = true;
     public boolean isSaved = false;
+    public boolean isLogin = false;
 
     private boolean isMenuPrint = true;
     private boolean isGamePrint = true;
     private PieceColor playerTurn;
 
+
     private FileManager fileManager;
     private FilePrint filePrint;
+    private UserManager userManager;
     private final Menu menu;
     private Board board;
 
-    boolean canEnpassant=true, canCastling=false, canPromotion=true ; //임시
+    public boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
+
 
     public GameManager() {
         fileManager = FileManager.getInstance();
         filePrint = new FilePrint(fileManager);
+        userManager = new UserManager(fileManager);
         menu = new Menu(filePrint);
 
         runProgram();
@@ -192,10 +203,22 @@ public class GameManager {
 
 
         if(cmdCode == HELPCODE){
+            int num;
+            if(isPlaying){ num = GameInput.number; }
+            else num = MenuInput.number;
             System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println(Command.HELP);
+
+            switch (num){
+                case 1 -> System.out.println(Command.HELP1);
+                case 2 -> System.out.println(Command.HELP2);
+                case 3 -> System.out.println(Command.HELP3);
+                case 4 -> System.out.println(Command.HELP4);
+                default -> throw new IllegalArgumentException("Invalid command");
+            }
             System.out.println(PrintTemplate.BOLDLINE);
             isMenuPrint = false;
+
+            return;
         }
 
 
@@ -212,6 +235,8 @@ public class GameManager {
                 menu.printWithTemplate(Command.EXIT.toString());
                 System.exit(0);
             }
+
+            return;
         }
 
 
@@ -229,6 +254,8 @@ public class GameManager {
                 System.out.println(PrintTemplate.BOLDLINE);
                 isGamePrint = false;
             }
+
+            return;
         }
 
         if(cmdCode == QUITCODE){
@@ -243,8 +270,10 @@ public class GameManager {
             }
             isMenuPrint = true;
 
+            return;
         }
 
+        //수정 해야함
         if(cmdCode == SAVECODE){
             int slot;
             if(!isPlaying){
@@ -264,8 +293,10 @@ public class GameManager {
             }
             isMenuPrint = false;
 
+            return;
         }
 
+        //수정 가능성 있을 수도
         if(cmdCode == LOADCODE) {
             int slot;
             if(isPlaying){ slot = GameInput.number; }
@@ -303,6 +334,8 @@ public class GameManager {
                 isMenuPrint = false;
                 isGamePrint = false;
             }
+
+            return;
         }
 
         if (cmdCode == DELSAVECODE) {
@@ -311,15 +344,177 @@ public class GameManager {
                 isMenuPrint = false;
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(CommandError.DELSAVE_BLOCK);
+                System.out.println(CommandError.CMD_BLOCK);
                 System.out.println(PrintTemplate.BOLDLINE);
                 isGamePrint = false;
             }
+
+            return;
         }
 
         if (cmdCode == SAVEFILECODE) {
             filePrint.saveListPrint();
             isMenuPrint = false;
+
+            return;
+        }
+            // isDuplicate private이라서 구현 못함
+        if (cmdCode == REGISTERCODE){
+            if(isPlaying){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.CMD_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
+
+                return;
+            }
+            String idStr;
+            while(true){
+                if(MenuInput.accountInput(true)){
+                    idStr = MenuInput.idStr;
+                    if(!(userManager.isDuplicate(idStr)))
+                        break;
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    //System.out.println(CommandError.CMD_BLOCK); //register관련 errorMessage추가
+                    System.out.println(PrintTemplate.BOLDLINE);
+                }
+            }
+
+            while(true) {
+                if (MenuInput.accountInput(true)) {
+                    String pwStr = MenuInput.pwStr;
+                    if (userManager.registerUser(idStr, pwStr)) {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //register관련 성공 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+
+                        break;
+                    } else {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //register관련 실패 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }
+            }
+            return;
+        }
+
+        if (cmdCode == LOGINCODE){
+            if(isPlaying){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.CMD_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
+
+                return;
+            }
+            if(isLogin){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.LOGIN_FAIL);
+                System.out.println(PrintTemplate.BOLDLINE);
+
+                return;
+            }
+
+            String idStr;
+            while(true){
+                if(MenuInput.accountInput(true)){
+                    idStr = MenuInput.idStr;
+                    if(userManager.isDuplicate(idStr))
+                        break;
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    //System.out.println(CommandError.CMD_BLOCK); //login관련 errorMessage추가
+                    System.out.println(PrintTemplate.BOLDLINE);
+                }
+            }
+
+            while(true) {
+                if (MenuInput.accountInput(true)) {
+                    String pwStr = MenuInput.pwStr;
+                    if (userManager.loginUser(idStr, pwStr)) {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //login관련 성공 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+
+                        //로그인해야됨
+                        isLogin = true;
+                        USER_ID = idStr;
+                        break;
+                    } else {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        //System.out.println(CommandError.CMD_BLOCK); //login관련 실패 message 출력
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }
+            }
+            return;
+        }
+
+        if (cmdCode == LOGOUTCODE){
+            if(isPlaying){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.CMD_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
+
+                return;
+            }
+
+            if(isLogin){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.LOGOUT_FAIL);
+                System.out.println(PrintTemplate.BOLDLINE);
+                USER_ID = "Guest"; //Guest 기본값으로 변경
+                isLogin = false;
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.LOGOUT_FAIL);
+                System.out.println(PrintTemplate.BOLDLINE);
+            }
+            return;
+        }
+
+        if (cmdCode == TOGGLECODE){
+            if(isPlaying){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.CMD_BLOCK);
+                System.out.println(PrintTemplate.BOLDLINE);
+
+                return;
+            }
+            int num = MenuInput.toggleNum;
+
+            System.out.println(PrintTemplate.BOLDLINE);
+
+            if(MenuInput.toggleOn){
+                switch (num){
+                    case 0 -> canEnpassant = true;
+                    case 1 -> canCastling = true;
+                    case 2 -> canPromotion = true;
+                }
+
+                System.out.println(Command.TOGGLE_ON.formatStr(num));
+            }else{
+                switch (num){
+                    case 0 -> canEnpassant = false;
+                    case 1 -> canCastling = false;
+                    case 2 -> canPromotion = false;
+                }
+
+                System.out.println(Command.TOGGLE_OFF.formatStr(num));
+            }
+
+
+            System.out.println(PrintTemplate.BOLDLINE);
+
+            return;
+        }
+
+        if(cmdCode == OPTIONCODE){
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(Command.OPTION.formatStr(canEnpassant, canCastling, canPromotion));
+            System.out.println(PrintTemplate.BOLDLINE);
+            isMenuPrint = false;
+            return;
         }
 
     }
