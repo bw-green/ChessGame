@@ -20,6 +20,11 @@ public class GameInput {
     static int LOAD = GameInputReturn.LOAD.getCode();
     static int DEL_SAVE = GameInputReturn.DEL_SAVE.getCode();
     static int SAVE_FILE = GameInputReturn.SAVE_FILE.getCode();
+    static int REGISTER = GameInputReturn.REGISTER.getCode();
+    static int LOGIN = GameInputReturn.LOGIN.getCode();
+    static int LOGOUT = GameInputReturn.LOGOUT.getCode();
+    static int TOGGLE = GameInputReturn.TOGGLE.getCode();
+    static int OPTION = GameInputReturn.OPTION.getCode();
 
 
     public static int number = 0;
@@ -93,8 +98,8 @@ public class GameInput {
         }
         else if(parts[1].startsWith("save")){
             String now = parts[1].substring("save".length());
-            if(checking(now)!=0){
-                number= checking(now);
+            if(checking(now,SAVE)!=0){
+                number= checking(now,SAVE);
                 return SAVE;// 파일매니저로 보내기
             }
             else{
@@ -105,8 +110,8 @@ public class GameInput {
 
         else if(parts[1].startsWith("delsave")){//아님
             String now = parts[1].substring("delsave".length());
-            if(checking(now)!=0){
-                number= checking(now);
+            if(checking(now,DEL_SAVE)!=0){
+                number= checking(now,DEL_SAVE);
                 return DEL_SAVE;
             }
             else{
@@ -117,8 +122,8 @@ public class GameInput {
         }//인자있음
         else if(parts[1].startsWith("load")){
             String now = parts[1].substring("load".length());
-            if(checking(now)!=0){
-                number= checking(now);
+            if(checking(now,LOAD)!=0){
+                number= checking(now,LOAD);
                 return LOAD; // 파일매니저로보내기
             }
             else{
@@ -153,10 +158,57 @@ public class GameInput {
                 throw new InputMismatchException("exit 실패");
             }
         }
+        else if (parts[1].startsWith("resgister")){
+            parts[1]=  blank(parts[1]);
+            if(parts[1].equals("resgister")){
+                return REGISTER;
+            }
+            else{
+                throw new InputMismatchException("resgister 실패");
+            }
+        }
+        else if (parts[1].startsWith("login")){
+            parts[1]=  blank(parts[1]);
+            if(parts[1].equals("login")){
+                return LOGIN;
+            }
+            else{
+                throw new InputMismatchException("login 실패");
+            }
+        }
+        else if (parts[1].startsWith("logout")){
+            parts[1]=  blank(parts[1]);
+            if(parts[1].equals("logout")){
+                return LOGOUT;
+            }
+            else{
+                throw new InputMismatchException("logout 실패");
+            }
+        }
+        else if(parts[1].startsWith("toggle")){
+            String now = parts[1].substring("toggle".length());
+            if(checkStr(now)){
+                return TOGGLE;
+            }
+            else{
+                throw new InputMismatchException("toggle 실패");
+            }
+        }
+        else if (parts[1].startsWith("option")){
+            parts[1]=  blank(parts[1]);
+            if(parts[1].equals("option")){
+                return OPTION;
+            }
+            else{
+                throw new InputMismatchException("option 실패");
+            }
+        }
+
 
         else{
             throw new InputMismatchException("없는 구문");
         }
+
     }
 
     private static String blank(String parts){
@@ -166,7 +218,15 @@ public class GameInput {
                 .collect(Collectors.joining());
     }
 
-    private static int checking(String now) {
+    private static int checking(String now, int cmdCode) {
+
+        int max;
+        if(cmdCode==SAVE|| cmdCode==DEL_SAVE|| cmdCode==LOAD){
+            max=3;
+        }
+        else{
+            max=4;
+        }
         if (Character.isWhitespace(now.charAt(0)) && now.charAt(1) >= '0' && now.charAt(1) <= '9') {
             boolean number = true;
             for(int i=2; i<now.length(); i++){
@@ -192,7 +252,7 @@ public class GameInput {
                 throw new InputMismatchException();
             }
 
-            if (num >= 1 && num <= 5) {
+            if (num >= 1 && num <= max) {
                 return num;
             }
             if(num>=0 && num <=9){
@@ -204,6 +264,38 @@ public class GameInput {
         } else {
             throw new InputMismatchException();
         }
+    }
+    private static boolean checkStr(String now){
+        if(Character.isWhitespace(now.charAt((0)))){
+            String[] parts = now.split(" ");
+
+            if(parts.length != 2) {
+                throw new InputMismatchException();
+            }
+            parts[0] = blank(parts[0]);
+            parts[1] = blank(parts[1]);
+            boolean isRuleValid = true;
+            boolean isOnValid = true;
+
+            // check special rule str
+            if(parts[0].startsWith("enpassant")){}
+            else if(parts[0].startsWith("castling")){}
+            else if(parts[0].startsWith("promotion")){}
+            else isRuleValid = false;
+
+            // check on/off str
+            if(parts[1].startsWith("on")){}
+            else if (parts[1].startsWith("off")){}
+            else isOnValid = false;
+
+            if(isRuleValid && isOnValid){
+                return true;
+            }else{
+                throw new InputMismatchException();
+            }
+        }
+
+        return false;
     }
 
 }
