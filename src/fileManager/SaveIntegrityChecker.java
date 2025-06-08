@@ -88,11 +88,13 @@ public class SaveIntegrityChecker {
 
         // 각 key의 value가 유효한지 검사
         for (String key : kvMap.keySet()) {
-            if (!validateValueByKey(key, kvMap.get(key))) {
-                errorList.add("Invalid value for key: " + key);
+            String value = kvMap.get(key);
+            if (!validateValueByKey(key, value)) {
+                errorList.add("Invalid value for " + key + ": " + value);
                 valid = false;
             }
         }
+
 
         return valid;
     }
@@ -510,7 +512,8 @@ public class SaveIntegrityChecker {
 
             // 형식 검증
             if (tokens.length != 3) {
-                errorList.add("Invalid coordinate line format at line " + (i + 1) + ": " + line);
+                errorList.add("Line " + (i + 1) + ": Invalid coordinate line format");
+
                 valid = false;
                 continue;
             }
@@ -520,7 +523,7 @@ public class SaveIntegrityChecker {
 
             // 기호 검증
             if (!allowedSymbols.contains(symbol)) {
-                errorList.add("Invalid piece symbol in coordinates at line " + (i + 1) + ": " + symbol);
+                errorList.add("Line " + (i + 1) + ": Invalid piece symbol in coordinates");
                 valid = false;
                 continue;
             }
@@ -530,14 +533,14 @@ public class SaveIntegrityChecker {
                 col = Integer.parseInt(tokens[1]);
                 row = Integer.parseInt(tokens[2]);
             } catch (NumberFormatException e) {
-                errorList.add("Invalid coordinate value at line " + (i + 1) + ": " + line);
+                errorList.add("Line " + (i + 1) + ": Invalid coordinate value at line ");
                 valid = false;
                 continue;
             }
 
             // 좌표 범위 확인
             if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                errorList.add("Coordinate out of bounds at line " + (i + 1) + ": (" + col + ", " + row + ")");
+                errorList.add("Line " + (i + 1) + ": Coordinate out of bounds at line: (" + col + ", " + row + ")");
                 valid = false;
                 continue;
             }
@@ -553,14 +556,14 @@ public class SaveIntegrityChecker {
 
             // 빈 칸 처리 (기물 없음)
             if (pieceSymbol.equals(".")) {
-                errorList.add("Coordinate points to empty cell at (" + col + ", " + row + "), expected: " + symbol);
+                errorList.add("Line " + (i + 1) + ": Coordinate points to empty cell at (" + col + ", " + row + "), expected: " + symbol);
                 valid = false;
                 continue;
             }
 
             // 기물 불일치
             if (!pieceSymbol.equals(expectedSymbol)) {
-                errorList.add("Coordinate mismatch at (" + col + ", " + row + "): board has '" + pieceSymbol + "', expected '" + expectedSymbol + "'");
+                errorList.add("Line " + (i + 1) + ": Coordinate mismatch at (" + col + ", " + row + "): board has '" + pieceSymbol + "', expected '" + expectedSymbol + "'");
                 valid = false;
             }
         }
