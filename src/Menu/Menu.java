@@ -2,7 +2,7 @@ package Menu;
 
 import fileManager.FilePrint;
 import data.PrintTemplate;
-
+import gameManager.GameManager;
 
 
 public class Menu {
@@ -13,7 +13,7 @@ public class Menu {
 
     public void printDefaultMenu(){
         System.out.println(PrintTemplate.MENULINE);
-        //filemanager로 savefile 출력
+        System.out.println(PrintTemplate.CURRENT_USER + GameManager.USER_ID);
         filePrint.showFileList();
         System.out.println(PrintTemplate.MENU_FIRST_INSTRUCT);
         System.out.println(PrintTemplate.BOLDLINE);

@@ -3,6 +3,9 @@ package data;
 
 public enum PrintTemplate {
 
+    // 미로그인 상태
+    GUEST("Guest"),
+
     //프롬프트 입력 창
     MENU_PROMPT("menu >"),
     BLACK_PROMPT("BLACK >"),
@@ -39,9 +42,13 @@ public enum PrintTemplate {
     END_INSUFFICIENT("Insufficient material to checkmate.\n" +
             "The game ends in a draw. Returning to the main menu."),
     THREE_CHECK_BLACK("BLACK has achieved three checks! BLACK wins. The game has ended.\n" +
-            "Returning to the main menu.\n"),
+            "Returning to the main menu."),
     THREE_CHECK_WHITE("WHITE has achieved three checks! BLACK wins. The game has ended.\n" +
-            "Returning to the main menu.\n");
+            "Returning to the main menu."),
+    END_WHITE_STALEMATE("StaleMate! No legal moves available. WHITE wins.\n" +
+            "The game has ended. Returning to the main menu."),
+    END_BLACK_STALEMATE("StaleMate! No legal moves available. BLACK wins.\n" +
+            "The game has ended. Returning to the main menu.");
 
 
     private final String printTmp;
