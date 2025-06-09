@@ -12,16 +12,16 @@ import java.util.List;
  */
     public class TestMain {
         public static void main(String[] args) {
-            System.out.println("=== [1] 기본 보드 ===");
-            Board defaultBoard = new Board(true,true,true,true);
-            System.out.println(defaultBoard);
-
-            System.out.println("=== [2] initialize = true (폰 게임 보드) ===");
-            PawnGameBoard pawnGameBoard = new PawnGameBoard(true);
-            System.out.println(pawnGameBoard);
-
-            System.out.println("=== [3] initialize = false (빈 보드) ===");
-            PawnGameBoard empty = new PawnGameBoard(false);
-            System.out.println(empty);
+//            System.out.println("=== [1] 기본 보드 ===");
+//            Board defaultBoard = new Board(true,true,true,true);
+//            System.out.println(defaultBoard);
+//
+//            System.out.println("=== [2] initialize = true (폰 게임 보드) ===");
+//            PawnGameBoard pawnGameBoard = new PawnGameBoard(true);
+//            System.out.println(pawnGameBoard);
+//
+//            System.out.println("=== [3] initialize = false (빈 보드) ===");
+//            PawnGameBoard empty = new PawnGameBoard(false);
+//            System.out.println(empty);
         }
     }

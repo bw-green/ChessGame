@@ -15,6 +15,19 @@ public class PawnGameBoard extends Board    {
         super(false, false, true, initialize);
 
     }
+    public PawnGameBoard(boolean canEnpassant, boolean canCastling, boolean canPromotion, boolean initialize) {
+        super(canEnpassant, canCastling, canPromotion, /*initialize*/ false);
+        // initialize == false 이면
+        // 빈 보드를 만든 다음에 PawnGameBoard#initializeBoard() 를 호출
+        // initialize == true 이면
+        // board의 initializeBoard()를 호출해서 원본 보드를 만듦.
+        if (initialize) {
+            super.initializeBoard();
+        }else{
+            this.initializeBoard();
+        }
+    }
+
     @Override
     public void initializeBoard() {
         // ▶ 폰 게임 전용 로직만 실행

@@ -677,6 +677,7 @@ public class SaveIntegrityChecker {
                     break;
                 case 4:
                     board = new PawnGameBoard(true);
+//                  board = new PawnGameBoard(true,true,true,true);
                     board.setPieces(boardLines);
                     break;
                 default:
