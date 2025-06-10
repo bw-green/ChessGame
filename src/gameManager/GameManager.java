@@ -514,6 +514,7 @@ public class GameManager {
                         //로그인
                         isLogin = true;
                         USER_ID = idStr;
+                        fileManager.loadFileNames();
                         break;
                     } else {
                         System.out.println(PrintTemplate.BOLDLINE);
@@ -545,6 +546,7 @@ public class GameManager {
                 System.out.println(PrintTemplate.BOLDLINE);
                 USER_ID = PrintTemplate.GUEST.toString();
                 isLogin = false;
+                fileManager.loadFileNames();
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.LOGOUT_FAIL);

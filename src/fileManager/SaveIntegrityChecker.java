@@ -651,7 +651,6 @@ public class SaveIntegrityChecker {
         if (!checkThreeCheckSettings()) success = false;
         if (!checkPieceCoordinates()) success = false;
 
-        //0,2,7 에서 0값 출력
         // board 객체를 못 만들 수도 있으므로 success == true인 경우에만 보드 초기화
         if (success) {
             int gameType;

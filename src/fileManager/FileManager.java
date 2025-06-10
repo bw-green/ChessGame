@@ -20,7 +20,7 @@ import static gameManager.GameManager.USER_ID;
 public class FileManager {
     private static final int MAX_SAVES = 3;
     private static final String SAVE_DIR = "saves";
-    private static final String USER_DIR = SAVE_DIR + "/User_" + USER_ID;
+    private static String USER_DIR = SAVE_DIR + "/User_" + USER_ID;
     private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
@@ -391,7 +391,12 @@ public class FileManager {
     }
 
 
-    private void loadFileNames() {
+    public void loadFileNames() {
+        USER_DIR = SAVE_DIR + "/User_" + USER_ID;
+        System.out.println(USER_DIR);
+        if (!new File(USER_DIR).exists()) {
+            ensureDirectoryByID();
+        }
         for (int i = 1; i <= MAX_SAVES; i++) {
             String filePath = getFilePath(i);
             File file = new File(filePath);
