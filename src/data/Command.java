@@ -29,10 +29,10 @@ public enum Command {
             "               /start <2~4> : start a new <Three Check/Chaturanga/Pawn Game>\n" +
             "/quit  | quit the current game and return to the main menu.\n" +
             "         Unsaved progress can disappear.\n" +
-            "/save <1~53> | save your game progress to savefile <1~53> if it is empty.\n" +
+            "/save <1~3> | save your game progress to savefile <1~53> if it is empty.\n" +
             "              Your savefile will be overwritten if it is not empty.\n" +
-            "/load <1~53> | load and continue your game progress from savefile no.<1~53>.\n" +
-            "/delsave <1~53> | !Caution! \n" +
+            "/load <1~3> | load and continue your game progress from savefile no.<1~53>.\n" +
+            "/delsave <1~3> | !Caution! \n" +
             "                 This command cannot be used during the game.\n" +
             "                 delete your game progress in savefile<1~53>.\n" +
             "/savefile | show your current savefile lists.\n" +
@@ -78,7 +78,7 @@ public enum Command {
     INPUT_PW(" PassWord :"),
     ACC_INPUT_TERMINATE("|Input process terminated.|"),
     REGISTER_START("|Please enter an ID and PassWord to register. \n" +
-            " The ID must be unique.|\n"),
+            " The ID must be unique.|"),
     REGISTER_SUCCESS("|User %s has been registered|"),
     LOGIN_START("|Please enter an ID and PassWord to login.|"),
     LOGIN_SUCCESS("|User %s has been logged in|"),
@@ -149,7 +149,7 @@ public enum Command {
                 if (args.length == 1 && args[0] instanceof String) {
                     yield String.format(this.toString(), args[0]);
                 }
-                throw new IllegalArgumentException(this + " requires a number between 1 and 5.");
+                throw new IllegalArgumentException(this + " ");
             }
 
             //int 인자 2개, string 1개
@@ -185,10 +185,10 @@ public enum Command {
                         args[2] instanceof Boolean) {
                     String[] strs = {"", "", ""};
                     strs[0] = (Boolean)args[0] ? "ON" : "OFF";
-                    strs[1] = (Boolean)args[0] ? "ON" : "OFF";
-                    strs[2] = (Boolean)args[0] ? "ON" : "OFF";
+                    strs[1] = (Boolean)args[1] ? "ON" : "OFF";
+                    strs[2] = (Boolean)args[2] ? "ON" : "OFF";
 
-                    yield String.format(this.toString(), (Object) strs);
+                    yield String.format(this.toString(), strs);
                 }
                 throw new IllegalArgumentException("OPTION requires 3 string arguments.");
             }

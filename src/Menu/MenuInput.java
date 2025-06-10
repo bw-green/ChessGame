@@ -1,6 +1,7 @@
 package Menu;
 
 import Input.UserInput;
+import data.Command;
 import data.CommandError;
 import data.GameInputReturn;
 import data.PrintTemplate;
@@ -55,6 +56,12 @@ public class MenuInput {
 
     public static boolean accountInput(boolean idInput){
         while(true){
+            if(idInput){
+                System.out.print(PrintTemplate.MENU_PROMPT + Command.INPUT_ID.toString());
+            }else{
+                System.out.print(PrintTemplate.MENU_PROMPT + Command.INPUT_PW.toString());
+            }
+
             Scanner sc = new Scanner(System.in);
             input = sc.nextLine();
 
@@ -72,14 +79,18 @@ public class MenuInput {
 
             //check string length
             if(input.length() <= 1 || input.length() >= 11){
+                System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.ACC_INVALID_INPUT);
+                System.out.println(PrintTemplate.BOLDLINE);
                 continue;
             }
 
             // check blank between string
             String[] temp = input.split(" ");
             if(temp.length >= 2){
+                System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.ACC_INVALID_INPUT);
+                System.out.println(PrintTemplate.BOLDLINE);
                 continue;
             }
 
@@ -213,7 +224,7 @@ public class MenuInput {
         else if(parts[1].startsWith("exit")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("exit")){
-                return QUIT;
+                return EXIT;
             }
             else{
                 throw new InputMismatchException("exit 실패");
@@ -246,7 +257,7 @@ public class MenuInput {
                 throw new InputMismatchException("logout 실패");
             }
         }
-        else if(parts[1].startsWith("OPTION")){
+        else if(parts[1].startsWith("option")){
             parts[1]=  blank(parts[1]) ;
             if(parts[1].equals("option")){
                 return OPTION;
@@ -324,23 +335,25 @@ public class MenuInput {
         if(Character.isWhitespace(now.charAt((0)))){
             String[] parts = now.split(" ");
 
-            if(parts.length != 2) {
+            //앞의 공백까지 포함해서 parts에 "", 특수규칙, on/off 형식으로 들어감. 추후 함수 수정 예정
+
+            if(parts.length != 3) {
                 throw new InputMismatchException();
             }
-            parts[0] = blank(parts[0]);
             parts[1] = blank(parts[1]);
+            parts[2] = blank(parts[2]);
             boolean isRuleValid = true;
             boolean isOnValid = true;
 
             // check special rule str
-            if(parts[0].startsWith("enpassant")){ toggleNum = 0; }
-            else if(parts[0].startsWith("castling")){ toggleNum = 1; }
-            else if(parts[0].startsWith("promotion")){ toggleNum = 2; }
+            if(parts[1].startsWith("enpassant")){ toggleNum = 0; }
+            else if(parts[1].startsWith("castling")){ toggleNum = 1; }
+            else if(parts[1].startsWith("promotion")){ toggleNum = 2; }
             else isRuleValid = false;
 
             // check on/off str
-            if(parts[1].startsWith("on")){toggleOn = true; }
-            else if (parts[1].startsWith("off")){ toggleOn = false; }
+            if(parts[2].startsWith("on")){toggleOn = true; }
+            else if (parts[2].startsWith("off")){ toggleOn = false; }
             else isOnValid = false;
 
             if(isRuleValid && isOnValid){
