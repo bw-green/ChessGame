@@ -115,15 +115,18 @@ public class GameManager {
                     Checker checker = new Checker(playerTurn);
                     boolean isCheck = checker.isCheck(board);
                     if(isCheck){
-                        if(playerTurn == PieceColor.BLACK){
-                            System.out.println(PrintTemplate.BOLDLINE);
-                            System.out.println(PrintTemplate.CHECK_BLACK);
-                            System.out.println(PrintTemplate.BOLDLINE);
-                        }else{
-                            System.out.println(PrintTemplate.BOLDLINE);
-                            System.out.println(PrintTemplate.CHECK_WHITE);
-                            System.out.println(PrintTemplate.BOLDLINE);
+                        if(!(board instanceof ThreeCheckBoard)){
+                            if(playerTurn == PieceColor.BLACK){
+                                System.out.println(PrintTemplate.BOLDLINE);
+                                System.out.println(PrintTemplate.CHECK_BLACK);
+                                System.out.println(PrintTemplate.BOLDLINE);
+                            }else{
+                                System.out.println(PrintTemplate.BOLDLINE);
+                                System.out.println(PrintTemplate.CHECK_WHITE);
+                                System.out.println(PrintTemplate.BOLDLINE);
+                            }
                         }
+
                     }
                     isSaved = false;
                     isGamePrint = true;
@@ -157,7 +160,7 @@ public class GameManager {
         }
 
         if(!isEnd && pieceColor != board.getCurrentTurn()){
-            if(gameEnd.isCheckMate(board)){
+            if(gameEnd.isStaleMate(board)){
                 if(board instanceof Chaturanga){
                     System.out.println(PrintTemplate.BOLDLINE);
                     if(board.getCurrentTurn() == PieceColor.WHITE){
@@ -182,25 +185,23 @@ public class GameManager {
         }
 
         if(!isEnd && board instanceof ThreeCheckBoard){
-            Checker checker = new Checker(board.getCurrentTurn());
+            Checker checker = new Checker(pieceColor);
             if(checker.isCheck(board)){
                 ThreeCheckBoard tempBoard = (ThreeCheckBoard) board;
                 if(pieceColor == PieceColor.WHITE){
-                    tempBoard.ThreeCheckB++;
-                }else{
                     tempBoard.ThreeCheckW++;
-                }
-
-                if(tempBoard.ThreeCheckB >= 3){
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    System.out.println(PrintTemplate.THREE_CHECK_BLACK);
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    isEnd = true;
-                }else if(tempBoard.ThreeCheckW >= 3){
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    System.out.println(PrintTemplate.THREE_CHECK_WHITE);
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    isEnd = true;
+                    if(tempBoard.ThreeCheckW < 3){
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        System.out.println(PrintTemplate.CHECK_WHITE + PrintTemplate.COUNT.formatMessage(tempBoard.ThreeCheckW));
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }else{
+                    tempBoard.ThreeCheckB++;
+                    if(tempBoard.ThreeCheckB < 3){
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        System.out.println(PrintTemplate.CHECK_BLACK + PrintTemplate.COUNT.formatMessage(tempBoard.ThreeCheckB));
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
                 }
             }
         }
@@ -295,8 +296,8 @@ public class GameManager {
                 int num = MenuInput.number;
                 switch(num){
                     case 1 -> board = new Board(canEnpassant, canCastling, canPromotion, true);
-                    case 2 -> board = new Chaturanga(false, false, true, true);
-                    case 3 -> board = new ThreeCheckBoard(true, true, true, true);
+                    case 2 -> board = new ThreeCheckBoard(true, true, true, true);
+                    case 3 -> board = new Chaturanga(false, false, true, true);
                     case 4 -> board = new PawnGameBoard(true);
                 }
 
