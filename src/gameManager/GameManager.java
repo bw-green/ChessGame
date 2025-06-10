@@ -200,6 +200,7 @@ public class GameManager {
                         System.out.println(PrintTemplate.BOLDLINE);
                     }
                 }
+            }
         }
 
         if(isEnd){

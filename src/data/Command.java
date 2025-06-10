@@ -40,11 +40,11 @@ public enum Command {
             "             Enable or disable the received special rule.\n" +
             "/option | show the special rule state applying to next basic chess game.\n" +
             "-------------------------------------------------- \n" +
-            "A collection of commands for quick execution.\n"),
+            "A collection of commands for quick execution."),
     HELP2("In 3 Check Chess, \n" +
             "you win if you check your opponent's king three times or deliver checkmate,\n" +
             "stalemate is possible, and insufficient material only applies \n" +
-            "when there are two kings left.\n"),
+            "when there are two kings left."),
     HELP3("A Pawn(F,f), if white, can move +1 rank, and if black, can move -1 rank.\n" +
             "If a pawn is located on rank 1 or rank 8, it must be promoted, and it becomes a Mantri.\n" +
             "\n" +
@@ -53,13 +53,13 @@ public enum Command {
             "\n" +
             "A Gaja(G,g)is only allowed to move two squares diagonally — \n" +
             "upper-right, lower-right, upper-left, or lower-left.\n" +
-            "It can move even if there is a piece in between.\n"),
+            "It can move even if there is a piece in between."),
     HELP4("The Pawn Game is a variant of standard chess in which all pieces\n" +
             "except pawns and kings are removed, so each player has only eight pawns and one king. \n" +
             "\n" +
             "In the current implementation of the Pawn Game,\n" +
             "special movement rules such as “Knockback” and\n" +
-            "a random pawn placement at the start of the game have also been added.\n"),
+            "a random pawn placement at the start of the game have also been added."),
 
 
     //savefile : 지울 예정

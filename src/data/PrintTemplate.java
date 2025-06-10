@@ -48,7 +48,8 @@ public enum PrintTemplate {
     END_WHITE_STALEMATE("StaleMate! No legal moves available. WHITE wins.\n" +
             "The game has ended. Returning to the main menu."),
     END_BLACK_STALEMATE("StaleMate! No legal moves available. BLACK wins.\n" +
-            "The game has ended. Returning to the main menu.");
+            "The game has ended. Returning to the main menu."),
+    COUNT(" (Count : %d)");
 
 
     private final String printTmp;
@@ -59,6 +60,20 @@ public enum PrintTemplate {
 
     @Override
     public String toString() {
+        return printTmp;
+    }
+
+    public String formatMessage(Object... args){
+        return printTmp;
+    }
+
+    public String formatMessage(int arg){
+        if(this == COUNT) {
+            if (arg >= 1 && arg <= 2)
+                return String.format(printTmp, arg);
+            else
+                throw new NumberFormatException("slot index out of bounds");
+        }
         return printTmp;
     }
 }
