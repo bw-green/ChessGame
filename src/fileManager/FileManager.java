@@ -393,7 +393,7 @@ public class FileManager {
 
     public void loadFileNames() {
         USER_DIR = SAVE_DIR + "/User_" + USER_ID;
-        System.out.println(USER_DIR);
+        //System.out.println(USER_DIR);
         if (!new File(USER_DIR).exists()) {
             ensureDirectoryByID();
         }
