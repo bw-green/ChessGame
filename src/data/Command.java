@@ -17,7 +17,7 @@ public enum Command {
 
     // help
     HELP1("/help <1~4>  | /help 1 : show the guide for commands\n" +
-            "                       /help <2~4> : show the guide for Chess Variant.\n" +
+            "               /help <2~4> : show the guide for Chess Variant.\n" +
             "                        each number points to [Three Check/Chaturanga/Pawn Game].\n" +
             "/register | make a new account for this program. \n" +
             "/login | login with an existing account.\n" +

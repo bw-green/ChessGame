@@ -70,7 +70,9 @@ public class MenuInput {
                 continue;
             }
 
-            input = blank(input);
+            System.out.println(input + " << input");
+
+//            input = blank(input); 앞에 있는 공백 있어도 에러
 
             // escape
             if(input.length() == 1 && input.charAt(0) == '0'){
@@ -93,6 +95,19 @@ public class MenuInput {
                 System.out.println(PrintTemplate.BOLDLINE);
                 continue;
             }
+
+            boolean flag = false;
+            for(Character ch : input.toCharArray()){
+                flag = (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z') ||  (ch >= 'A' && ch <= 'Z');
+                if(!flag){
+                    System.out.println(1);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(CommandError.ACC_INVALID_INPUT);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    break;
+                }
+            }
+            if(!flag){ continue; }
 
             //skipped each character is alphabet or number
             if(idInput){
