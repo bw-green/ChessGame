@@ -249,7 +249,7 @@ public class SaveIntegrityChecker {
      * false - 필수 key 누락 시
      */
     private boolean checkAllowedKeySet(Set<String> keys) {
-        Set<String> validKeys = Set.of("id", "save_name", "game_type", "castling", "promotion", "enpassant", "threeCheckW", "threeCheckB");
+        Set<String> validKeys = Set.of("id", "save_name", "game_type", "castling", "promotion", "enpassant", "ThreeCheckW", "ThreeCheckB");
         return keys.containsAll(validKeys);
     }
 
@@ -283,8 +283,8 @@ public class SaveIntegrityChecker {
             case "promotion":
             case "enpassant":
                 return value.equals("0") || value.equals("1");
-            case "threeCheckW":
-            case "threeCheckB":
+            case "ThreeCheckW":
+            case "ThreeCheckB":
                 try {
                     int v = Integer.parseInt(value);
                     return v >= -1 && v <= 2;
@@ -502,7 +502,7 @@ public class SaveIntegrityChecker {
         Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf"));
 
         // 특수좌표 줄 처리 (lines[boardIdx + 1] ~ lines[boardStartIdx - 1])
-        for (int i = boardIdx + 1; i < boardStartIdx; i++) {
+        for (int i = boardIdx + 2; i < boardStartIdx; i++) {
             String line = lines.get(i).trim();
             if (line.isEmpty()) continue;
 
@@ -527,8 +527,8 @@ public class SaveIntegrityChecker {
 
             // 좌표 파싱
             try {
-                col = Integer.parseInt(tokens[1]);
-                row = Integer.parseInt(tokens[2]);
+                row = Integer.parseInt(tokens[1]);
+                col = Integer.parseInt(tokens[2]);
             } catch (NumberFormatException e) {
                 errorList.add("Invalid coordinate value at line " + (i + 1) + ": " + line);
                 valid = false;
@@ -651,6 +651,7 @@ public class SaveIntegrityChecker {
         if (!checkThreeCheckSettings()) success = false;
         if (!checkPieceCoordinates()) success = false;
 
+        //0,2,7 에서 0값 출력
         // board 객체를 못 만들 수도 있으므로 success == true인 경우에만 보드 초기화
         if (success) {
             int gameType;

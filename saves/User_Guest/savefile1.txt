@@ -1,0 +1,35 @@
+id:Guest,
+save_name:XPDB4p1gpa,
+game_type:1,
+castling:1,
+promotion:1,
+enpassant:1,
+ThreeCheckW:-1,
+ThreeCheckB:-1,
+board:
+black
+pf 1 0
+pf 1 1
+pf 1 2
+pf 1 3
+pf 1 4
+pf 1 5
+pf 1 6
+pf 1 7
+P 4 4
+Pf 4 4
+Pf 6 0
+Pf 6 1
+Pf 6 2
+Pf 6 3
+Pf 6 5
+Pf 6 6
+Pf 6 7
+r n b q k b n r 
+p p p p p p p p 
+. . . . . . . . 
+. . . . . . . . 
+. . . . P . . . 
+. . . . . . . . 
+P P P P . P P P 
+R N B Q K B N R 

@@ -106,37 +106,51 @@ public class FileManager {
         //if(board instanceof PawnGame) gameType = 4;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write(USER_ID); //1. ID
+
+            writer.write("id:"); //ID 저장
+            writer.write(USER_ID+ ","); //1. ID
             writer.newLine();
 
-            writer.write(saveName); //2. 세이브파일이름
+            writer.write("save_name:"); //세이브파일 이름 저장
+            writer.write(saveName+ ","); //2. 세이브파일이름
             writer.newLine();
 
-            writer.write(gameType); //3. 게임유형
+            writer.write("game_type:"); //게임유형 저장
+            writer.write(gameType+ ","); //3. 게임유형
             writer.newLine();
 
-            writer.write(board.canCastling ? 1:0); //4. 캐슬링
+            writer.write("castling:"); //캐슬링 저장
+            writer.write(board.canCastling ? "1":"0");//4. 캐슬링
+            writer.write(",");
             writer.newLine();
 
-            writer.write(board.canPromotion ? 1:0); //5. 프로모션
+            writer.write("promotion:"); //프로모션 저장
+            writer.write(board.canPromotion ?"1":"0"); //5. 프로모션
+            writer.write(",");
             writer.newLine();
 
-            writer.write(board.canEnpassant ? 1:0); //6. 앙파상
+            writer.write("enpassant:"); //앙파상 저장
+            writer.write(board.canEnpassant ? "1":"0"); //6. 앙파상
+            writer.write(",");
             writer.newLine();
 
+            writer.write("ThreeCheckW:"); //쓰리체크 W 저장
             if(board instanceof ThreeCheckBoard threeCheckBoard)
                 writer.write(threeCheckBoard.ThreeCheckW); //7. 쓰리체크 W
             else {writer.write("-1");} //7. 쓰리체크 W
+            writer.write(",");
             writer.newLine();
 
+            writer.write("ThreeCheckB:"); //쓰리체크 B 저장
             if(board instanceof ThreeCheckBoard threeCheckBoard)
                 writer.write(threeCheckBoard.ThreeCheckB); //8. 쓰리체크 B
             else {writer.write("-1");} //8. 쓰리체크 B
+            writer.write(",");
             writer.newLine();
 
             writer.write("board:"); //9. 보드 구분 쓰기
             writer.newLine();
-            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "WHITE" : "BLACK"); // 10. 턴 정보
+            writer.write(board.getCurrentTurn() == PieceColor.WHITE ? "white" : "black"); // 10. 턴 정보
             writer.newLine();
 
             // 여기서 특수 룰 상태 저장 시작
@@ -209,8 +223,8 @@ public class FileManager {
 
     // 세이브 파일 불러오기
     public Board loadSavedFile(int slot) {
-        if (slot < 1 || slot > MAX_SAVES ) return null;
-        if(filename.get(slot-1).equals(deFault)) return null;
+        if (slot < 1 || slot > MAX_SAVES) return null;
+        if (filename.get(slot - 1).equals(deFault)) return null;
         String filePath = getFilePath(slot);
 
         List<String> checkList = new ArrayList<>();
@@ -218,13 +232,23 @@ public class FileManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                checkList.add(line);
+                String trimmed = line.trim();
+
+                // 빈 줄 또는 제어문자만 있는 줄은 무시
+                if (trimmed.isEmpty() || !containsPrintableChar(trimmed)) continue;
+
+                checkList.add(trimmed);
             }
         } catch (IOException e) {
-            e.printStackTrace(); // 또는 로깅/예외 처리
+            e.printStackTrace(); // 또는 로깅 처리
         }
         SaveIntegrityChecker check = new SaveIntegrityChecker(checkList);
-        return check.validateFile();
+        Board board = check.validateFile();
+        List<String> errorList = check.getErrors();
+        for(String error : errorList){
+            System.out.println(error);
+        }
+        return board;
     }
 
 
@@ -379,9 +403,18 @@ public class FileManager {
             }
 
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String saveName = reader.readLine();// 첫 줄
-                if (saveName != null && saveName.length() == 10) {
-                    filename.set(i - 1, saveName);
+                reader.readLine(); //id 부분 생략
+                String saveLine = reader.readLine(); // 예: save_name:1MK73CeLcS,
+                if (saveLine != null) {
+                    int colonIndex = saveLine.indexOf(':');
+                    int commaIndex = saveLine.indexOf(',');
+
+                    if (colonIndex != -1 && commaIndex != -1 && commaIndex > colonIndex) {
+                        String saveName = saveLine.substring(colonIndex + 1, commaIndex); // 콜론 다음~콤마 이전
+                        if (saveName.length() == 10) {
+                            filename.set(i - 1, saveName);
+                        }
+                    }
                 }
             } catch (IOException e) {
                 //System.out.println(FileError.DEBUG_ERROR_LOAD_FN); //디버깅용
@@ -411,4 +444,14 @@ public class FileManager {
 
     //중복 문자열 함수 처리
     private String getFilePath(int slot) {return USER_DIR + "/savefile" + slot + ".txt";}
+
+    //제어문자 및 null값 세이브파일에 입력된거 인식
+    private boolean containsPrintableChar(String s) {
+        for (char c : s.toCharArray()) {
+            if (!Character.isISOControl(c)) return true;
+        }
+        return false;
+    }
 }
+
+
