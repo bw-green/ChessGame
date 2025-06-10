@@ -293,8 +293,8 @@ public class GameManager {
                 int num = MenuInput.number;
                 switch(num){
                     case 1 -> board = new Board(canEnpassant, canCastling, canPromotion, true);
-                    case 2 -> board = new Chaturanga(false, false, true, true);
-                    case 3 -> board = new ThreeCheckBoard(true, true, true, true);
+                    case 2 -> board = new ThreeCheckBoard(true, true, true, true);
+                    case 3 -> board = new Chaturanga(false, false, true, true);
                     case 4 -> board = new PawnGameBoard(true);
                 }
 
