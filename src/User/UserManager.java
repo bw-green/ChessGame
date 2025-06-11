@@ -23,6 +23,6 @@ public class UserManager {
     public boolean registerUser(String id, String pw) {
         if (users.containsKey(id)) return false;
         users.put(id, new User(id, pw));
-        return fileManager.saveUserList(users);
+        return fileManager.saveUserList(id, pw);
     }
 }
