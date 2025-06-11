@@ -726,4 +726,42 @@ public class SaveIntegrityChecker {
         // 최종 반환
         return success ? board : null;
     }
+
+
+    /**
+     * 테스트 케이스를 위한 메서드
+     */
+    // 테스트용 public wrapper 메서드들 추가
+    public boolean testCheckKeyValueBlock() {
+        return checkKeyValueBlock();
+    }
+
+    public boolean testCheckBoardLines(int start) {
+        return checkBoardLines(start);
+    }
+
+    public boolean testCheckPieceSymbols() {
+        return checkPieceSymbols();
+    }
+
+    public boolean testCheckKingCount() {
+        return checkKingCount();
+    }
+
+    public boolean testCheckRuleFlags() {
+        return checkRuleFlags();
+    }
+
+    public boolean testCheckThreeCheckSettings() {
+        return checkThreeCheckSettings();
+    }
+
+    public boolean testCheckPieceCoordinates() {
+        return checkPieceCoordinates();
+    }
+
+    // GameEnd는 Board가 필요하므로 파라미터로 넘김
+    public boolean testCheckGameEnd(Board board) {
+        return checkGameEnd(board);
+    }
 }
