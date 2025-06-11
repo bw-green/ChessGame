@@ -203,6 +203,17 @@ public class GameManager {
                         System.out.println(PrintTemplate.BOLDLINE);
                     }
                 }
+                if(tempBoard.ThreeCheckB >= 3){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.THREE_CHECK_WHITE);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    isEnd = true;
+                }else if(tempBoard.ThreeCheckW >= 3){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.THREE_CHECK_BLACK);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    isEnd = true;
+                }
             }
         }
 
