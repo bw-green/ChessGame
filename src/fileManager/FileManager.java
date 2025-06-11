@@ -3,6 +3,7 @@ package fileManager;
 import User.User;
 import board.Board;
 import board.Chaturanga;
+import board.PawnGameBoard;
 import board.ThreeCheckBoard;
 import data.PieceColor;
 //import data.FileError;
@@ -103,7 +104,7 @@ public class FileManager {
 
         if(board instanceof ThreeCheckBoard) gameType = 2;
         if(board instanceof Chaturanga) gameType = 3;
-        //if(board instanceof PawnGame) gameType = 4;
+        if(board instanceof PawnGameBoard) gameType = 4;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
 
@@ -136,14 +137,14 @@ public class FileManager {
 
             writer.write("ThreeCheckW:"); //쓰리체크 W 저장
             if(board instanceof ThreeCheckBoard threeCheckBoard)
-                writer.write(threeCheckBoard.ThreeCheckW); //7. 쓰리체크 W
+                writer.write(String.valueOf(threeCheckBoard.ThreeCheckW)); //7. 쓰리체크 W
             else {writer.write("-1");} //7. 쓰리체크 W
             writer.write(",");
             writer.newLine();
 
             writer.write("ThreeCheckB:"); //쓰리체크 B 저장
             if(board instanceof ThreeCheckBoard threeCheckBoard)
-                writer.write(threeCheckBoard.ThreeCheckB); //8. 쓰리체크 B
+                writer.write(String.valueOf(threeCheckBoard.ThreeCheckB)); //8. 쓰리체크 B
             else {writer.write("-1");} //8. 쓰리체크 B
             writer.write(",");
             writer.newLine();
@@ -165,15 +166,16 @@ public class FileManager {
                             writer.write(pawn.getSymbol() + " " + row + " " + col);
                             writer.newLine();
                         }
-                        if (!pawn.isMoved) {
+                        if (pawn.isMoved) { //움직인 Pawn을 저장
                             writer.write(pawn.getSymbol() + "f " + row + " " + col); //f을 붙여줘서 일반 Pawn과 구분
                             writer.newLine();
                         }
                     }
 
+                    // Z z
                     // Pawn2 첫 움직임 체크(폰게임 전문)
                     else if (piece instanceof Pawn2 pawn2) {
-                        if (!pawn2.isMoved) {
+                        if (pawn2.isMoved) { //움직인 Pawn2(Z)를 저장
                             writer.write(pawn2.getSymbol() + " " + row + " " + col); //z로 저장됨.
                             writer.newLine();
                         }
