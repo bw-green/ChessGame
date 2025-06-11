@@ -449,7 +449,7 @@ public class SaveIntegrityChecker {
     /**
      * checkThreeCheckSettings
      * <p>
-     * - threeCheckW, threeCheckB 항목의 값이 정수이고, -1 이상 2 이하인지 검사합니다.
+     * - ThreeCheckW, ThreeCheckB 항목의 값이 정수이고, -1 이상 2 이하인지 검사합니다.
      * - gameType이 2(쓰리체크)가 아닌데 값이 -1이 아닌 경우에 오류로 간주합니다.
      * - gameType이 2(쓰리체크)일 때 값이 0 이상 2 이하 값이 아닌 경우에도 오류로 간주합니다.
      * - Integer.parseInt() 시 NumberFormatException 발생 시 false 반환합니다.
@@ -457,7 +457,7 @@ public class SaveIntegrityChecker {
     private boolean checkThreeCheckSettings() {
         boolean valid = true;
 
-        String[] keys = {"threeCheckW", "threeCheckB"};
+        String[] keys = {"ThreeCheckW", "ThreeCheckB"};
         int gameType = Integer.parseInt(kvMap.get("game_type"));
 
         for (String key : keys) {
@@ -525,8 +525,9 @@ public class SaveIntegrityChecker {
         // 허용 기호
         Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf"));
 
-        // 특수좌표 줄 처리 (lines[boardIdx + 1] ~ lines[boardStartIdx - 1])
-        for (int i = boardIdx + 1; i < boardStartIdx; i++) {
+        // 특수 좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
+        // white, black 은 checkBoardLines() 에서 미리 검사
+        for (int i = boardIdx + 2; i < boardStartIdx; i++) {
             String line = lines.get(i).trim();
             if (line.isEmpty()) continue;
 
@@ -535,7 +536,6 @@ public class SaveIntegrityChecker {
             // 형식 검증
             if (tokens.length != 3) {
                 errorList.add("Line " + (i + 1) + ": Invalid coordinate line format");
-
                 valid = false;
                 continue;
             }

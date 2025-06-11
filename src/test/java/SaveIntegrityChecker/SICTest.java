@@ -15,16 +15,15 @@ public class SICTest {
     public void testValidSaveFile() {
         List<String> lines = List.of(
                 "id: test123",
-                "save_name: save1",
+                "save_name: save123456",
                 "game_type: 1",
                 "castling: 1",
                 "promotion: 1",
                 "enpassant: 0",
-                "threeCheckW: -1",
-                "threeCheckB: -1",
+                "ThreeCheckW: -1",
+                "ThreeCheckB: -1",
                 "board:",
                 "white",
-                // 특수좌표 없음
                 "r n b q k b n r",
                 "p p p p p p p p",
                 ". . . . . . . .",
@@ -37,7 +36,9 @@ public class SICTest {
 
         SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
         Board board = checker.validateFile();
-
+        for (String error : checker.getErrors()) {
+            System.out.println(error);
+        }
         assertNotNull(board, "Board should be created for a valid save file.");
         assertTrue(checker.getErrors().isEmpty(), "No errors should be reported for a valid save file.");
     }
