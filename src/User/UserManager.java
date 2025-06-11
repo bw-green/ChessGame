@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserManager {
-    private Map<String,User> users = new HashMap<>();
+    private final Map<String,User> users;
     private final FileManager fileManager;
 
     public UserManager(FileManager fileManager) {
