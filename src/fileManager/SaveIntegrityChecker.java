@@ -619,19 +619,19 @@ public class SaveIntegrityChecker {
 
         // 검사 1: CheckMate
         if (gameEnd.isCheckMate(board)) {
-            errorList.add("GameEnd: CheckMate detected.");
+            errorList.add("Invalild game state: CheckMate detected.");
             valid = false;
         }
 
         // 검사 2: StaleMate
         if (gameEnd.isStaleMate(board)) {
-            errorList.add("GameEnd: StaleMate detected.");
+            errorList.add("Invalid game state: StaleMate detected.");
             valid = false;
         }
 
         // 검사 3: InsufficientPieces
         if (gameEnd.isInsufficientPieces(board)) {
-            errorList.add("GameEnd: Insufficient pieces detected.");
+            errorList.add("Invalid game state: Insufficient pieces detected.");
             valid = false;
         }
 
@@ -665,21 +665,25 @@ public class SaveIntegrityChecker {
                 gameType = -1;
             }
 
+            boolean canEnpassant = kvMap.get("enpassant").equals("1");
+            boolean canCastling = kvMap.get("castling").equals("1");
+            boolean canPromotion = kvMap.get("promotion").equals("1");
+
             switch (gameType) {
                 case 1:
-                    board = new Board();
+                    board = new Board(canEnpassant, canCastling, canPromotion);
                     board.setPieces(boardLines);
                     break;
                 case 2:
-                    board = new ThreeCheckBoard(true, true, true, true);
+                    board = new ThreeCheckBoard(canEnpassant, canCastling, canPromotion, false);
                     board.setPieces(boardLines);
                     break;
                 case 3:
-                    board = new Chaturanga(true, true, true, true);
+                    board = new Chaturanga(false, false, true, false);
                     board.setPieces(boardLines);
                     break;
                 case 4:
-                    board = new PawnGameBoard(true);
+                    board = new PawnGameBoard(false);
                     board.setPieces(boardLines);
                     break;
                 default:
