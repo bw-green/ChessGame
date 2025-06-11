@@ -32,26 +32,34 @@ public class SaveIntegrityChecker {
 
     /**
      * checkKeyValueBlock
-     * <p>
+     *
      * 저장된 lines 리스트에서 key-value 블록을 읽어 검사하는 함수.
      * key-value 블록은 "board:" 줄이 나오기 전까지의 줄로 구성됨.
-     * <p>
+     *
      * 주요 동작:
      * 1. 빈 줄은 건너뜀.
      * 2. "board:" 줄을 만나면 key-value 블록 종료.
      * 3. 각 줄에 대해 형식 검사(checkKeyValueFormat) 수행.
      * 4. key-value 쌍을 kvMap에 저장 (쉼표 제거).
-     * 5. 필수 key 집합 검사 (checkAllowedKeySet).
-     * 6. 각 key의 value 유효성 검사 (validateValueByKey).
-     * <p>
+     * 5. key 등장 순서가 올바른지 검사
+     * 6. 필수 key 집합 검사 (checkAllowedKeySet).
+     * 7. 각 key의 value 유효성 검사 (validateValueByKey).
+     *
      * 에러 발생 시 errorList에 메시지 추가 후 false 반환.
      *
      * @return true - 모든 검사가 통과된 경우
-     * false - 형식 오류, 누락 key, 유효하지 않은 value 발생 시
+     * false - 형식 오류, 순서 오류, 누락 key, 유효하지 않은 value 발생 시
      */
     private boolean checkKeyValueBlock() {
         boolean valid = true;
         kvMap = new HashMap<>(); // key-value 쌍 저장용
+
+        // 키 순서 고려
+        List<String> expectedOrder = List.of(
+                "id", "save_name", "game_type", "castling", "promotion", "enpassant", "ThreeCheckW", "ThreeCheckB"
+        );
+        List<String> actualOrder = new ArrayList<>();
+        List<Integer> actualOrderLineNums = new ArrayList<>(); // 실제 lines 줄 번호
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -78,6 +86,20 @@ public class SaveIntegrityChecker {
             String value = tokens[1].trim().replace(",", ""); // 쉼표 제거
 
             kvMap.put(key, value);
+            actualOrder.add(key);
+            actualOrderLineNums.add(i + 1);
+        }
+
+        // 순서 검사
+        for (int i = 0; i < actualOrder.size(); i++) {
+            int lineNum = actualOrderLineNums.get(i);
+            if (i >= expectedOrder.size()) {
+                errorList.add("Line " + lineNum + ": Invalid extra key - unexpected key '" + actualOrder.get(i) + "'");
+                valid = false;
+            } else if (!actualOrder.get(i).equals(expectedOrder.get(i))) {
+                errorList.add("Line " + lineNum + ": Invalid key order - expected '" + expectedOrder.get(i) + "', found '" + actualOrder.get(i) + "'");
+                valid = false;
+            }
         }
 
         // 필수 키가 모두 있는지 검사
@@ -94,7 +116,6 @@ public class SaveIntegrityChecker {
                 valid = false;
             }
         }
-
 
         return valid;
     }
@@ -251,7 +272,7 @@ public class SaveIntegrityChecker {
      * false - 필수 key 누락 시
      */
     private boolean checkAllowedKeySet(Set<String> keys) {
-        Set<String> validKeys = Set.of("id", "save_name", "game_type", "castling", "promotion", "enpassant", "threeCheckW", "threeCheckB");
+        Set<String> validKeys = Set.of("id", "save_name", "game_type", "castling", "promotion", "enpassant", "ThreeCheckW", "ThreeCheckB");
         return keys.containsAll(validKeys);
     }
 
@@ -265,7 +286,7 @@ public class SaveIntegrityChecker {
      * - "id", "save_name" : 영문자/숫자만 허용, 길이 1 이상
      * - "game_type"      : 1 ~ 4 중 하나
      * - "castling", "promotion", "enpassant" : "0" 또는 "1"
-     * - "threeCheckW", "threeCheckB" : 정수 -1 ~ 2 범위 내 값
+     * - "ThreeCheckW", "ThreeCheckB" : 정수 -1 ~ 2 범위 내 값
      * <p>
      * 유효하지 않은 key가 들어오는 경우 false 반환.
      *
@@ -277,16 +298,17 @@ public class SaveIntegrityChecker {
     private boolean validateValueByKey(String key, String value) {
         switch (key) {
             case "id":
+                return value.matches("[a-zA-Z0-9]+") && value.length() >= 2 && value.length() <= 9;
             case "save_name":
-                return value.matches("[a-zA-Z0-9]+") && value.length() >= 1;
+                return value.matches("[a-zA-Z0-9]+") && value.length() == 10;
             case "game_type":
                 return value.matches("[1-4]");
             case "castling":
             case "promotion":
             case "enpassant":
                 return value.equals("0") || value.equals("1");
-            case "threeCheckW":
-            case "threeCheckB":
+            case "ThreeCheckW":
+            case "ThreeCheckB":
                 try {
                     int v = Integer.parseInt(value);
                     return v >= -1 && v <= 2;
@@ -428,8 +450,8 @@ public class SaveIntegrityChecker {
      * checkThreeCheckSettings
      * <p>
      * - threeCheckW, threeCheckB 항목의 값이 정수이고, -1 이상 2 이하인지 검사합니다.
-     * - gameType이 3(쓰리체크)가 아닌데 값이 -1이 아닌 경우에 오류로 간주합니다.
-     * - gameType이 3(쓰리체크)일 때 값이 0 이상 2 이하 값이 아닌 경우에도 오류로 간주합니다.
+     * - gameType이 2(쓰리체크)가 아닌데 값이 -1이 아닌 경우에 오류로 간주합니다.
+     * - gameType이 2(쓰리체크)일 때 값이 0 이상 2 이하 값이 아닌 경우에도 오류로 간주합니다.
      * - Integer.parseInt() 시 NumberFormatException 발생 시 false 반환합니다.
      */
     private boolean checkThreeCheckSettings() {
@@ -452,7 +474,7 @@ public class SaveIntegrityChecker {
                 }
 
                 // 검사 조건
-                if (gameType == 3) {
+                if (gameType == 2) {
                     // 쓰리체크인 경우: 값은 0 이상 2 이하
                     if (value < 0 || value > 2) {
                         errorList.add("Invalid value for " + key + " in ThreeCheck game: " + value);
