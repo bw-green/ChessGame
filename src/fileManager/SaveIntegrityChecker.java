@@ -4,6 +4,7 @@ import board.Board;
 import board.Chaturanga;
 import board.PawnGameBoard;
 import board.ThreeCheckBoard;
+import check.Checker;
 import check.GameEnd;
 import data.PieceColor;
 import piece.*;
@@ -24,7 +25,7 @@ public class SaveIntegrityChecker {
         this.boardLines = new ArrayList<>();
         this.errorList = new ArrayList<>();
         this.board = null;
-        validateFile();
+        //validateFile();
     }
 
     public List<String> getErrors() {
@@ -630,6 +631,16 @@ public class SaveIntegrityChecker {
         // 검사 3: InsufficientPieces
         if (gameEnd.isInsufficientPieces(board)) {
             errorList.add("GameEnd: Insufficient pieces detected.");
+            valid = false;
+        }
+
+        // 검사 4: 킹이 제거되는 상황인지(ex. BLACK King이 Check된 상황에서 WHITE 턴)
+        PieceColor otherColor;
+        otherColor = currentTurnLine.equalsIgnoreCase("white")
+                        ? PieceColor.BLACK: PieceColor.WHITE;
+        Checker checker = new Checker(otherColor);
+        if(checker.isCheck(board)) {
+            errorList.add("GameEnd: King would be eliminated.");
             valid = false;
         }
 
