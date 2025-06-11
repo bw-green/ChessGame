@@ -242,7 +242,7 @@ public class FileManager {
                 checkList.add(trimmed);
             }
         } catch (IOException e) {
-            e.printStackTrace(); // 또는 로깅 처리
+            //e.printStackTrace(); // 또는 로깅 처리
         }
         SaveIntegrityChecker check = new SaveIntegrityChecker(checkList);
         Board board = check.validateFile();
