@@ -547,7 +547,7 @@ public class SaveIntegrityChecker {
             String[] tokensInRow = boardLines.get(row).split("\\s+");
             String pieceSymbol = tokensInRow[col];
 
-            // Pf/pf와 Z/z는 P/p로 변환 후 비교
+            // Pf/pf는 P/p로 변환 후 비교
             String expectedSymbol = symbol;
             if (symbol.equals("Pf")) expectedSymbol = "P";
             if (symbol.equals("pf")) expectedSymbol = "p";
