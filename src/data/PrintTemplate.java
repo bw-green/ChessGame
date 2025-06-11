@@ -43,7 +43,7 @@ public enum PrintTemplate {
             "The game ends in a draw. Returning to the main menu."),
     THREE_CHECK_BLACK("BLACK has achieved three checks! BLACK wins. The game has ended.\n" +
             "Returning to the main menu."),
-    THREE_CHECK_WHITE("WHITE has achieved three checks! BLACK wins. The game has ended.\n" +
+    THREE_CHECK_WHITE("WHITE has achieved three checks! WHITE wins. The game has ended.\n" +
             "Returning to the main menu."),
     END_WHITE_STALEMATE("StaleMate! No legal moves available. WHITE wins.\n" +
             "The game has ended. Returning to the main menu."),
