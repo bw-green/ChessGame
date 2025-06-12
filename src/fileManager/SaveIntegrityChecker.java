@@ -4,8 +4,10 @@ import board.Board;
 import board.Chaturanga;
 import board.PawnGameBoard;
 import board.ThreeCheckBoard;
+import check.Checker;
 import check.GameEnd;
 import data.PieceColor;
+import piece.*;
 
 import java.util.*;
 import java.util.List;
@@ -23,7 +25,7 @@ public class SaveIntegrityChecker {
         this.boardLines = new ArrayList<>();
         this.errorList = new ArrayList<>();
         this.board = null;
-        validateFile();
+        //validateFile();
     }
 
     public List<String> getErrors() {
@@ -676,8 +678,7 @@ public class SaveIntegrityChecker {
                     board.setPieces(boardLines);
                     break;
                 case 4:
-                    board = new PawnGameBoard(true);
-//                  board = new PawnGameBoard(true,true,true,true);
+                    board = new PawnGameBoard(false);
                     board.setPieces(boardLines);
                     break;
                 default:

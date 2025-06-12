@@ -2,6 +2,8 @@ package check;
 
 import board.Cell;
 import board.Board;
+import board.ThreeCheckBoard;
+import board.Chaturanga;
 import data.PieceColor;
 
 public class GameEnd {
@@ -72,6 +74,9 @@ public class GameEnd {
                 count++;
 
             }
+        }
+        if(board instanceof ThreeCheckBoard || board instanceof Chaturanga) {
+            return count == 2;
         }
 
         if(count == 4){

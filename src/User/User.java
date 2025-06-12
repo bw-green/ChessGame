@@ -15,8 +15,4 @@ public class User {
     public boolean matchPw(String pw) {
         return this.pw.equals(pw);
     }
-
-    public String getPw() {
-        return pw;
-    }
 }
