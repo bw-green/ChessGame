@@ -705,10 +705,6 @@ public class SaveIntegrityChecker {
             canCastling = kvMap.get("castling").equalsIgnoreCase("1");
             canPromotion = kvMap.get("promotion").equalsIgnoreCase("1");
 
-            boolean canEnpassant = kvMap.get("enpassant").equals("1");
-            boolean canCastling = kvMap.get("castling").equals("1");
-            boolean canPromotion = kvMap.get("promotion").equals("1");
-
             switch (gameType) {
                 case 1:
                     board = new Board(canEnpassant, canCastling, canPromotion);
@@ -716,6 +712,8 @@ public class SaveIntegrityChecker {
                     break;
                 case 2:
                     board = new ThreeCheckBoard(canEnpassant,canCastling,canPromotion,false);
+                    ThreeCheckBoard thcBoard = (ThreeCheckBoard) board;
+                    //thcBoard.setPieces(boardLines);
                     board.setPieces(boardLines);
                     thcBoard.ThreeCheckW = Integer.parseInt(kvMap.get("ThreeCheckW"));
                     thcBoard.ThreeCheckB = Integer.parseInt(kvMap.get("ThreeCheckB"));
@@ -787,7 +785,6 @@ public class SaveIntegrityChecker {
             // 최종 반환
             return success ? board : null;
         }
-    }
 
     /**
      * 테스트 케이스를 위한 메서드
