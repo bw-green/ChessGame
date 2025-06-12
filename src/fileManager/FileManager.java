@@ -242,7 +242,7 @@ public class FileManager {
                 checkList.add(trimmed);
             }
         } catch (IOException e) {
-            e.printStackTrace(); // 또는 로깅 처리
+            //e.printStackTrace(); // 또는 로깅 처리
         }
         SaveIntegrityChecker check = new SaveIntegrityChecker(checkList);
         Board board = check.validateFile();
@@ -320,18 +320,18 @@ public class FileManager {
     }
 
     // 저장
-    public boolean saveUserList(Map<String, User> users) {
+    public boolean saveUserList(String id, String pw) {
+        ensureSaveDirectory();
 
-        if (!new File(SAVE_DIR).exists()) {
-            ensureSaveDirectory();
-        }
+        File file = new File(SAVE_DIR, "userlist.txt");
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_DIR + "/userlist.txt"))) {
-            for (Map.Entry<String, User> entry : users.entrySet()) {
-                User user = entry.getValue();
-                writer.write(user.getId() + "," + user.getPw() + ",");
+        try (BufferedWriter writer = new BufferedWriter(
+                new FileWriter(file,true))) {
+            if (file.length() > 0) {
                 writer.newLine();
             }
+            writer.write(id + "," + pw + ",");
+
             return true;
         } catch (IOException e) {
             // System.err.println(FileError.FAILED_TO_SAVE_USER);

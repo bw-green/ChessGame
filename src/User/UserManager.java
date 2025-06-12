@@ -2,11 +2,10 @@ package User;
 
 
 import fileManager.FileManager;
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserManager {
-    private Map<String,User> users = new HashMap<>();
+    private final Map<String,User> users;
     private final FileManager fileManager;
 
     public UserManager(FileManager fileManager) {
@@ -23,6 +22,6 @@ public class UserManager {
     public boolean registerUser(String id, String pw) {
         if (users.containsKey(id)) return false;
         users.put(id, new User(id, pw));
-        return fileManager.saveUserList(users);
+        return fileManager.saveUserList(id, pw);
     }
 }
