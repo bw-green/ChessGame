@@ -66,14 +66,13 @@ public class MenuInput {
             input = sc.nextLine();
 
             if(input.isEmpty()){
+                System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.ACC_INVALID_INPUT);
+                System.out.println(PrintTemplate.BOLDLINE);
                 continue;
             }
 
-            System.out.println(input + " << input");
-
-//            input = blank(input); 앞에 있는 공백 있어도 에러
-
+            input = input.trim().replaceAll("\\s+", " "); // 공백 처리
             // escape
             if(input.length() == 1 && input.charAt(0) == '0'){
                 return false;
@@ -100,7 +99,6 @@ public class MenuInput {
             for(Character ch : input.toCharArray()){
                 flag = (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'z') ||  (ch >= 'A' && ch <= 'Z');
                 if(!flag){
-                    System.out.println(1);
                     System.out.println(PrintTemplate.BOLDLINE);
                     System.out.println(CommandError.ACC_INVALID_INPUT);
                     System.out.println(PrintTemplate.BOLDLINE);

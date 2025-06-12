@@ -34,26 +34,34 @@ public class SaveIntegrityChecker {
 
     /**
      * checkKeyValueBlock
-     * <p>
+     *
      * 저장된 lines 리스트에서 key-value 블록을 읽어 검사하는 함수.
      * key-value 블록은 "board:" 줄이 나오기 전까지의 줄로 구성됨.
-     * <p>
+     *
      * 주요 동작:
      * 1. 빈 줄은 건너뜀.
      * 2. "board:" 줄을 만나면 key-value 블록 종료.
      * 3. 각 줄에 대해 형식 검사(checkKeyValueFormat) 수행.
      * 4. key-value 쌍을 kvMap에 저장 (쉼표 제거).
-     * 5. 필수 key 집합 검사 (checkAllowedKeySet).
-     * 6. 각 key의 value 유효성 검사 (validateValueByKey).
-     * <p>
+     * 5. key 등장 순서가 올바른지 검사
+     * 6. 필수 key 집합 검사 (checkAllowedKeySet).
+     * 7. 각 key의 value 유효성 검사 (validateValueByKey).
+     *
      * 에러 발생 시 errorList에 메시지 추가 후 false 반환.
      *
      * @return true - 모든 검사가 통과된 경우
-     * false - 형식 오류, 누락 key, 유효하지 않은 value 발생 시
+     * false - 형식 오류, 순서 오류, 누락 key, 유효하지 않은 value 발생 시
      */
     private boolean checkKeyValueBlock() {
         boolean valid = true;
         kvMap = new HashMap<>(); // key-value 쌍 저장용
+
+        // 키 순서 고려
+        List<String> expectedOrder = List.of(
+                "id", "save_name", "game_type", "castling", "promotion", "enpassant", "ThreeCheckW", "ThreeCheckB"
+        );
+        List<String> actualOrder = new ArrayList<>();
+        List<Integer> actualOrderLineNums = new ArrayList<>(); // 실제 lines 줄 번호
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -80,6 +88,20 @@ public class SaveIntegrityChecker {
             String value = tokens[1].trim().replace(",", ""); // 쉼표 제거
 
             kvMap.put(key, value);
+            actualOrder.add(key);
+            actualOrderLineNums.add(i + 1);
+        }
+
+        // 순서 검사
+        for (int i = 0; i < actualOrder.size(); i++) {
+            int lineNum = actualOrderLineNums.get(i);
+            if (i >= expectedOrder.size()) {
+                errorList.add("Line " + lineNum + ": Invalid extra key - unexpected key '" + actualOrder.get(i) + "'");
+                valid = false;
+            } else if (!actualOrder.get(i).equals(expectedOrder.get(i))) {
+                errorList.add("Line " + lineNum + ": Invalid key order - expected '" + expectedOrder.get(i) + "', found '" + actualOrder.get(i) + "'");
+                valid = false;
+            }
         }
 
         // 필수 키가 모두 있는지 검사
@@ -90,8 +112,9 @@ public class SaveIntegrityChecker {
 
         // 각 key의 value가 유효한지 검사
         for (String key : kvMap.keySet()) {
-            if (!validateValueByKey(key, kvMap.get(key))) {
-                errorList.add("Invalid value for key: " + key);
+            String value = kvMap.get(key);
+            if (!validateValueByKey(key, value)) {
+                errorList.add("Invalid value for " + key + ": " + value);
                 valid = false;
             }
         }
@@ -277,8 +300,9 @@ public class SaveIntegrityChecker {
     private boolean validateValueByKey(String key, String value) {
         switch (key) {
             case "id":
+                return value.matches("[a-zA-Z0-9]+") && value.length() >= 2 && value.length() <= 9;
             case "save_name":
-                return value.matches("[a-zA-Z0-9]+") && value.length() >= 1;
+                return value.matches("[a-zA-Z0-9]+") && value.length() == 10;
             case "game_type":
                 return value.matches("[1-4]");
             case "castling":
@@ -503,7 +527,10 @@ public class SaveIntegrityChecker {
         // 허용 기호
         Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf","Z","z"));
 
+        // 특수 좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
+        // white, black 은 checkBoardLines() 에서 미리 검사
         // 특수좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
+
         for (int i = boardIdx + 2; i < boardStartIdx; i++) {
             String line = lines.get(i).trim();
             if (line.isEmpty()) continue;
@@ -512,7 +539,7 @@ public class SaveIntegrityChecker {
 
             // 형식 검증
             if (tokens.length != 3) {
-                errorList.add("Invalid coordinate line format at line " + (i + 1) + ": " + line);
+                errorList.add("Line " + (i + 1) + ": Invalid coordinate line format");
                 valid = false;
                 continue;
             }
@@ -522,7 +549,7 @@ public class SaveIntegrityChecker {
 
             // 기호 검증
             if (!allowedSymbols.contains(symbol)) {
-                errorList.add("Invalid piece symbol in coordinates at line " + (i + 1) + ": " + symbol);
+                errorList.add("Line " + (i + 1) + ": Invalid piece symbol in coordinates");
                 valid = false;
                 continue;
             }
@@ -532,14 +559,14 @@ public class SaveIntegrityChecker {
                 row = Integer.parseInt(tokens[1]);
                 col = Integer.parseInt(tokens[2]);
             } catch (NumberFormatException e) {
-                errorList.add("Invalid coordinate value at line " + (i + 1) + ": " + line);
+                errorList.add("Line " + (i + 1) + ": Invalid coordinate value at line ");
                 valid = false;
                 continue;
             }
 
             // 좌표 범위 확인
             if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                errorList.add("Coordinate out of bounds at line " + (i + 1) + ": (" + col + ", " + row + ")");
+                errorList.add("Line " + (i + 1) + ": Coordinate out of bounds at line: (" + col + ", " + row + ")");
                 valid = false;
                 continue;
             }
@@ -555,14 +582,14 @@ public class SaveIntegrityChecker {
 
             // 빈 칸 처리 (기물 없음)
             if (pieceSymbol.equals(".")) {
-                errorList.add("Coordinate points to empty cell at (" + col + ", " + row + "), expected: " + symbol);
+                errorList.add("Line " + (i + 1) + ": Coordinate points to empty cell at (" + col + ", " + row + "), expected: " + symbol);
                 valid = false;
                 continue;
             }
 
             // 기물 불일치
             if (!pieceSymbol.equals(expectedSymbol)) {
-                errorList.add("Coordinate mismatch at (" + col + ", " + row + "): board has '" + pieceSymbol + "', expected '" + expectedSymbol + "'");
+                errorList.add("Line " + (i + 1) + ": Coordinate mismatch at (" + col + ", " + row + "): board has '" + pieceSymbol + "', expected '" + expectedSymbol + "'");
                 valid = false;
             }
         }
@@ -618,19 +645,19 @@ public class SaveIntegrityChecker {
 
         // 검사 1: CheckMate
         if (gameEnd.isCheckMate(board)) {
-            errorList.add("GameEnd: CheckMate detected.");
+            errorList.add("Invalild game state: CheckMate detected.");
             valid = false;
         }
 
         // 검사 2: StaleMate
         if (gameEnd.isStaleMate(board)) {
-            errorList.add("GameEnd: StaleMate detected.");
+            errorList.add("Invalid game state: StaleMate detected.");
             valid = false;
         }
 
         // 검사 3: InsufficientPieces
         if (gameEnd.isInsufficientPieces(board)) {
-            errorList.add("GameEnd: Insufficient pieces detected.");
+            errorList.add("Invalid game state: Insufficient pieces detected.");
             valid = false;
         }
 
@@ -680,7 +707,7 @@ public class SaveIntegrityChecker {
 
             switch (gameType) {
                 case 1:
-                    board = new Board(canEnpassant,canCastling,canPromotion,false); //재
+                    board = new Board(canEnpassant, canCastling, canPromotion);
                     board.setPieces(boardLines);
                     break;
                 case 2:
@@ -696,7 +723,7 @@ public class SaveIntegrityChecker {
                     board.setPieces(boardLines);
                     break;
                 case 4:
-                    board = new PawnGameBoard(false, false, true, true);
+                    board = new PawnGameBoard(canEnpassant, canCastling, canPromotion, true);
                     board.setPieces(boardLines);
                     break;
                 default:
@@ -758,4 +785,42 @@ public class SaveIntegrityChecker {
             // 최종 반환
             return success ? board : null;
         }
+
+    /**
+     * 테스트 케이스를 위한 메서드
+     */
+    // 테스트용 public wrapper 메서드들 추가
+    public boolean testCheckKeyValueBlock() {
+        return checkKeyValueBlock();
     }
+
+    public boolean testCheckBoardLines(int start) {
+        return checkBoardLines(start);
+    }
+
+    public boolean testCheckPieceSymbols() {
+        return checkPieceSymbols();
+    }
+
+    public boolean testCheckKingCount() {
+        return checkKingCount();
+    }
+
+    public boolean testCheckRuleFlags() {
+        return checkRuleFlags();
+    }
+
+    public boolean testCheckThreeCheckSettings() {
+        return checkThreeCheckSettings();
+    }
+
+    public boolean testCheckPieceCoordinates() {
+        return checkPieceCoordinates();
+    }
+
+    // GameEnd는 Board가 필요하므로 파라미터로 넘김
+    public boolean testCheckGameEnd(Board board) {
+        return checkGameEnd(board);
+    }
+}
+
