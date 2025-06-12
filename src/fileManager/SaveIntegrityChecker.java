@@ -4,8 +4,10 @@ import board.Board;
 import board.Chaturanga;
 import board.PawnGameBoard;
 import board.ThreeCheckBoard;
+import check.Checker;
 import check.GameEnd;
 import data.PieceColor;
+import piece.*;
 
 import java.util.*;
 import java.util.List;
@@ -23,7 +25,7 @@ public class SaveIntegrityChecker {
         this.boardLines = new ArrayList<>();
         this.errorList = new ArrayList<>();
         this.board = null;
-        validateFile();
+        //validateFile();
     }
 
     public List<String> getErrors() {
@@ -327,6 +329,7 @@ public class SaveIntegrityChecker {
      * - 보드 상에 허용된 기물 기호 외의 문자가 존재할 경우 false 반환 + 오류 메시지 추가.
      * - 게임 유형에 따라 허용되는 기물 기호 집합이 다름:
      * - 차투랑가 (gameType=3): K, M, G, N, R, F, k, m, g, n, r, f
+     * - 폰게임 (gameType=4): K, Q, R, B, N, Z, k, q, r, b, n, z
      * - 그 외 게임 유형 : K, Q, R, B, N, P, k, q, r, b, n, p
      */
     private boolean checkPieceSymbols() {
@@ -339,6 +342,8 @@ public class SaveIntegrityChecker {
 
         if (gameType == 3) {
             allowedSymbols = new HashSet<>(Arrays.asList('K', 'M', 'G', 'N', 'R', 'F', 'k', 'm', 'g', 'n', 'r', 'f'));
+        } else if (gameType == 4) {
+            allowedSymbols = new HashSet<>(Arrays.asList('K', 'Q', 'R', 'B', 'N', 'Z', 'k', 'q', 'r', 'b', 'n', 'z'));
         } else {
             allowedSymbols = new HashSet<>(Arrays.asList('K', 'Q', 'R', 'B', 'N', 'P', 'k', 'q', 'r', 'b', 'n', 'p'));
         }
@@ -427,9 +432,6 @@ public class SaveIntegrityChecker {
 
         // 검사 대상 키 목록
         String[] ruleKeys = {"castling", "promotion", "enpassant"};
-
-        // gameType 읽기
-        int gameType = Integer.parseInt(kvMap.get("game_type"));
 
         for (String key : ruleKeys) {
             if (kvMap.containsKey(key)) {
@@ -523,10 +525,12 @@ public class SaveIntegrityChecker {
         int boardStartIdx = findBoardStartIndex();
 
         // 허용 기호
-        Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf"));
+        Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf","Z","z"));
 
         // 특수 좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
         // white, black 은 checkBoardLines() 에서 미리 검사
+        // 특수좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
+
         for (int i = boardIdx + 2; i < boardStartIdx; i++) {
             String line = lines.get(i).trim();
             if (line.isEmpty()) continue;
@@ -552,8 +556,8 @@ public class SaveIntegrityChecker {
 
             // 좌표 파싱
             try {
-                col = Integer.parseInt(tokens[1]);
-                row = Integer.parseInt(tokens[2]);
+                row = Integer.parseInt(tokens[1]);
+                col = Integer.parseInt(tokens[2]);
             } catch (NumberFormatException e) {
                 errorList.add("Line " + (i + 1) + ": Invalid coordinate value at line ");
                 valid = false;
@@ -595,7 +599,6 @@ public class SaveIntegrityChecker {
 
     /**
      * checkGameEnd
-     *
      * - 이미 구현된 GameEnd 클래스를 활용하여 현재 보드가 체크메이트, 스테일메이트, 또는 불충분 기물 상태인지 검사합니다.
      * - Board 객체가 정상적으로 생성된 이후 호출되며, 다음 조건 중 하나라도 true이면 오류로 간주하고 false를 반환합니다:
      * - GameEnd.isCheckMate(board)
@@ -631,6 +634,7 @@ public class SaveIntegrityChecker {
             currentColor = PieceColor.WHITE;
         } else if (currentTurnLine.equalsIgnoreCase("black")) {
             currentColor = PieceColor.BLACK;
+            board.turnChange(); //작동되는지 확인해야함.
         } else {
             errorList.add("Invalid current turn value: " + currentTurnLine);
             return false; // 턴 정보가 이상하면 검사 실패 처리
@@ -654,6 +658,16 @@ public class SaveIntegrityChecker {
         // 검사 3: InsufficientPieces
         if (gameEnd.isInsufficientPieces(board)) {
             errorList.add("Invalid game state: Insufficient pieces detected.");
+            valid = false;
+        }
+
+        // 검사 4: 킹이 제거되는 상황인지(ex. BLACK King이 Check된 상황에서 WHITE 턴)
+        PieceColor otherColor;
+        otherColor = currentTurnLine.equalsIgnoreCase("white")
+                        ? PieceColor.BLACK: PieceColor.WHITE;
+        Checker checker = new Checker(otherColor);
+        if(checker.isCheck(board)) {
+            errorList.add("GameEnd: King would be eliminated.");
             valid = false;
         }
 
@@ -686,6 +700,10 @@ public class SaveIntegrityChecker {
                 success = false;
                 gameType = -1;
             }
+            boolean canEnpassant, canCastling, canPromotion;
+            canEnpassant = kvMap.get("enpassant").equalsIgnoreCase("1");
+            canCastling = kvMap.get("castling").equalsIgnoreCase("1");
+            canPromotion = kvMap.get("promotion").equalsIgnoreCase("1");
 
             boolean canEnpassant = kvMap.get("enpassant").equals("1");
             boolean canCastling = kvMap.get("castling").equals("1");
@@ -697,15 +715,17 @@ public class SaveIntegrityChecker {
                     board.setPieces(boardLines);
                     break;
                 case 2:
-                    board = new ThreeCheckBoard(canEnpassant, canCastling, canPromotion, false);
+                    board = new ThreeCheckBoard(canEnpassant,canCastling,canPromotion,false);
                     board.setPieces(boardLines);
+                    thcBoard.ThreeCheckW = Integer.parseInt(kvMap.get("ThreeCheckW"));
+                    thcBoard.ThreeCheckB = Integer.parseInt(kvMap.get("ThreeCheckB"));
                     break;
                 case 3:
-                    board = new Chaturanga(false, false, true, false);
+                    board = new Chaturanga(canEnpassant,canCastling,canPromotion,false);
                     board.setPieces(boardLines);
                     break;
                 case 4:
-                    board = new PawnGameBoard(false);
+                    board = new PawnGameBoard(canEnpassant, canCastling, canPromotion, true);
                     board.setPieces(boardLines);
                     break;
                 default:
@@ -714,19 +734,60 @@ public class SaveIntegrityChecker {
                     board = null;
                     success = false;
             }
-        }
-        else {
+        } else {
             errorList.add("Skipping additional integrity checks (checkmate/stalemate/insufficient material): previous integrity checks failed.");
             board = null; // 명시적으로 넣어주는 것도 안전
         }
 
-        // GameEnd 검사도 board가 생성된 경우만 시도
-        if (board != null && !checkGameEnd(board)) success = false;
+        //특수좌표 대입 부분
+        int boardIdx = -1;
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).trim().equalsIgnoreCase("board:")) {
+                boardIdx = i;
+                break;
+            }
+        }
 
-        // 최종 반환
-        return success ? board : null;
+        for (int i = boardIdx + 2; i < boardStartIdx; i++) {
+            String line = lines.get(i).trim();
+            if (line.isEmpty()) continue;
+            String[] parts = line.split("\\s+");
+            if (parts.length != 3) continue; // 잘못된 형식은 무시
+
+            int row = Integer.parseInt(parts[1]);
+            int col = Integer.parseInt(parts[2]);
+
+            Piece piece = Objects.requireNonNull(board).getCell(row, col).getPiece();
+            if (piece == null) continue; // 기물이 없으면 무시
+
+            // 특수 상태 복원
+            if (piece instanceof Pawn pawn) {
+                if(parts[0].contains("f")){
+                    pawn.isMoved = true;
+                }
+                else{
+                    pawn.enPassantable = true;
+                    pawn.enPassantCounter = 1;
+                }
+
+            }
+            else if (piece instanceof Pawn2 pawn2) {
+                pawn2.isMoved = true;
+            }
+            else if (piece instanceof King king) {
+                king.firstMove = true;
+            }
+            else if (piece instanceof Rook rook) {
+                rook.firstMove = true;
+            }
+        }
+            // GameEnd 검사도 board가 생성된 경우만 시도
+            if (board != null && !checkGameEnd(board)) success = false;
+
+            // 최종 반환
+            return success ? board : null;
+        }
     }
-
 
     /**
      * 테스트 케이스를 위한 메서드
@@ -765,3 +826,4 @@ public class SaveIntegrityChecker {
         return checkGameEnd(board);
     }
 }
+

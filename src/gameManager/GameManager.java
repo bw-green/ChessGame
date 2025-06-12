@@ -1,5 +1,7 @@
 package gameManager;
 
+import board.Chaturanga;
+import board.ThreeCheckBoard;
 import check.Checker;
 import check.GameEnd;
 import data.*;
@@ -33,7 +35,7 @@ public class GameManager {
     private final int OPTIONCODE =    GameInputReturn.OPTION.getCode();
     private final int COORDINATECODE = GameInputReturn.COORDINATE_TRUE.getCode();
 
-    public static String USER_ID = null;
+    public static String USER_ID = PrintTemplate.GUEST.toString();
 
 
     public boolean isPlaying = false;
@@ -52,8 +54,7 @@ public class GameManager {
     private final Menu menu;
     private Board board;
 
-    public boolean canEnpassant=true, canCastling=false, canPromotion=false ; //임시
-
+    public boolean canEnpassant=true, canCastling=true, canPromotion=true ;
 
     public GameManager() {
         fileManager = FileManager.getInstance();
@@ -73,7 +74,7 @@ public class GameManager {
             }else{
                 cmdCode = runMenu();
             }
-            if(cmdCode >= HELPCODE && cmdCode <= SAVEFILECODE){
+            if(cmdCode >= HELPCODE && cmdCode <= OPTIONCODE){
                 runCommand(cmdCode);
             }else if(cmdCode == ERRORCODE){
                 if(!isPlaying) isMenuPrint = false;
@@ -114,15 +115,18 @@ public class GameManager {
                     Checker checker = new Checker(playerTurn);
                     boolean isCheck = checker.isCheck(board);
                     if(isCheck){
-                        if(playerTurn == PieceColor.BLACK){
-                            System.out.println(PrintTemplate.BOLDLINE);
-                            System.out.println(PrintTemplate.CHECK_BLACK);
-                            System.out.println(PrintTemplate.BOLDLINE);
-                        }else{
-                            System.out.println(PrintTemplate.BOLDLINE);
-                            System.out.println(PrintTemplate.CHECK_WHITE);
-                            System.out.println(PrintTemplate.BOLDLINE);
+                        if(!(board instanceof ThreeCheckBoard)){
+                            if(playerTurn == PieceColor.BLACK){
+                                System.out.println(PrintTemplate.BOLDLINE);
+                                System.out.println(PrintTemplate.CHECK_BLACK);
+                                System.out.println(PrintTemplate.BOLDLINE);
+                            }else{
+                                System.out.println(PrintTemplate.BOLDLINE);
+                                System.out.println(PrintTemplate.CHECK_WHITE);
+                                System.out.println(PrintTemplate.BOLDLINE);
+                            }
                         }
+
                     }
                     isSaved = false;
                     isGamePrint = true;
@@ -144,23 +148,76 @@ public class GameManager {
 
     private void isGameEnd(PieceColor pieceColor){
         GameEnd gameEnd = new GameEnd(pieceColor);
+        boolean isEnd = false;
+
+        //1. CheckMate
         if(gameEnd.isCheckMate(board)){
             System.out.println(PrintTemplate.BOLDLINE);
             if(pieceColor == PieceColor.WHITE) { System.out.println(PrintTemplate.END_BLACK_CHECKMATE); }
             else { System.out.println(PrintTemplate.END_WHITE_CHECKMATE); }
             System.out.println(PrintTemplate.BOLDLINE + "\n");
-            isPlaying = false;
-            isMenuPrint = true;
-        }else if(gameEnd.isStaleMate(board)){
-            System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println(PrintTemplate.END_STALEMATE);
-            System.out.println(PrintTemplate.BOLDLINE + "\n");
-            isPlaying = false;
-            isMenuPrint = true;
-        }else if(gameEnd.isInsufficientPieces(board)){
+            isEnd = true;
+        }
+
+        if(!isEnd && pieceColor != board.getCurrentTurn()){
+            if(gameEnd.isStaleMate(board)){
+                if(board instanceof Chaturanga){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    if(board.getCurrentTurn() == PieceColor.WHITE){
+                        System.out.println(PrintTemplate.END_WHITE_STALEMATE);
+                    }else{
+                        System.out.println(PrintTemplate.END_BLACK_STALEMATE);
+                    }
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.END_STALEMATE);
+                    System.out.println(PrintTemplate.BOLDLINE + "\n");
+                }
+                isEnd = true;
+            }
+        }
+
+        if(!isEnd && gameEnd.isInsufficientPieces(board)){
             System.out.println(PrintTemplate.BOLDLINE);
             System.out.println(PrintTemplate.END_INSUFFICIENT);
             System.out.println(PrintTemplate.BOLDLINE + "\n");
+            isEnd = true;
+        }
+
+        if(!isEnd && board instanceof ThreeCheckBoard){
+            Checker checker = new Checker(pieceColor);
+            if(checker.isCheck(board)){
+                ThreeCheckBoard tempBoard = (ThreeCheckBoard) board;
+                if(pieceColor == PieceColor.WHITE){
+                    tempBoard.ThreeCheckW++;
+                    if(tempBoard.ThreeCheckW < 3){
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        System.out.println(PrintTemplate.CHECK_WHITE + PrintTemplate.COUNT.formatMessage(tempBoard.ThreeCheckW));
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }else{
+                    tempBoard.ThreeCheckB++;
+                    if(tempBoard.ThreeCheckB < 3){
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        System.out.println(PrintTemplate.CHECK_BLACK + PrintTemplate.COUNT.formatMessage(tempBoard.ThreeCheckB));
+                        System.out.println(PrintTemplate.BOLDLINE);
+                    }
+                }
+                if(tempBoard.ThreeCheckB >= 3){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.THREE_CHECK_WHITE);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    isEnd = true;
+                }else if(tempBoard.ThreeCheckW >= 3){
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(PrintTemplate.THREE_CHECK_BLACK);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    isEnd = true;
+                }
+            }
+        }
+
+        if(isEnd){
             isPlaying = false;
             isMenuPrint = true;
         }
@@ -200,6 +257,7 @@ public class GameManager {
 
     //runCommand
     private void runCommand(int cmdCode){
+
 
 
         if(cmdCode == HELPCODE){
@@ -246,8 +304,15 @@ public class GameManager {
                 isPlaying = true;
                 isSaved = false;
                 isGamePrint = true;
-                board = new Board(canEnpassant , canCastling, canPromotion);
-//                board = new PawnGameBoard(true);
+                int num = MenuInput.number;
+                switch(num){
+                    case 1 -> board = new Board(canEnpassant, canCastling, canPromotion, true);
+                    case 2 -> board = new ThreeCheckBoard(true, true, true, true);
+                    case 3 -> board = new Chaturanga(false, false, true, true);
+                    case 4 -> board = new PawnGameBoard(true);
+//                    board = new PawnGameBoard(false, false, true, true);
+                }
+
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.START_BLOCK);
@@ -273,14 +338,15 @@ public class GameManager {
             return;
         }
 
-        //수정 해야함
         if(cmdCode == SAVECODE){
             int slot;
             if(!isPlaying){
-                board = new Board(canEnpassant, canCastling, canPromotion); //여긴 사실 이거 쓰면 안됨요
+                board = new Board(canEnpassant, canCastling, canPromotion, true);
                 slot = MenuInput.number;
             }else { slot = GameInput.number; }
+
             isSaved = fileManager.overWriteSavedFile(slot, board);
+
             if(isSaved){
                 System.out.println(PrintTemplate.BOLDLINE);
                 filePrint.showFileList();
@@ -296,23 +362,34 @@ public class GameManager {
             return;
         }
 
-        //수정 가능성 있을 수도
         if(cmdCode == LOADCODE) {
             int slot;
             if(isPlaying){ slot = GameInput.number; }
             else{ slot = MenuInput.number; }
 
-            board = new Board(canEnpassant,canCastling,canPromotion);
-            boolean isLoad = fileManager.isEmptySlot(slot);
-            if(!isLoad){board = fileManager.loadSavedFile(slot);} //isLoad가 true면 비어있는 slot
+            Board tempBoard = null;
 
-            if (board != null) {
+            boolean isEmptySlot = fileManager.isEmptySlot(slot);
+
+            if(!isEmptySlot){
+                tempBoard = fileManager.loadSavedFile(slot);
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(FileError.FAILED_LOAD.format(slot));
+                System.out.println(PrintTemplate.BOLDLINE);
+                isMenuPrint = false;
+                isGamePrint = false;
+                return;
+            }
+
+            if (tempBoard != null) {
                 if(isPlaying){
                     showSaveAndList();
                     System.out.print(Command.YES_OR_NO_LOAD);
                     boolean input = MenuInput.yesOrNoInput();
                     if(!input){ return; }
                 }
+                board = tempBoard;
                 playerTurn = board.getCurrentTurn();
                 isPlaying = true;
                 isGamePrint = true;
@@ -321,12 +398,6 @@ public class GameManager {
                 System.out.println(FileMessage.SAVE_LOADED.format(slot));
                 System.out.println((FileMessage.SAVE_NAME.format(slot,fileManager.getFilename().get(slot-1))));
                 System.out.println(PrintTemplate.BOLDLINE + "\n");
-            }else if(isLoad){
-                System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(FileError.FAILED_LOAD.format(slot));
-                System.out.println(PrintTemplate.BOLDLINE);
-                isMenuPrint = false;
-                isGamePrint = false;
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(FileError.FAILED_LOAD_ER);
@@ -358,7 +429,7 @@ public class GameManager {
 
             return;
         }
-            // isDuplicate private이라서 구현 못함
+
         if (cmdCode == REGISTERCODE){
             if(isPlaying){
                 System.out.println(PrintTemplate.BOLDLINE);
@@ -367,35 +438,46 @@ public class GameManager {
 
                 return;
             }
-            String idStr;
+            System.out.println(PrintTemplate.BOLDLINE);
+            System.out.println(Command.REGISTER_START);
+            System.out.println(PrintTemplate.BOLDLINE);
+
+
+            //id 입력
+            String idStr = null;
             while(true){
-                if(MenuInput.accountInput(true)){
+                if(MenuInput.accountInput(true)) {
                     idStr = MenuInput.idStr;
-                    if(!(userManager.isDuplicate(idStr)))
+                    if (!(userManager.isDuplicate(idStr)))
                         break;
-                }else{
-                    System.out.println(PrintTemplate.BOLDLINE);
-                    //System.out.println(CommandError.CMD_BLOCK); //register관련 errorMessage추가
-                    System.out.println(PrintTemplate.BOLDLINE);
-                }
-            }
-
-            while(true) {
-                if (MenuInput.accountInput(true)) {
-                    String pwStr = MenuInput.pwStr;
-                    if (userManager.registerUser(idStr, pwStr)) {
+                    else {
                         System.out.println(PrintTemplate.BOLDLINE);
-                        //System.out.println(CommandError.CMD_BLOCK); //register관련 성공 message 출력
-                        System.out.println(PrintTemplate.BOLDLINE);
-
-                        break;
-                    } else {
-                        System.out.println(PrintTemplate.BOLDLINE);
-                        //System.out.println(CommandError.CMD_BLOCK); //register관련 실패 message 출력
+                        System.out.println(CommandError.ID_EXISTING.formatMessage(idStr));
                         System.out.println(PrintTemplate.BOLDLINE);
                     }
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(Command.ACC_INPUT_TERMINATE);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    return;
                 }
             }
+
+            //false인 경우는 프로세스 종료
+            if (MenuInput.accountInput(false)) {
+                String pwStr = MenuInput.pwStr;
+                if (userManager.registerUser(idStr, pwStr)) {
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(Command.REGISTER_SUCCESS.formatStr(idStr));
+                    System.out.println(PrintTemplate.BOLDLINE);
+                }
+            }else{
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(Command.ACC_INPUT_TERMINATE);
+                System.out.println(PrintTemplate.BOLDLINE);
+                return;
+            }
+
             return;
         }
 
@@ -415,36 +497,48 @@ public class GameManager {
                 return;
             }
 
-            String idStr;
+            String idStr = null;
             while(true){
                 if(MenuInput.accountInput(true)){
                     idStr = MenuInput.idStr;
-                    if(userManager.isDuplicate(idStr))
-                        break;
+                    if(userManager.isDuplicate(idStr)) { break; }
+                    else {
+                        System.out.println(PrintTemplate.BOLDLINE);
+                        System.out.println(CommandError.ID_INVALID.formatMessage(idStr));
+                        System.out.println(PrintTemplate.BOLDLINE);
+
+                    }
                 }else{
                     System.out.println(PrintTemplate.BOLDLINE);
-                    //System.out.println(CommandError.CMD_BLOCK); //login관련 errorMessage추가
+                    System.out.println(Command.ACC_INPUT_TERMINATE);
                     System.out.println(PrintTemplate.BOLDLINE);
+                    return;
                 }
             }
 
             while(true) {
-                if (MenuInput.accountInput(true)) {
+                if (MenuInput.accountInput(false)) {
                     String pwStr = MenuInput.pwStr;
                     if (userManager.loginUser(idStr, pwStr)) {
                         System.out.println(PrintTemplate.BOLDLINE);
-                        //System.out.println(CommandError.CMD_BLOCK); //login관련 성공 message 출력
+                        System.out.println(Command.LOGIN_SUCCESS.formatStr(idStr));
                         System.out.println(PrintTemplate.BOLDLINE);
 
-                        //로그인해야됨
+                        //로그인
                         isLogin = true;
                         USER_ID = idStr;
+                        fileManager.loadFileNames();
                         break;
                     } else {
                         System.out.println(PrintTemplate.BOLDLINE);
-                        //System.out.println(CommandError.CMD_BLOCK); //login관련 실패 message 출력
+                        System.out.println(CommandError.PW_UNMATCH);
                         System.out.println(PrintTemplate.BOLDLINE);
                     }
+                }else{
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    System.out.println(Command.ACC_INPUT_TERMINATE);
+                    System.out.println(PrintTemplate.BOLDLINE);
+                    return;
                 }
             }
             return;
@@ -461,10 +555,11 @@ public class GameManager {
 
             if(isLogin){
                 System.out.println(PrintTemplate.BOLDLINE);
-                System.out.println(CommandError.LOGOUT_FAIL);
+                System.out.println(Command.LOGOUT.formatStr(USER_ID));
                 System.out.println(PrintTemplate.BOLDLINE);
-                USER_ID = "Guest"; //Guest 기본값으로 변경
+                USER_ID = PrintTemplate.GUEST.toString();
                 isLogin = false;
+                fileManager.loadFileNames();
             }else{
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.LOGOUT_FAIL);
@@ -505,13 +600,11 @@ public class GameManager {
 
 
             System.out.println(PrintTemplate.BOLDLINE);
-
-            return;
         }
 
         if(cmdCode == OPTIONCODE){
             System.out.println(PrintTemplate.BOLDLINE);
-            System.out.println(Command.OPTION.formatStr(canEnpassant, canCastling, canPromotion));
+            System.out.println(Command.OPTION.formatStr(canPromotion, canEnpassant, canCastling));
             System.out.println(PrintTemplate.BOLDLINE);
             isMenuPrint = false;
             return;
