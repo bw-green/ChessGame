@@ -8,12 +8,8 @@ import piece.Piece;
 import java.util.Random;
 
 public class PawnGameBoard extends Board    {
-    public PawnGameBoard(boolean initialize) {
-        // canEnpassant=false, canCastling=false, canPromotion=true
-        // initialize == true -> override initializeBoard() call!
-        // initialize == false -> empty!
+    public PawnGameBoard(boolean canEnpassant, boolean canCastling, boolean canPromotion, boolean initialize){
         super(false, false, true, initialize);
-
     }
     @Override
     public void initializeBoard() {
