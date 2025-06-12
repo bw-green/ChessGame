@@ -310,6 +310,7 @@ public class GameManager {
                     case 2 -> board = new ThreeCheckBoard(true, true, true, true);
                     case 3 -> board = new Chaturanga(false, false, true, true);
                     case 4 -> board = new PawnGameBoard(true);
+//                    board = new PawnGameBoard(false, false, true, true);
                 }
 
             }else{
