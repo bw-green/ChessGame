@@ -10,6 +10,7 @@ public enum CommandError {
 
     // 계정 관련 명령어 : GameManager 에서만 사용 예정
     ACC_INVALID_INPUT("Invalid input:Input must be between 2 and 10 characters."),
+    ACC_BANNED_STR("Invalid input:This input is not allowed"),
     ID_EXISTING("|User %s is already been registered|"),
     ID_INVALID("|User %s cannot be found|"),
     PW_UNMATCH("|Password does not match|"),
