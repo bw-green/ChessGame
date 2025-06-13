@@ -243,6 +243,7 @@ public class GameManager {
 
     public void showSaveAndList(){
         System.out.println(PrintTemplate.BOLDLINE);
+        System.out.println(PrintTemplate.CURRENT_USER + GameManager.USER_ID);
         filePrint.showFileList();
         if(isSaved)
             System.out.println(PrintTemplate.GAME_SAVED);
@@ -348,6 +349,7 @@ public class GameManager {
 
             if(isSaved){
                 System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(PrintTemplate.CURRENT_USER + USER_ID);
                 filePrint.showFileList();
                 System.out.println(FileMessage.SAVE_CREATED.format(slot));
                 System.out.println(PrintTemplate.BOLDLINE);
