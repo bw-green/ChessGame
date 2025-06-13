@@ -244,13 +244,18 @@ public class FileManager {
         } catch (IOException e) {
             //e.printStackTrace(); // 또는 로깅 처리
         }
-        SaveIntegrityChecker check = new SaveIntegrityChecker(checkList);
-        Board board = check.validateFile();
-        List<String> errorList = check.getErrors();
-        for(String error : errorList){
-            System.out.println(error);
+        try{
+            SaveIntegrityChecker check = new SaveIntegrityChecker(checkList);
+            Board board = check.validateFile();
+            List<String> errorList = check.getErrors();
+            for(String error : errorList){
+                System.out.println(error);
+            }
+            return board;
         }
-        return board;
+        catch (Exception e){
+            return null;
+        }
     }
 
 
