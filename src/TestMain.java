@@ -17,11 +17,11 @@ import java.util.List;
 //            System.out.println(defaultBoard);
 //
 //            System.out.println("=== [2] initialize = true (폰 게임 보드) ===");
-//            PawnGameBoard pawnGameBoard = new PawnGameBoard(true);
+//            PawnGameBoard pawnGameBoard = new PawnGameBoard(false, false, true, true);
 //            System.out.println(pawnGameBoard);
 //
 //            System.out.println("=== [3] initialize = false (빈 보드) ===");
-//            PawnGameBoard empty = new PawnGameBoard(false);
+//            PawnGameBoard empty = new PawnGameBoard(false, false, true, true);
 //            System.out.println(empty);
         }
     }
