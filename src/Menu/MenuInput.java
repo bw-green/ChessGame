@@ -109,7 +109,7 @@ public class MenuInput {
             }
             if(!flag){ continue; }
 
-            if(input.equals(bannedStr[0]) || input.equals(bannedStr[1])){
+            if(idInput && (input.equals(bannedStr[0]) || input.equals(bannedStr[1]))){
                 System.out.println(PrintTemplate.BOLDLINE);
                 System.out.println(CommandError.ACC_BANNED_STR);
                 System.out.println(PrintTemplate.BOLDLINE);
