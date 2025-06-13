@@ -342,6 +342,8 @@ public class SaveIntegrityChecker {
 
         if (gameType == 3) {
             allowedSymbols = new HashSet<>(Arrays.asList('K', 'M', 'G', 'N', 'R', 'F', 'k', 'm', 'g', 'n', 'r', 'f'));
+        } else if (gameType == 4) {
+            allowedSymbols = new HashSet<>(Arrays.asList('K', 'Q', 'R', 'B', 'N', 'Z', 'k', 'q', 'r', 'b', 'n', 'z'));
         } else {
             allowedSymbols = new HashSet<>(Arrays.asList('K', 'Q', 'R', 'B', 'N', 'P', 'k', 'q', 'r', 'b', 'n', 'p'));
         }
@@ -523,7 +525,7 @@ public class SaveIntegrityChecker {
         int boardStartIdx = findBoardStartIndex();
 
         // 허용 기호
-        Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf","Z","z"));
+        Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf","Z", "z"));
 
         // 특수 좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
         // white, black 은 checkBoardLines() 에서 미리 검사

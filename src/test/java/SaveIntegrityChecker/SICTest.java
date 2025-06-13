@@ -19,7 +19,7 @@ public class SICTest {
                 "game_type:1",
                 "castling:1",
                 "promotion:1",
-                "enpassant:0",
+                "enpassant:1",
                 "ThreeCheckW:-1",
                 "ThreeCheckB:-1",
                 "board:",
@@ -55,7 +55,7 @@ public class SICTest {
                     "game_type:1",
                     "castling:1",
                     "promotion:1",
-                    "enpassant:0",
+                    "enpassant:1",
                     "ThreeCheckW:-1",
                     "ThreeCheckB:-1",
                     "board:",
@@ -93,7 +93,7 @@ public class SICTest {
                     "game_type:1",
                     "castling:1",
                     "promotion:1",
-                    "enpassant:0",
+                    "enpassant:1",
                     "ThreeCheckW:-1",
                     "ThreeCheckB:-1",
                     "board:",
@@ -123,84 +123,7 @@ public class SICTest {
             assertFalse(result, "Invalid board should fail checkPieceSymbols.");
         }
 
-        // Case 3 - Valid board (gameType 3 - Chaturanga)
-        {
-            List<String> lines = List.of(
-                    "id:test123",
-                    "save_name:save123456",
-                    "game_type:3",
-                    "castling:0",
-                    "promotion:0",
-                    "enpassant:0",
-                    "ThreeCheckW:-1",
-                    "ThreeCheckB:-1",
-                    "board:",
-                    "white",
-                    "r n g m k g n r",
-                    "f f f f f f f f",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    "F F F F F F F F",
-                    "R N G M K G N R"
-            );
-
-            SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
-            checker.testCheckKeyValueBlock(); // kvMap 정상화
-            int boardStartIdx = checker.testFindBoardStartIndex(); // board 시작 인덱스 얻기
-            checker.testCheckBoardLines(boardStartIdx); // boardLines 정상화
-            checker.getErrors().clear(); // 에러 초기화 후 진짜 테스트
-            boolean result = checker.testCheckPieceSymbols();
-
-            System.out.println("Case 3 - Valid board (gameType 3 - Chaturanga)");
-            for (String error : checker.getErrors()) {
-                System.out.println("    " + error);
-            }
-            System.out.println();
-            assertTrue(result, "Valid Chaturanga board should pass checkPieceSymbols.");
-        }
-
-        // Case 4 - Invalid board (gameType 3 - Chaturanga)
-        {
-            List<String> lines = List.of(
-                    "id:test123",
-                    "save_name:save123456",
-                    "game_type:3",
-                    "castling:0",
-                    "promotion:0",
-                    "enpassant:0",
-                    "ThreeCheckW:-1",
-                    "ThreeCheckB:-1",
-                    "board:",
-                    "white",
-                    "r n g m k g n r",
-                    "f f f f f f f f",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    "F F F F F F F F",
-                    "R N G M X G N R" // 'X' → invalid
-            );
-
-            SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
-            checker.testCheckKeyValueBlock(); // kvMap 정상화
-            int boardStartIdx = checker.testFindBoardStartIndex(); // board 시작 인덱스 얻기
-            checker.testCheckBoardLines(boardStartIdx); // boardLines 정상화
-            checker.getErrors().clear(); // 에러 초기화 후 진짜 테스트
-            boolean result = checker.testCheckPieceSymbols();
-
-            System.out.println("Case 4 - Invalid board (gameType 3 - Chaturanga)");
-            for (String error : checker.getErrors()) {
-                System.out.println("    " + error);
-            }
-            System.out.println();
-
-            assertFalse(result, "Invalid Chaturanga board should fail checkPieceSymbols.");
-        }
-
-        // Case 5 - Valid board (gameType 2 - ThreeCheck)
+        // Case 3 - Valid board (gameType 2 - ThreeCheck)
         {
             List<String> lines = List.of(
                     "id:test123",
@@ -208,7 +131,7 @@ public class SICTest {
                     "game_type:2",
                     "castling:1",
                     "promotion:1",
-                    "enpassant:0",
+                    "enpassant:1",
                     "ThreeCheckW:0",
                     "ThreeCheckB:1",
                     "board:",
@@ -230,7 +153,7 @@ public class SICTest {
             checker.getErrors().clear(); // 에러 초기화 후 진짜 테스트
             boolean result = checker.testCheckPieceSymbols();
 
-            System.out.println("Case 5 - Valid board (gameType 2 - ThreeCheck)");
+            System.out.println("Case 3 - Valid board (gameType 2 - ThreeCheck)");
             for (String error : checker.getErrors()) {
                 System.out.println("    " + error);
             }
@@ -239,7 +162,7 @@ public class SICTest {
             assertTrue(result, "Valid ThreeCheck board should pass checkPieceSymbols.");
         }
 
-        // Case 6 - Invalid board (gameType 2 - ThreeCheck)
+        // Case 4 - Invalid board (gameType 2 - ThreeCheck)
         {
             List<String> lines = List.of(
                     "id:test123",
@@ -269,13 +192,91 @@ public class SICTest {
             checker.getErrors().clear(); // 에러 초기화 후 진짜 테스트
             boolean result = checker.testCheckPieceSymbols();
 
-            System.out.println("Case 6 - Invalid board (gameType 2 - ThreeCheck)");
+            System.out.println("Case 4 - Invalid board (gameType 2 - ThreeCheck)");
             for (String error : checker.getErrors()) {
                 System.out.println("    " + error);
             }
             System.out.println();
 
             assertFalse(result, "Invalid ThreeCheck board should fail checkPieceSymbols.");
+        }
+
+
+        // Case 5 - Valid board (gameType 3 - Chaturanga)
+        {
+            List<String> lines = List.of(
+                    "id:test123",
+                    "save_name:save123456",
+                    "game_type:3",
+                    "castling:0",
+                    "promotion:1",
+                    "enpassant:0",
+                    "ThreeCheckW:-1",
+                    "ThreeCheckB:-1",
+                    "board:",
+                    "white",
+                    "r n g m k g n r",
+                    "f f f f f f f f",
+                    ". . . . . . . .",
+                    ". . . . . . . .",
+                    ". . . . . . . .",
+                    ". . . . . . . .",
+                    "F F F F F F F F",
+                    "R N G M K G N R"
+            );
+
+            SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
+            checker.testCheckKeyValueBlock(); // kvMap 정상화
+            int boardStartIdx = checker.testFindBoardStartIndex(); // board 시작 인덱스 얻기
+            checker.testCheckBoardLines(boardStartIdx); // boardLines 정상화
+            checker.getErrors().clear(); // 에러 초기화 후 진짜 테스트
+            boolean result = checker.testCheckPieceSymbols();
+
+            System.out.println("Case 5 - Valid board (gameType 3 - Chaturanga)");
+            for (String error : checker.getErrors()) {
+                System.out.println("    " + error);
+            }
+            System.out.println();
+            assertTrue(result, "Valid Chaturanga board should pass checkPieceSymbols.");
+        }
+
+        // Case 6 - Invalid board (gameType 3 - Chaturanga)
+        {
+            List<String> lines = List.of(
+                    "id:test123",
+                    "save_name:save123456",
+                    "game_type:3",
+                    "castling:0",
+                    "promotion:1",
+                    "enpassant:0",
+                    "ThreeCheckW:-1",
+                    "ThreeCheckB:-1",
+                    "board:",
+                    "white",
+                    "r n g m k g n r",
+                    "f f f f f f f f",
+                    ". . . . . . . .",
+                    ". . . . . . . .",
+                    ". . . . . . . .",
+                    ". . . . . . . .",
+                    "F F F F F F F F",
+                    "R N G M X G N R" // 'X' → invalid
+            );
+
+            SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
+            checker.testCheckKeyValueBlock(); // kvMap 정상화
+            int boardStartIdx = checker.testFindBoardStartIndex(); // board 시작 인덱스 얻기
+            checker.testCheckBoardLines(boardStartIdx); // boardLines 정상화
+            checker.getErrors().clear(); // 에러 초기화 후 진짜 테스트
+            boolean result = checker.testCheckPieceSymbols();
+
+            System.out.println("Case 6 - Invalid board (gameType 3 - Chaturanga)");
+            for (String error : checker.getErrors()) {
+                System.out.println("    " + error);
+            }
+            System.out.println();
+
+            assertFalse(result, "Invalid Chaturanga board should fail checkPieceSymbols.");
         }
 
         // Case 7 - Valid board (gameType 4 - PawnGame)
@@ -285,20 +286,20 @@ public class SICTest {
                     "save_name:save123456",
                     "game_type:4",
                     "castling:0",
-                    "promotion:0",
+                    "promotion:1",
                     "enpassant:0",
                     "ThreeCheckW:-1",
                     "ThreeCheckB:-1",
                     "board:",
                     "black",
-                    "p . . . k . p .",
-                    ". . . p p . . p",
-                    ". p . . . p . .",
-                    ". . p . . . . .",
-                    ". . P . P . . .",
-                    "P . . P . . . .",
-                    ". . . . . P . P",
-                    ". P . . K . P ."
+                    "z . . . k . z .",
+                    ". . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    "Z . . Z . . . .",
+                    ". . . . . Z . Z",
+                    ". Z . . K . Z ."
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -324,20 +325,20 @@ public class SICTest {
                     "save_name:save123456",
                     "game_type:4",
                     "castling:0",
-                    "promotion:0",
+                    "promotion:1",
                     "enpassant:0",
                     "ThreeCheckW:-1",
                     "ThreeCheckB:-1",
                     "board:",
                     "white",
-                    "r n b q k b n r",
-                    "p p p p p p p p",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    "P P P P P P P P",
-                    "R N B Q X B N R" // 'X' → invalid
+                    "z . . . k . z .",
+                    ". . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    "Z . . Z . . . .",
+                    ". . . . . Z . Z",
+                    ". Z . . X . Z ." // X
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -367,7 +368,7 @@ public class SICTest {
                     "game_type:1",
                     "castling:1",
                     "promotion:1",
-                    "enpassant:0",
+                    "enpassant:1",
                     "ThreeCheckW:-1",
                     "ThreeCheckB:-1",
                     "board:",
@@ -1309,14 +1310,14 @@ public class SICTest {
                     "white",
                     "K 4", // 형식 오류
                     "r 7 0 1", // 형식 오류
-                    "p . . . k . p .",
-                    ". . . p p . . p",
-                    ". p . . . p . .",
-                    ". . p . . . . .",
-                    ". . P . P . . .",
-                    "P . . P . . . .",
-                    ". . . . . P . P",
-                    ". P . . K . P ."
+                    "z . . . k . z .",
+                    ". . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    "Z . . Z . . . .",
+                    ". . . . . Z . Z",
+                    ". Z . . K . Z ."
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -1474,14 +1475,14 @@ public class SICTest {
                     "board:",
                     "white",
                     "m 4 7", // Invalid 기물 기호
-                    "p . . . k . p .",
-                    ". . . p p . . p",
-                    ". p . . . p . .",
-                    ". . p . . . . .",
-                    ". . P . P . . .",
-                    "P . . P . . . .",
-                    ". . . . . P . P",
-                    ". P . . K . P ."
+                    "z . . . k . z .",
+                    ". . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    "Z . . Z . . . .",
+                    ". . . . . Z . Z",
+                    ". Z . . K . Z ."
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -1645,14 +1646,14 @@ public class SICTest {
                     "k 8 -3", // row 범위 오류
                     "Pf 0 6",
                     "pf 0 1",
-                    ". . . . k . p .",
-                    "p . . p p . . p",
-                    ". p . . . p . .",
-                    ". . p . . . . .",
-                    ". . P . P . . .",
-                    ". . . P . . . .",
-                    "P . . . . P . P",
-                    ". P . . K . P ."
+                    ". . . . k . z .",
+                    "z . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    ". . . Z . . . .",
+                    "Z . . . . Z . Z",
+                    ". Z . . K . Z ."
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -1812,14 +1813,14 @@ public class SICTest {
                     "K 3 3", // 빈 칸 좌표 (. 위치)
                     "Pf 0 6",
                     "pf 0 1",
-                    ". . . . k . p .",
-                    "p . . p p . . p",
-                    ". p . . . p . .",
-                    ". . p . . . . .",
-                    ". . P . P . . .",
-                    ". . . P . . . .",
-                    "P . . . . P . P",
-                    ". P . . K . P ."
+                    ". . . . k . z .",
+                    "z . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    ". . . Z . . . .",
+                    "Z . . . . Z . Z",
+                    ". Z . . K . Z ."
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -1981,14 +1982,14 @@ public class SICTest {
                     "R 0 0", // board에는 'p' 또는 빈칸 예상 → 'R' 불일치
                     "Pf 0 6",
                     "pf 0 1",
-                    "p p p p p p p p",
-                    "p . . . . . . .",
-                    ". p p p p p p p",
-                    ". . . . . . . .",
-                    ". . . . . . . .",
-                    ". P P P P P P P",
-                    "P . . . . . . .",
-                    "P P P P P P P P"
+                    ". . . . k . z .",
+                    "z . . z z . . z",
+                    ". z . . . z . .",
+                    ". . z . . . . .",
+                    ". . Z . Z . . .",
+                    ". . . Z . . . .",
+                    "Z . . . . Z . Z",
+                    ". Z . . K . Z ."
             );
 
             SaveIntegrityChecker checker = new SaveIntegrityChecker(lines);
@@ -2176,7 +2177,7 @@ public class SICTest {
                     "K 3 6",
                     "k 6 0",
                     "R . . . . . k .",
-                    ". . . . . p p p",
+                    ". . . . . z z z",
                     ". . . . . . . .",
                     ". . . . . . . .",
                     ". . . . . . . .",
