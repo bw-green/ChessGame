@@ -272,7 +272,6 @@ public class GameManager {
                 case 2 -> System.out.println(Command.HELP2);
                 case 3 -> System.out.println(Command.HELP3);
                 case 4 -> System.out.println(Command.HELP4);
-                default -> throw new IllegalArgumentException("Invalid command");
             }
             System.out.println(PrintTemplate.BOLDLINE);
             isMenuPrint = false;
