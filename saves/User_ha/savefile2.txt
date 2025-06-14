@@ -1,0 +1,18 @@
+id:ha,
+save_name:Fx58DIe3Kf,
+game_type:3,
+castling:0,
+promotion:1,
+enpassant:0,
+ThreeCheckW:-1,
+ThreeCheckB:-1,
+board:
+black
+r n g k m g n r
+f f f f f f f f 
+. . . . . . . .
+. . . . . . . . 
+. . . . . . . .
+. . . . F . . . 
+F F F F . F F F 
+R N G K M G N R
