@@ -88,13 +88,8 @@ public class FileManager {
         if (slot < 1 || slot > MAX_SAVES) return false;
         slot--;
 
-        if (!new File(SAVE_DIR).exists()) {
-            ensureSaveDirectory();
-        }
-
-        if (!new File(USER_DIR).exists()) {
-            ensureDirectoryByID();
-        }
+        ensureSaveDirectory();
+        ensureDirectoryByID();
 
         String saveName = generateRandomSaveName();
         String filePath = getFilePath(slot + 1); //savefile 1~3생성을 위해 +1
@@ -381,12 +376,6 @@ public class FileManager {
         return users;
     }
 
-
-
-
-
-
-
     public void resetTestState() { //Test 제작을 위한 함수 절대 임의로 호출하지 말것!!
         for (int i = 0; i < MAX_SAVES; i++) {
             filename.set(i, "NO DATA");
@@ -400,10 +389,8 @@ public class FileManager {
 
     public void loadFileNames() {
         USER_DIR = SAVE_DIR + "/User_" + USER_ID;
-        //System.out.println(USER_DIR);
-        if (!new File(USER_DIR).exists()) {
-            ensureDirectoryByID();
-        }
+        ensureDirectoryByID();
+
         for (int i = 1; i <= MAX_SAVES; i++) {
             String filePath = getFilePath(i);
             File file = new File(filePath);
