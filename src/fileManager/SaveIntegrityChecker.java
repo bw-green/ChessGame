@@ -12,6 +12,8 @@ import piece.*;
 import java.util.*;
 import java.util.List;
 
+import static gameManager.GameManager.USER_ID;
+
 public class SaveIntegrityChecker {
     private final List<String> lines;
     private Map<String, String> kvMap;
@@ -34,10 +36,8 @@ public class SaveIntegrityChecker {
 
     /**
      * checkKeyValueBlock
-     *
      * 저장된 lines 리스트에서 key-value 블록을 읽어 검사하는 함수.
      * key-value 블록은 "board:" 줄이 나오기 전까지의 줄로 구성됨.
-     *
      * 주요 동작:
      * 1. 빈 줄은 건너뜀.
      * 2. "board:" 줄을 만나면 key-value 블록 종료.
@@ -46,9 +46,7 @@ public class SaveIntegrityChecker {
      * 5. key 등장 순서가 올바른지 검사
      * 6. 필수 key 집합 검사 (checkAllowedKeySet).
      * 7. 각 key의 value 유효성 검사 (validateValueByKey).
-     *
      * 에러 발생 시 errorList에 메시지 추가 후 false 반환.
-     *
      * @return true - 모든 검사가 통과된 경우
      * false - 형식 오류, 순서 오류, 누락 key, 유효하지 않은 value 발생 시
      */
@@ -67,26 +65,33 @@ public class SaveIntegrityChecker {
             String line = lines.get(i);
 
             if (line.trim().isEmpty()) continue; // 빈 줄은 건너뜀
-
             // "board:" 만나면 key-value 블록 종료
             if (line.trim().equalsIgnoreCase("board:")) break;
-
             // 형식 검사 → 반드시 key:value 형식
             if (!checkKeyValueFormat(line)) {
                 errorList.add("Line " + (i + 1) + ": Invalid key-value format");
                 valid = false;
             }
-
             // key, value 분리 (":" 기준 최대 2개 split)
             String[] tokens = line.trim().split(":", 2);
             if (tokens.length != 2) {
                 errorList.add("Line " + (i + 1) + ": Invalid key-value format");
                 valid = false;
+                continue;
             }
 
             String key = tokens[0].trim();
-            String value = tokens[1].trim().replace(",", ""); // 쉼표 제거
-
+            String value = tokens[1].trim();
+            // 콤마(,)가 있으면 value 분리 및 오류 체크
+            int commaIdx = value.indexOf(',');
+            if (commaIdx != -1) {
+                String afterComma = value.substring(commaIdx + 1).trim();
+                if (!afterComma.isEmpty()) {
+                    errorList.add("Line " + (i + 1) + ": Invalid value - unexpected text after comma");
+                    valid = false;
+                }
+                value = value.substring(0, commaIdx).trim();
+            }
             kvMap.put(key, value);
             actualOrder.add(key);
             actualOrderLineNums.add(i + 1);
@@ -118,6 +123,13 @@ public class SaveIntegrityChecker {
                 valid = false;
             }
         }
+
+        /*
+        세이브파일 속 user가 현재 user_id와 일치하는지 확인
+        -> 세이브파일 속 id값과 세이브파일이 들어있는 폴더 이름의 id가 일치하는지 확인
+         */
+        if(!kvMap.get("id").equals(USER_ID)) valid = false;
+
 
         return valid;
     }
@@ -300,7 +312,7 @@ public class SaveIntegrityChecker {
     private boolean validateValueByKey(String key, String value) {
         switch (key) {
             case "id":
-                return value.matches("[a-zA-Z0-9]+") && value.length() >= 2 && value.length() <= 9;
+                return value.matches("[a-zA-Z0-9]+") && value.length() >= 2 && value.length() <= 10;
             case "save_name":
                 return value.matches("[a-zA-Z0-9]+") && value.length() == 10;
             case "game_type":
@@ -338,7 +350,7 @@ public class SaveIntegrityChecker {
         Set<Character> allowedSymbols;
 
         // gameType 읽기
-        int gameType = Integer.parseInt(kvMap.get("game_type"));
+        int gameType = Integer.parseInt(kvMap.get("game_type").trim());
 
         if (gameType == 3) {
             allowedSymbols = new HashSet<>(Arrays.asList('K', 'M', 'G', 'N', 'R', 'F', 'k', 'm', 'g', 'n', 'r', 'f'));
@@ -525,7 +537,7 @@ public class SaveIntegrityChecker {
         int boardStartIdx = findBoardStartIndex();
 
         // 허용 기호
-        Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf","Z","z"));
+        Set<String> allowedSymbols = new HashSet<>(Arrays.asList("K", "k", "R", "r", "P", "p", "Pf", "pf","Z", "z"));
 
         // 특수 좌표 줄 처리 (lines[boardIdx + 2] ~ lines[boardStartIdx - 1])
         // white, black 은 checkBoardLines() 에서 미리 검사
@@ -549,24 +561,24 @@ public class SaveIntegrityChecker {
 
             // 기호 검증
             if (!allowedSymbols.contains(symbol)) {
-                errorList.add("Line " + (i + 1) + ": Invalid piece symbol in coordinates");
+                errorList.add("Line " + (i + 1) + ": Invalid piece symbol in coordinates: " + symbol);
                 valid = false;
                 continue;
             }
 
             // 좌표 파싱
             try {
-                row = Integer.parseInt(tokens[1]);
-                col = Integer.parseInt(tokens[2]);
+                col = Integer.parseInt(tokens[1]);
+                row = Integer.parseInt(tokens[2]);
             } catch (NumberFormatException e) {
-                errorList.add("Line " + (i + 1) + ": Invalid coordinate value at line ");
+                errorList.add("Line " + (i + 1) + ": Invalid coordinate value at line");
                 valid = false;
                 continue;
             }
 
             // 좌표 범위 확인
             if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                errorList.add("Line " + (i + 1) + ": Coordinate out of bounds at line: (" + col + ", " + row + ")");
+                errorList.add("Line " + (i + 1) + ": Coordinate out of bounds at line: (" + row + ", " + col + ")");
                 valid = false;
                 continue;
             }
@@ -582,7 +594,7 @@ public class SaveIntegrityChecker {
 
             // 빈 칸 처리 (기물 없음)
             if (pieceSymbol.equals(".")) {
-                errorList.add("Line " + (i + 1) + ": Coordinate points to empty cell at (" + col + ", " + row + "), expected: " + symbol);
+                errorList.add("Line " + (i + 1) + ": Coordinate points to empty cell at (" + col + ", " + row + "), expected: " + expectedSymbol);
                 valid = false;
                 continue;
             }
@@ -645,7 +657,7 @@ public class SaveIntegrityChecker {
 
         // 검사 1: CheckMate
         if (gameEnd.isCheckMate(board)) {
-            errorList.add("Invalild game state: CheckMate detected.");
+            errorList.add("Invalid game state: CheckMate detected.");
             valid = false;
         }
 
@@ -707,7 +719,7 @@ public class SaveIntegrityChecker {
 
             switch (gameType) {
                 case 1:
-                    board = new Board(canEnpassant, canCastling, canPromotion);
+                    board = new Board(canEnpassant, canCastling, canPromotion, false);
                     board.setPieces(boardLines);
                     break;
                 case 2:
@@ -732,59 +744,64 @@ public class SaveIntegrityChecker {
                     board = null;
                     success = false;
             }
+
+            //특수좌표 대입 부분
+            int boardIdx = -1;
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).trim().equalsIgnoreCase("board:")) {
+                    boardIdx = i;
+                    break;
+                }
+            }
+
+            for (int i = boardIdx + 2; i < boardStartIdx; i++) {
+                String line = lines.get(i).trim();
+                if (line.isEmpty()) continue;
+                String[] parts = line.split("\\s+");
+                if (parts.length != 3) continue; // 잘못된 형식은 무시
+
+                int col = Integer.parseInt(parts[1]);
+                int row = Integer.parseInt(parts[2]);
+
+                Piece piece = Objects.requireNonNull(board).getCell(row, col).getPiece();
+                if (piece == null) continue; // 기물이 없으면 무시
+
+                // 특수 상태 복원
+                if (piece instanceof Pawn pawn) {
+                    if(parts[0].contains("f")){
+                        pawn.isMoved = true;
+                    }
+                    else{
+                        pawn.enPassantable = true;
+                        pawn.enPassantCounter = 1;
+                    }
+
+                }
+                else if (piece instanceof Pawn2 pawn2) {
+                    pawn2.isMoved = true;
+                }
+                else if (piece instanceof King king) {
+                    king.firstMove = true;
+                }
+                else if (piece instanceof Rook rook) {
+                    rook.firstMove = true;
+                }
+            }
+
+            // GameEnd 검사도 board가 생성된 경우만 시도
+            if (board != null) {
+                if (!checkGameEnd(board)) {
+                    success = false;
+                }
+            }
         } else {
             errorList.add("Skipping additional integrity checks (checkmate/stalemate/insufficient material): previous integrity checks failed.");
             board = null; // 명시적으로 넣어주는 것도 안전
         }
 
-        //특수좌표 대입 부분
-        int boardIdx = -1;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).trim().equalsIgnoreCase("board:")) {
-                boardIdx = i;
-                break;
-            }
-        }
-
-        for (int i = boardIdx + 2; i < boardStartIdx; i++) {
-            String line = lines.get(i).trim();
-            if (line.isEmpty()) continue;
-            String[] parts = line.split("\\s+");
-            if (parts.length != 3) continue; // 잘못된 형식은 무시
-
-            int row = Integer.parseInt(parts[1]);
-            int col = Integer.parseInt(parts[2]);
-
-            Piece piece = Objects.requireNonNull(board).getCell(row, col).getPiece();
-            if (piece == null) continue; // 기물이 없으면 무시
-
-            // 특수 상태 복원
-            if (piece instanceof Pawn pawn) {
-                if(parts[0].contains("f")){
-                    pawn.isMoved = true;
-                }
-                else{
-                    pawn.enPassantable = true;
-                    pawn.enPassantCounter = 1;
-                }
-
-            }
-            else if (piece instanceof Pawn2 pawn2) {
-                pawn2.isMoved = true;
-            }
-            else if (piece instanceof King king) {
-                king.firstMove = true;
-            }
-            else if (piece instanceof Rook rook) {
-                rook.firstMove = true;
-            }
-        }
-            // GameEnd 검사도 board가 생성된 경우만 시도
-            if (board != null && !checkGameEnd(board)) success = false;
-
-            // 최종 반환
-            return success ? board : null;
-        }
+        // 최종 반환
+        return success ? board : null;
+    }
 
     /**
      * 테스트 케이스를 위한 메서드
@@ -793,6 +810,8 @@ public class SaveIntegrityChecker {
     public boolean testCheckKeyValueBlock() {
         return checkKeyValueBlock();
     }
+
+    public int testFindBoardStartIndex() { return findBoardStartIndex(); }
 
     public boolean testCheckBoardLines(int start) {
         return checkBoardLines(start);
