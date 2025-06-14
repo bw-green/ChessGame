@@ -78,8 +78,9 @@ public class GameInput {
         }
         String[] parts = input.split("/");
         if(parts[1].startsWith("help")){
-            parts[1]=  blank(parts[1]) ;
-            if(parts[1].equals("help")){
+            String now = parts[1].substring("help".length());
+            if(checking(now, HELP) != 0){
+                number = checking(now, HELP);
                 return HELP;
             }
             else{
@@ -131,8 +132,9 @@ public class GameInput {
             }
         }//인자있음
         else if(parts[1].startsWith("start")){
-            parts[1]=blank(parts[1]) ;
-            if(parts[1].equals("start")){
+            String now = parts[1].substring("start".length());
+            if(checking(now,START)!=0){
+                number= checking(now,START);
                 return START;
             }
             else{

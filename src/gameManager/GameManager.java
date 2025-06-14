@@ -243,6 +243,7 @@ public class GameManager {
 
     public void showSaveAndList(){
         System.out.println(PrintTemplate.BOLDLINE);
+        System.out.println(PrintTemplate.CURRENT_USER + GameManager.USER_ID);
         filePrint.showFileList();
         if(isSaved)
             System.out.println(PrintTemplate.GAME_SAVED);
@@ -271,7 +272,6 @@ public class GameManager {
                 case 2 -> System.out.println(Command.HELP2);
                 case 3 -> System.out.println(Command.HELP3);
                 case 4 -> System.out.println(Command.HELP4);
-                default -> throw new IllegalArgumentException("Invalid command");
             }
             System.out.println(PrintTemplate.BOLDLINE);
             isMenuPrint = false;
@@ -348,6 +348,7 @@ public class GameManager {
 
             if(isSaved){
                 System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(PrintTemplate.CURRENT_USER + USER_ID);
                 filePrint.showFileList();
                 System.out.println(FileMessage.SAVE_CREATED.format(slot));
                 System.out.println(PrintTemplate.BOLDLINE);

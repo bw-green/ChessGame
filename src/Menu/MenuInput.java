@@ -26,6 +26,8 @@ public class MenuInput {
     static int TOGGLE =   GameInputReturn.TOGGLE.getCode();
     static int OPTION =    GameInputReturn.OPTION.getCode();
 
+    static String[] bannedStr = {"Guest", "guest"};
+
     public static int number = 0;
     public static String input;
     public static int toggleNum = -1;
@@ -106,6 +108,13 @@ public class MenuInput {
                 }
             }
             if(!flag){ continue; }
+
+            if(idInput && (input.equals(bannedStr[0]) || input.equals(bannedStr[1]))){
+                System.out.println(PrintTemplate.BOLDLINE);
+                System.out.println(CommandError.ACC_BANNED_STR);
+                System.out.println(PrintTemplate.BOLDLINE);
+                continue;
+            }
 
             //skipped each character is alphabet or number
             if(idInput){

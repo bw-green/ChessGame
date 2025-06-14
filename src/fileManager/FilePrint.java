@@ -4,6 +4,7 @@ import data.FileMessage;
 import data.FileError;
 import data.PrintTemplate;
 import board.Board;
+import gameManager.GameManager;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class FilePrint {
 
     public void saveListPrint() { //./savefile 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
+        System.out.println(PrintTemplate.CURRENT_USER + GameManager.USER_ID);
         showFileList();
         System.out.println(PrintTemplate.MENU_LAST_SAVE);
         System.out.println(PrintTemplate.BOLDLINE);
@@ -24,6 +26,7 @@ public class FilePrint {
     public void saveFilePrint(int slot, Board board) { // ./save 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.overWriteSavedFile(slot, board)) {
+            System.out.println(PrintTemplate.CURRENT_USER + GameManager.USER_ID);
             showFileList();
             System.out.println(FileMessage.SAVE_CREATED.format(slot));
         }
@@ -33,6 +36,7 @@ public class FilePrint {
     public void deleteFilePrint(int slot) { // ./delsave 명령어 호출시
         System.out.println(PrintTemplate.BOLDLINE);
         if(fileManager.deleteSavedFile(slot)) {
+            System.out.println(PrintTemplate.CURRENT_USER + GameManager.USER_ID);
             showFileList();
             System.out.println(FileMessage.SAVE_DELETED.format(slot));
         }
