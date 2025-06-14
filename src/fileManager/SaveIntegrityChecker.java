@@ -52,70 +52,75 @@ public class SaveIntegrityChecker {
      */
     private boolean checkKeyValueBlock() {
         boolean valid = true;
-        kvMap = new HashMap<>(); // key-value 쌍 저장용
+        kvMap = new HashMap<>();
 
-        // 키 순서 고려
+        // 키 순서 정의
         List<String> expectedOrder = List.of(
-                "id", "save_name", "game_type", "castling", "promotion", "enpassant", "ThreeCheckW", "ThreeCheckB"
+                "id", "save_name", "game_type", "castling",
+                "promotion", "enpassant", "ThreeCheckW", "ThreeCheckB"
         );
         List<String> actualOrder = new ArrayList<>();
-        List<Integer> actualOrderLineNums = new ArrayList<>(); // 실제 lines 줄 번호
+        List<Integer> actualOrderLineNums = new ArrayList<>();
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
+            String line = lines.get(i).trim();
+            if (line.isEmpty()) continue;
+            if (line.equalsIgnoreCase("board:")) break;
 
-            if (line.trim().isEmpty()) continue; // 빈 줄은 건너뜀
-            // "board:" 만나면 key-value 블록 종료
-            if (line.trim().equalsIgnoreCase("board:")) break;
-            // 형식 검사 → 반드시 key:value 형식
-            if (!checkKeyValueFormat(line)) {
-                errorList.add("Line " + (i + 1) + ": Invalid key-value format");
+            // 형식 검사 - colon 포함 여부
+            if (!line.contains(":")) {
+                errorList.add("Line " + (i + 1) + ": Invalid key-value format (missing colon)");
                 valid = false;
+                continue;
             }
-            // key, value 분리 (":" 기준 최대 2개 split)
-            String[] tokens = line.trim().split(":", 2);
-            if (tokens.length != 2) {
+
+            // 형식 검사 - 정확히 key:value 형식인지
+            if (!checkKeyValueFormat(line)) {
                 errorList.add("Line " + (i + 1) + ": Invalid key-value format");
                 valid = false;
                 continue;
             }
 
+            // split 후 처리 (형식 통과한 경우만 여기까지 옴)
+            String[] tokens = line.split(":", 2);
             String key = tokens[0].trim();
-            String value = tokens[1].trim();
-            // 콤마(,)가 있으면 value 분리 및 오류 체크
-            int commaIdx = value.indexOf(',');
-            if (commaIdx != -1) {
-                String afterComma = value.substring(commaIdx + 1).trim();
-                if (!afterComma.isEmpty()) {
-                    errorList.add("Line " + (i + 1) + ": Invalid value - unexpected text after comma");
-                    valid = false;
-                }
-                value = value.substring(0, commaIdx).trim();
+            String value = tokens[1].trim().replace(",", "");
+
+            // 빈 값 검증
+            if (value.isEmpty()) {
+                errorList.add("Line " + (i + 1) + ": Value for key '" + key + "' is missing");
+                valid = false;
             }
+
+            // 정상적인 key:value 쌍만 저장
             kvMap.put(key, value);
             actualOrder.add(key);
             actualOrderLineNums.add(i + 1);
         }
 
-        // 순서 검사
-        for (int i = 0; i < actualOrder.size(); i++) {
-            int lineNum = actualOrderLineNums.get(i);
-            if (i >= expectedOrder.size()) {
-                errorList.add("Line " + lineNum + ": Invalid extra key - unexpected key '" + actualOrder.get(i) + "'");
-                valid = false;
-            } else if (!actualOrder.get(i).equals(expectedOrder.get(i))) {
-                errorList.add("Line " + lineNum + ": Invalid key order - expected '" + expectedOrder.get(i) + "', found '" + actualOrder.get(i) + "'");
+        // ✅ 누락된 key 확인
+        Set<String> requiredKeys = new HashSet<>(expectedOrder);
+        Set<String> actualKeys = kvMap.keySet();
+        for (String key : requiredKeys) {
+            if (!actualKeys.contains(key)) {
+                errorList.add("Missing required key: '" + key + "'");
                 valid = false;
             }
         }
 
-        // 필수 키가 모두 있는지 검사
-        if (!checkAllowedKeySet(kvMap.keySet())) {
-            errorList.add("Invalid or missing keys detected in key-value block");
-            valid = false;
+        // ✅ 키 순서 검사 (필요한 키가 모두 있을 때만 수행)
+        if (actualOrder.size() == expectedOrder.size()) {
+            for (int i = 0; i < actualOrder.size(); i++) {
+                int lineNum = actualOrderLineNums.get(i);
+                if (!actualOrder.get(i).equals(expectedOrder.get(i))) {
+                    errorList.add("Line " + lineNum + ": Invalid key order - expected '" +
+                            expectedOrder.get(i) + "', found '" + actualOrder.get(i) + "'");
+                    valid = false;
+                }
+            }
         }
 
-        // 각 key의 value가 유효한지 검사
+        // ✅ 각 key의 value 유효성 검사
         for (String key : kvMap.keySet()) {
             String value = kvMap.get(key);
             if (!validateValueByKey(key, value)) {
@@ -123,13 +128,6 @@ public class SaveIntegrityChecker {
                 valid = false;
             }
         }
-
-        /*
-        세이브파일 속 user가 현재 user_id와 일치하는지 확인
-        -> 세이브파일 속 id값과 세이브파일이 들어있는 폴더 이름의 id가 일치하는지 확인
-         */
-        if(!kvMap.get("id").equals(USER_ID)) valid = false;
-
 
         return valid;
     }
@@ -194,7 +192,8 @@ public class SaveIntegrityChecker {
      */
     private boolean checkBoardLines(int start) {
         boolean valid = true;
-        // 1. board: 키워드 찾기
+
+        // 1. "board:" 키워드 찾기
         int boardKeywordIndex = -1;
         for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).trim().equalsIgnoreCase("board:")) {
@@ -204,24 +203,25 @@ public class SaveIntegrityChecker {
         }
         if (boardKeywordIndex == -1) {
             errorList.add("\"board:\" keyword not found.");
-            valid = false;
+            return false; // 이후 로직 진행 불가
         }
 
         // 2. turn indicator (white / black) 확인
         if (boardKeywordIndex + 1 >= lines.size()) {
             errorList.add("Missing turn indicator after \"board:\"");
-            valid = false;
+            return false; // 이후 로직 진행 불가
         }
+
         String turnLine = lines.get(boardKeywordIndex + 1).trim();
         if (!(turnLine.equals("white") || turnLine.equals("black"))) {
             errorList.add("Line " + (boardKeywordIndex + 2) + ": Invalid turn indicator (must be white or black)");
             valid = false;
         }
 
-        // 3. 특수좌표 구간 검사 (8x8 보드 시작 전까지)
+        // 3. 특수좌표 구간 검사 (8×8 보드 시작 전까지)
         if (start == -1) {
-            errorList.add("8x8 board not found.");
-            valid = false;
+            errorList.add("8×8 board not found.");
+            return false;
         }
 
         for (int i = boardKeywordIndex + 2; i < start; i++) {
@@ -230,15 +230,15 @@ public class SaveIntegrityChecker {
                 errorList.add("Line " + (i + 1) + ": Invalid special coordinate format (must have 3 elements)");
                 valid = false;
             }
-            // 여기에서 추가적인 형식 검사 가능 (예: 기물/행/열 형식 등)
         }
 
-        // 4. 8x8 보드 줄 검사
+        // 4. 8×8 보드 줄 개수 검사
         if (lines.size() < start + 8) {
             errorList.add("Insufficient number of board lines (need 8 lines).");
-            valid = false;
+            return false;
         }
 
+        // 5. 각 보드 줄이 8개 토큰으로 구성됐는지 검사
         boardLines = new ArrayList<>();
         for (int i = start; i < start + 8; i++) {
             String[] tokens = lines.get(i).trim().split("\\s+");
