@@ -152,7 +152,7 @@ public class FileManager {
             // 여기서 특수 룰 상태 저장 시작
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
-                    var piece = board.getCell(row, col).getPiece();
+                    var piece = board.getCell(col, row).getPiece();
                     if (piece == null) continue;
 
                     // Pawn 앙파상 체크

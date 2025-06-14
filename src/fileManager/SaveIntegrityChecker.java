@@ -578,7 +578,7 @@ public class SaveIntegrityChecker {
 
             // 좌표 범위 확인
             if (row < 0 || row >= 8 || col < 0 || col >= 8) {
-                errorList.add("Line " + (i + 1) + ": Coordinate out of bounds at line: (" + col + ", " + row + ")");
+                errorList.add("Line " + (i + 1) + ": Coordinate out of bounds at line: (" + row + ", " + col + ")");
                 valid = false;
                 continue;
             }
