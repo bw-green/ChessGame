@@ -387,7 +387,7 @@ public class FileManager {
 
 
     public void loadFileNames() {
-        USER_DIR = SAVE_DIR + "/User_" + USER_ID;
+        USER_DIR = SAVE_DIR + "/User " + USER_ID;
         ensureDirectoryByID();
 
         for (int i = 1; i <= MAX_SAVES; i++) {
