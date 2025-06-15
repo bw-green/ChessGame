@@ -21,7 +21,7 @@ import static gameManager.GameManager.USER_ID;
 public class FileManager {
     private static final int MAX_SAVES = 3;
     private static final String SAVE_DIR = "saves";
-    private static String USER_DIR = SAVE_DIR + "/User_" + USER_ID;
+    private static String USER_DIR = SAVE_DIR + "/User " + USER_ID;
     private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
@@ -319,60 +319,59 @@ public class FileManager {
         }
     }
 
-    // 저장
     public boolean saveUserList(String id, String pw) {
         ensureSaveDirectory();
 
-        File file = new File(SAVE_DIR, "userlist.txt");
+        File file = new File(SAVE_DIR, "UserList.txt");
+        boolean fileExists = file.exists() && file.length() > 0;
 
-        try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter(file,true))) {
-            if (file.length() > 0) {
-                writer.newLine();
-            }
-            writer.write(id + "," + pw + ",");
-
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            if (fileExists)
+                writer.write(",");
+            writer.newLine();
+            writer.write("id: " + id + ",");
+            writer.newLine();
+            writer.write("password: " + pw);
+            // 마지막 데이터일 때는 콤마를 제거하고 저장하고 싶다면,
+            // 따로 처리해줘야 함. (예: 전체 저장 재작성)
             return true;
         } catch (IOException e) {
-            // System.err.println(FileError.FAILED_TO_SAVE_USER);
             return false;
         }
     }
 
-    // 불러오기
-    public Map<String,User> loadUserList() {
-        ensureSaveDirectory(); // 디렉토리 존재 확인
+    public Map<String, User> loadUserList() {
+        ensureSaveDirectory();
 
-        File file = new File(SAVE_DIR + "/userlist.txt");
+        File file = new File(SAVE_DIR + "/UserList.txt");
         Map<String, User> users = new HashMap<>();
 
-        // 파일이 존재하지 않으면 빈 리스트 반환
         if (!file.exists()) return users;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String id = null, pw = null;
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty()) continue;
 
-                String[] tokens = line.split(",", 2); // "," 기준으로 최대 2개 분리
-                if (tokens.length != 2) continue;
+                if (line.startsWith("id:")) {
+                    id = line.substring(3).trim();
+                    if (id.endsWith(",")) id = id.substring(0, id.length() - 1).trim();
+                } else if (line.startsWith("password:")) {
+                    pw = line.substring(9).trim();
+                    if (pw.endsWith(",")) pw = pw.substring(0, pw.length() - 1).trim();
+                }
 
-                String id = tokens[0].trim();
-                String pw = tokens[1].trim();
-
-                // 마지막 쉼표 제거 (파일에 "id, pw," 형식일 경우)
-                if (pw.endsWith(",")) pw = pw.substring(0, pw.length() - 1);
-
-                if (!id.isEmpty() && !pw.isEmpty()) {
+                if (id != null && pw != null) {
                     users.put(id, new User(id, pw));
+                    id = null;
+                    pw = null;
                 }
             }
         } catch (IOException e) {
-            // 에러 출력 또는 FileError 사용
-            // System.err.println("사용자 파일 로딩 실패: " + e.getMessage());
+            // 예외 처리
         }
-
         return users;
     }
 
@@ -388,7 +387,7 @@ public class FileManager {
 
 
     public void loadFileNames() {
-        USER_DIR = SAVE_DIR + "/User_" + USER_ID;
+        USER_DIR = SAVE_DIR + "/User " + USER_ID;
         ensureDirectoryByID();
 
         for (int i = 1; i <= MAX_SAVES; i++) {
