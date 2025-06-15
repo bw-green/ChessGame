@@ -343,7 +343,7 @@ public class FileManager {
     public Map<String, User> loadUserList() {
         ensureSaveDirectory();
 
-        File file = new File(SAVE_DIR + "/userlist.txt");
+        File file = new File(SAVE_DIR + "/UserList.txt");
         Map<String, User> users = new HashMap<>();
 
         if (!file.exists()) return users;
