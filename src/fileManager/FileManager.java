@@ -244,7 +244,7 @@ public class FileManager {
             Board board = check.validateFile();
             List<String> errorList = check.getErrors();
             for(String error : errorList){
-                System.out.println(error);
+//                System.out.println(error);
             }
             return board;
         }
