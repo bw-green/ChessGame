@@ -21,7 +21,7 @@ import static gameManager.GameManager.USER_ID;
 public class FileManager {
     private static final int MAX_SAVES = 3;
     private static final String SAVE_DIR = "saves";
-    private static String USER_DIR = SAVE_DIR + "/User_" + USER_ID;
+    private static String USER_DIR = SAVE_DIR + "/User " + USER_ID;
     private final String deFault = "No Data"; //기획서 일치
     private final String LSFdeFault = "Last saved file";
 
@@ -322,7 +322,7 @@ public class FileManager {
     public boolean saveUserList(String id, String pw) {
         ensureSaveDirectory();
 
-        File file = new File(SAVE_DIR, "userlist.txt");
+        File file = new File(SAVE_DIR, "UserList.txt");
         boolean fileExists = file.exists() && file.length() > 0;
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
